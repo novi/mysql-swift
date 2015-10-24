@@ -13,7 +13,9 @@
 		529215B51BDB8D56009B031A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 529215B31BDB8D56009B031A /* Main.storyboard */; };
 		529215C01BDB8D57009B031A /* MySQLDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215BF1BDB8D57009B031A /* MySQLDemoTests.swift */; };
 		529215CB1BDB8D57009B031A /* MySQLDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215CA1BDB8D57009B031A /* MySQLDemoUITests.swift */; };
-		529215DB1BDB8DC5009B031A /* MySQL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 529215DA1BDB8DC5009B031A /* MySQL.framework */; };
+		529215E31BDB92F7009B031A /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215E21BDB92F7009B031A /* Model.swift */; settings = {ASSET_TAGS = (); }; };
+		529215EC1BDBA361009B031A /* MySQL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 529215DA1BDB8DC5009B031A /* MySQL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		529215EE1BDBA3DD009B031A /* Himotoki.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 529215ED1BDBA3DD009B031A /* Himotoki.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,6 +35,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		529215EB1BDBA345009B031A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				529215EE1BDBA3DD009B031A /* Himotoki.framework in CopyFiles */,
+				529215EC1BDBA361009B031A /* MySQL.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		529215AA1BDB8D56009B031A /* MySQLDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MySQLDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		529215AD1BDB8D56009B031A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -47,6 +63,8 @@
 		529215CA1BDB8D57009B031A /* MySQLDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySQLDemoUITests.swift; sourceTree = "<group>"; };
 		529215CC1BDB8D57009B031A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		529215DA1BDB8DC5009B031A /* MySQL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MySQL.framework; path = "../../../Library/Developer/Xcode/DerivedData/MySQL-bvzumdhtnwalwsfwfabwjcnopspy/Build/Products/Debug/MySQL.framework"; sourceTree = "<group>"; };
+		529215E21BDB92F7009B031A /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		529215ED1BDBA3DD009B031A /* Himotoki.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Himotoki.framework; path = ../MySQL/Carthage/Build/Mac/Himotoki.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,7 +72,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				529215DB1BDB8DC5009B031A /* MySQL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +95,7 @@
 		529215A11BDB8D56009B031A = {
 			isa = PBXGroup;
 			children = (
+				529215ED1BDBA3DD009B031A /* Himotoki.framework */,
 				529215DA1BDB8DC5009B031A /* MySQL.framework */,
 				529215AC1BDB8D56009B031A /* MySQLDemo */,
 				529215BE1BDB8D57009B031A /* MySQLDemoTests */,
@@ -101,6 +119,7 @@
 			children = (
 				529215AD1BDB8D56009B031A /* AppDelegate.swift */,
 				529215AF1BDB8D56009B031A /* ViewController.swift */,
+				529215E21BDB92F7009B031A /* Model.swift */,
 				529215B11BDB8D56009B031A /* Assets.xcassets */,
 				529215B31BDB8D56009B031A /* Main.storyboard */,
 				529215B61BDB8D56009B031A /* Info.plist */,
@@ -136,6 +155,7 @@
 				529215A61BDB8D56009B031A /* Sources */,
 				529215A71BDB8D56009B031A /* Frameworks */,
 				529215A81BDB8D56009B031A /* Resources */,
+				529215EB1BDBA345009B031A /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -255,6 +275,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				529215E31BDB92F7009B031A /* Model.swift in Sources */,
 				529215B01BDB8D56009B031A /* ViewController.swift in Sources */,
 				529215AE1BDB8D56009B031A /* AppDelegate.swift in Sources */,
 			);
@@ -387,9 +408,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../MySQL/Carthage/Build/Mac\"";
 				INFOPLIST_FILE = MySQLDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../MySQL/External/mysql-connector/lib\"";
 				PRODUCT_BUNDLE_IDENTIFIER = jp.novi.MySQLDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -399,9 +423,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../MySQL/Carthage/Build/Mac\"";
 				INFOPLIST_FILE = MySQLDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../MySQL/External/mysql-connector/lib\"";
 				PRODUCT_BUNDLE_IDENTIFIER = jp.novi.MySQLDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -478,6 +505,7 @@
 				529215D11BDB8D57009B031A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		529215D21BDB8D57009B031A /* Build configuration list for PBXNativeTarget "MySQLDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -486,6 +514,7 @@
 				529215D41BDB8D57009B031A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		529215D51BDB8D57009B031A /* Build configuration list for PBXNativeTarget "MySQLDemoUITests" */ = {
 			isa = XCConfigurationList;
@@ -494,6 +523,7 @@
 				529215D71BDB8D57009B031A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
