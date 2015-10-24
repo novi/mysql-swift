@@ -17,7 +17,12 @@ public class Connection {
         let insertedId: Int
         init(mysql: UnsafeMutablePointer<MYSQL>) {
             self.insertedId = Int(mysql_insert_id(mysql))
-            self.affectedRows = Int(mysql_affected_rows(mysql))
+            let arows = mysql_affected_rows(mysql)
+            if arows == (~0) {
+                self.affectedRows = 0 // error or select statement
+            } else {
+                self.affectedRows = Int(arows)
+            }
         }
     }
     
@@ -98,6 +103,8 @@ public class Connection {
         guard mysql_query(mysql, (query as NSString).UTF8String) == 0 else {
             throw QueryError.QueryError(MySQLUtil.getMySQLErrorString(mysql))
         }
+        let status = Status(mysql: mysql)
+        
         let res = mysql_use_result(mysql)
         guard res != nil else {
             throw QueryError.ResultFetchError(MySQLUtil.getMySQLErrorString(mysql))
@@ -143,7 +150,7 @@ public class Connection {
                     if let str = NSString(UTF8String: sf) {
                         cols[f.name] = try f.castValue(str as String, row: rowCount)
                     } else {
-                        throw QueryError.ValueError("parse value int \(f.name), row: \(rowCount)")
+                        throw QueryError.ValueError("parse string value in \(f.name), at row: \(rowCount)")
                     }
                 }
                 
