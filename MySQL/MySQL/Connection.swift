@@ -28,17 +28,27 @@ public class Connection {
         case NoField
     }
     
-    let mysql: UnsafeMutablePointer<MYSQL>
+    var mysql_: UnsafeMutablePointer<MYSQL>
     init(mysql: UnsafeMutablePointer<MYSQL>) {
-        self.mysql = mysql
+        self.mysql_ = mysql
+    }
+    
+    var mysql: UnsafeMutablePointer<MYSQL>? {
+        guard mysql_ != nil else {
+            return nil
+        }
+        return mysql_
     }
     
     var isConnected: Bool {
+        guard let mysql = mysql else {
+            return false
+        }
         return mysql_stat(mysql) != nil ? true : false
     }
     
     public func query(query: String, args:[AnyObject]) throws -> [[String?]] {
-        guard isConnected else {
+        guard let mysql = self.mysql where isConnected else {
             throw QueryError.NotConnected
         }
         
@@ -83,10 +93,15 @@ public class Connection {
     }
     
     func disconnect() {
+        guard let mysql = mysql else {
+            return
+        }
         mysql_close(mysql)
+        self.mysql_ = nil
     }
     
     deinit {
+        disconnect()
         disconnect()
     }
 }
