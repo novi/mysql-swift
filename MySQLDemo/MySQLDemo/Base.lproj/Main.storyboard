@@ -688,6 +688,18 @@
                                     </menu>
                                 </popUpButtonCell>
                             </popUpButton>
+                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dyr-Vp-jqq">
+                                <rect key="frame" x="36" y="228" width="96" height="22"/>
+                                <animations/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="oqB-1o-viB">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <binding destination="LYz-Pl-vBP" name="value" keyPath="values.defaultHost" id="Kw9-Q7-bjU"/>
+                                </connections>
+                            </textField>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k3o-PK-OXX">
                                 <rect key="frame" x="36" y="196" width="96" height="22"/>
                                 <animations/>
@@ -712,18 +724,6 @@
                                     <binding destination="LYz-Pl-vBP" name="value" keyPath="values.defaultUsername" id="rKi-42-ExZ"/>
                                 </connections>
                             </textField>
-                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="62j-Ls-REF">
-                                <rect key="frame" x="36" y="132" width="96" height="22"/>
-                                <animations/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="XHF-nE-9Bm">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                                <connections>
-                                    <binding destination="LYz-Pl-vBP" name="value" keyPath="values.defaultPassword" id="ite-kZ-HMP"/>
-                                </connections>
-                            </textField>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ff6-Bx-fWe">
                                 <rect key="frame" x="302" y="190" width="92" height="32"/>
                                 <animations/>
@@ -735,24 +735,27 @@
                                     <action selector="connectTapped:" target="XfG-lQ-9wD" id="ZPE-pu-u8c"/>
                                 </connections>
                             </button>
-                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dyr-Vp-jqq">
-                                <rect key="frame" x="36" y="228" width="96" height="22"/>
+                            <secureTextField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Pj-Bn-Xl0">
+                                <rect key="frame" x="36" y="132" width="96" height="22"/>
                                 <animations/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="oqB-1o-viB">
+                                <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="jd5-6O-R0o">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
+                                    <allowedInputSourceLocales>
+                                        <string>NSAllRomanInputSourcesLocaleIdentifier</string>
+                                    </allowedInputSourceLocales>
+                                </secureTextFieldCell>
                                 <connections>
-                                    <binding destination="LYz-Pl-vBP" name="value" keyPath="values.defaultHost" id="Kw9-Q7-bjU"/>
+                                    <binding destination="LYz-Pl-vBP" name="value" keyPath="values.defaultPassword" id="cBL-a5-Qe0"/>
                                 </connections>
-                            </textField>
+                            </secureTextField>
                         </subviews>
                         <animations/>
                     </view>
                     <connections>
                         <outlet property="hostField" destination="dyr-Vp-jqq" id="9fU-or-oIj"/>
-                        <outlet property="passwordField" destination="62j-Ls-REF" id="97L-WS-w0z"/>
+                        <outlet property="passwordField" destination="6Pj-Bn-Xl0" id="Abd-FK-8rc"/>
                         <outlet property="portField" destination="k3o-PK-OXX" id="Sct-aS-CCF"/>
                         <outlet property="userField" destination="g6P-yd-Ggn" id="Lqa-kw-1LC"/>
                     </connections>

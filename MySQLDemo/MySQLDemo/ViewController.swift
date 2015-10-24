@@ -8,6 +8,7 @@
 
 import Cocoa
 import MySQL
+import Himotoki
 
 class ViewController: NSViewController {
 
@@ -40,12 +41,17 @@ class ViewController: NSViewController {
         do {
             let conn = try database.getConnection()
             
-            let rows = try conn.query("SELECT * FROM users", args:[])
-            print(rows)
+            let rows: [Row.User] = try conn.query("SELECT * FROM users", args:[])
+            for row in rows {
+                print("\(row.id) : \(row.userName) \(row.age)")
+            }
             
         } catch (let e) {
             print("\(e as ErrorType)")
-            self.presentError(e as NSError)
+            let err = NSError(domain: "MySQL", code: 1, userInfo: [
+                NSLocalizedDescriptionKey: "\(e as ErrorType)"
+                ])
+            self.presentError(err)
         }
         
     }
