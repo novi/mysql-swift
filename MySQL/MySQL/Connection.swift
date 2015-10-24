@@ -44,18 +44,18 @@ public class Connection {
             self.type = f.type
         }
         func castValue(str: String, row: Int) throws -> AnyObject {
-            if type == MYSQL_TYPE_DECIMAL ||
-                type == MYSQL_TYPE_TINY ||
+            if type == MYSQL_TYPE_TINY ||
                 type == MYSQL_TYPE_SHORT ||
                 type == MYSQL_TYPE_LONG ||
-                type == MYSQL_TYPE_TIMESTAMP ||
-                type == MYSQL_TYPE_LONGLONG {
+                type == MYSQL_TYPE_INT24 {
                     guard let v = Int(str) else {
                         throw QueryError.ValueError("parse error: \(str) as \(self.type) in \(self.name) at \(row)")
                     }
                     return v
             }
-            if type == MYSQL_TYPE_FLOAT {
+            if type == MYSQL_TYPE_FLOAT ||
+                type == MYSQL_TYPE_DECIMAL ||
+                type == MYSQL_TYPE_NEWDECIMAL {
                 guard let v = Float(str) else {
                     throw QueryError.ValueError("parse error: \(str) as \(self.type) in \(self.name) at \(row)")
                 }
