@@ -1,0 +1,5 @@
+module MySQLConnector [system] {
+header "/Users/ito/Projects/MySQL/MySQL/External/mysql-connector/include/mysql.h"
+export *
+}
+

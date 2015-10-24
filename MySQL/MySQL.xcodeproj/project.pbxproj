@@ -11,6 +11,10 @@
 		529215921BDB8CD6009B031A /* MySQL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 529215871BDB8CD6009B031A /* MySQL.framework */; settings = {ASSET_TAGS = (); }; };
 		529215971BDB8CD6009B031A /* MySQLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215961BDB8CD6009B031A /* MySQLTests.swift */; };
 		529215D91BDB8D6D009B031A /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215D81BDB8D6D009B031A /* Database.swift */; settings = {ASSET_TAGS = (); }; };
+		529215DD1BDB9038009B031A /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215DC1BDB9038009B031A /* Connection.swift */; settings = {ASSET_TAGS = (); }; };
+		529215DF1BDB9277009B031A /* Himotoki.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 529215DE1BDB9277009B031A /* Himotoki.framework */; };
+		52F721FF1BDBD49B0066B725 /* libmysqlclient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 52F721FD1BDBD4140066B725 /* libmysqlclient.a */; settings = {ASSET_TAGS = (); }; };
+		52F722011BDBD4C50066B725 /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 52F722001BDBD4C50066B725 /* libstdc++.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -23,6 +27,18 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		529215E01BDB92A8009B031A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		529215871BDB8CD6009B031A /* MySQL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MySQL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5292158A1BDB8CD6009B031A /* MySQL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MySQL.h; sourceTree = "<group>"; };
@@ -31,6 +47,10 @@
 		529215961BDB8CD6009B031A /* MySQLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySQLTests.swift; sourceTree = "<group>"; };
 		529215981BDB8CD6009B031A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		529215D81BDB8D6D009B031A /* Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
+		529215DC1BDB9038009B031A /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
+		529215DE1BDB9277009B031A /* Himotoki.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Himotoki.framework; path = Carthage/Build/Mac/Himotoki.framework; sourceTree = "<group>"; };
+		52F721FD1BDBD4140066B725 /* libmysqlclient.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmysqlclient.a; path = "External/mysql-connector/lib/libmysqlclient.a"; sourceTree = "<group>"; };
+		52F722001BDBD4C50066B725 /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "usr/lib/libstdc++.tbd"; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +58,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52F722011BDBD4C50066B725 /* libstdc++.tbd in Frameworks */,
+				529215DF1BDB9277009B031A /* Himotoki.framework in Frameworks */,
+				52F721FF1BDBD49B0066B725 /* libmysqlclient.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,6 +78,9 @@
 		5292157D1BDB8CD5009B031A = {
 			isa = PBXGroup;
 			children = (
+				52F722001BDBD4C50066B725 /* libstdc++.tbd */,
+				52F721FD1BDBD4140066B725 /* libmysqlclient.a */,
+				529215DE1BDB9277009B031A /* Himotoki.framework */,
 				529215891BDB8CD6009B031A /* MySQL */,
 				529215951BDB8CD6009B031A /* MySQLTests */,
 				529215881BDB8CD6009B031A /* Products */,
@@ -75,6 +101,7 @@
 			children = (
 				5292158A1BDB8CD6009B031A /* MySQL.h */,
 				529215D81BDB8D6D009B031A /* Database.swift */,
+				529215DC1BDB9038009B031A /* Connection.swift */,
 				5292158C1BDB8CD6009B031A /* Info.plist */,
 			);
 			path = MySQL;
@@ -111,6 +138,7 @@
 				529215831BDB8CD6009B031A /* Frameworks */,
 				529215841BDB8CD6009B031A /* Headers */,
 				529215851BDB8CD6009B031A /* Resources */,
+				529215E01BDB92A8009B031A /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -198,6 +226,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				529215D91BDB8D6D009B031A /* Database.swift in Sources */,
+				529215DD1BDB9038009B031A /* Connection.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -313,13 +342,23 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
 				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/External/mysql-connector/include\"";
 				INFOPLIST_FILE = MySQL/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/External/mysql-connector/lib",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = jp.novi.MySQL;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "\"$(SRCROOT)/External\"";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -333,13 +372,23 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
 				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/External/mysql-connector/include\"";
 				INFOPLIST_FILE = MySQL/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/External/mysql-connector/lib",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = jp.novi.MySQL;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "\"$(SRCROOT)/External\"";
 			};
 			name = Release;
 		};
