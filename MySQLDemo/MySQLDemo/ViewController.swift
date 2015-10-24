@@ -8,7 +8,6 @@
 
 import Cocoa
 import MySQL
-import Himotoki
 
 class ViewController: NSViewController {
 
