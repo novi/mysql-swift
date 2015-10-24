@@ -18,7 +18,7 @@ struct Row {
         static func decode(e: Extractor) throws -> User {
             return try build(User.init)(
                 e <| "id",
-                e <| "user_name",
+                e <| "name",
                 e <|? "age"
             )
         }
