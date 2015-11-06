@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		529215AE1BDB8D56009B031A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215AD1BDB8D56009B031A /* AppDelegate.swift */; };
-		529215B01BDB8D56009B031A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215AF1BDB8D56009B031A /* ViewController.swift */; };
+		529215B01BDB8D56009B031A /* DatabaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215AF1BDB8D56009B031A /* DatabaseViewController.swift */; };
 		529215B21BDB8D56009B031A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 529215B11BDB8D56009B031A /* Assets.xcassets */; };
 		529215B51BDB8D56009B031A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 529215B31BDB8D56009B031A /* Main.storyboard */; };
 		529215C01BDB8D57009B031A /* MySQLDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215BF1BDB8D57009B031A /* MySQLDemoTests.swift */; };
@@ -16,6 +16,7 @@
 		529215E31BDB92F7009B031A /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215E21BDB92F7009B031A /* Model.swift */; settings = {ASSET_TAGS = (); }; };
 		529215EC1BDBA361009B031A /* MySQL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 529215DA1BDB8DC5009B031A /* MySQL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		529215EE1BDBA3DD009B031A /* Himotoki.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 529215ED1BDBA3DD009B031A /* Himotoki.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		52F722031BDDB5CB0066B725 /* ConnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F722021BDDB5CB0066B725 /* ConnectionViewController.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,7 +53,7 @@
 /* Begin PBXFileReference section */
 		529215AA1BDB8D56009B031A /* MySQLDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MySQLDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		529215AD1BDB8D56009B031A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		529215AF1BDB8D56009B031A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		529215AF1BDB8D56009B031A /* DatabaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseViewController.swift; sourceTree = "<group>"; };
 		529215B11BDB8D56009B031A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		529215B41BDB8D56009B031A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		529215B61BDB8D56009B031A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -65,6 +66,7 @@
 		529215DA1BDB8DC5009B031A /* MySQL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MySQL.framework; path = "../../../Library/Developer/Xcode/DerivedData/MySQL-bvzumdhtnwalwsfwfabwjcnopspy/Build/Products/Debug/MySQL.framework"; sourceTree = "<group>"; };
 		529215E21BDB92F7009B031A /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		529215ED1BDBA3DD009B031A /* Himotoki.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Himotoki.framework; path = ../MySQL/Carthage/Build/Mac/Himotoki.framework; sourceTree = "<group>"; };
+		52F722021BDDB5CB0066B725 /* ConnectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,7 +120,8 @@
 			isa = PBXGroup;
 			children = (
 				529215AD1BDB8D56009B031A /* AppDelegate.swift */,
-				529215AF1BDB8D56009B031A /* ViewController.swift */,
+				529215AF1BDB8D56009B031A /* DatabaseViewController.swift */,
+				52F722021BDDB5CB0066B725 /* ConnectionViewController.swift */,
 				529215E21BDB92F7009B031A /* Model.swift */,
 				529215B11BDB8D56009B031A /* Assets.xcassets */,
 				529215B31BDB8D56009B031A /* Main.storyboard */,
@@ -275,8 +278,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52F722031BDDB5CB0066B725 /* ConnectionViewController.swift in Sources */,
 				529215E31BDB92F7009B031A /* Model.swift in Sources */,
-				529215B01BDB8D56009B031A /* ViewController.swift in Sources */,
+				529215B01BDB8D56009B031A /* DatabaseViewController.swift in Sources */,
 				529215AE1BDB8D56009B031A /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
