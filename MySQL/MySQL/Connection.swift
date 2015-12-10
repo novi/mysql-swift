@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Himotoki
 import MySQLConnector
 
 public class Connection {
@@ -95,7 +94,7 @@ public class Connection {
         return mysql_stat(mysql) != nil ? true : false
     }
     
-    public func query<T: Decodable where T.DecodedType == T>(query: String, args:[AnyObject]) throws -> [T] {
+    public func query<T: QueryResultRowType>(query: String, args:[AnyObject]) throws -> [T] {
         guard let mysql = self.mysql where isConnected else {
             throw QueryError.NotConnected
         }
@@ -145,7 +144,7 @@ public class Connection {
                 let sf = row[i]
                 let f = fields[i]
                 if sf == nil {
-                    //cols[name] = nil
+                    cols[f.name] = NSNull()
                 } else {
                     if let str = NSString(UTF8String: sf) {
                         cols[f.name] = try f.castValue(str as String, row: rowCount)
@@ -159,7 +158,7 @@ public class Connection {
             rows.append(cols)
         }
         
-        return try decodeArray(rows)
+        return try rows.map({ try T.fromRow(QueryResult(row: $0 )) })
     }
     
     func disconnect() {
