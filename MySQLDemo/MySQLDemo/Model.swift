@@ -7,21 +7,25 @@
 //
 
 import Foundation
-import Himotoki
+import MySQL
 
 struct Row {
     
-    struct User: Decodable {
+    struct User: QueryResultRowType {
         let id: Int
         let userName: String
         let age: Int?
-        static func decode(e: Extractor) throws -> User {
+        //let ages: Bool
+        
+        static func fromRow(r: QueryResult) throws -> User {
             return try build(User.init)(
-                e <| "id",
-                e <| "name",
-                e <|? "age"
+                r <| "id",
+                r <| "name",
+                r <|? "age"
+                //,r <| "ages"
             )
         }
+        
     }
     
 }

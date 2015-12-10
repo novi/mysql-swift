@@ -27,6 +27,7 @@ class ConnectionViewController: NSViewController, NSTableViewDataSource {
         do {
             let rows: [Row.User] = try conn.query(queryField.stringValue, args:[])
             for row in rows {
+                //print(row)
                 print("\(row.id) : \(row.userName) \(row.age)")
             }
             self.users = rows
