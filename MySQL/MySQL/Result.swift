@@ -27,7 +27,7 @@ public struct QueryResult {
     let row: [String:AnyObject]
     
     func isNull(key: String) -> Bool {
-        if row[key] is NSNull {
+        if row[key] is Connection.NullValue {
             return true
         }
         return false
