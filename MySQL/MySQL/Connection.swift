@@ -25,15 +25,6 @@ public class Connection {
         }
     }
     
-    public enum QueryError: ErrorType {
-        case NotConnected
-        case QueryError(String)
-        case ResultFetchError(String)
-        case NoField
-        case FieldFetchError
-        case ValueError(String)
-    }
-    
     struct Field {
         let name: String
         let type: enum_field_types
@@ -95,6 +86,11 @@ public class Connection {
     }
     
     public func query<T: QueryResultRowType>(query: String, args:[AnyObject]) throws -> [T] {
+        let (rows, _) = try self.query(query, args: args) as ([T], Status)
+        return rows
+    }
+    
+    public func query<T: QueryResultRowType>(query: String, args:[AnyObject]) throws -> ([T], Status) {
         guard let mysql = self.mysql where isConnected else {
             throw QueryError.NotConnected
         }
@@ -158,7 +154,7 @@ public class Connection {
             rows.append(cols)
         }
         
-        return try rows.map({ try T.fromRow(QueryResult(row: $0 )) })
+        return try (rows.map({ try T.fromRow(QueryResult(row: $0 )) }), status)
     }
     
     func disconnect() {
