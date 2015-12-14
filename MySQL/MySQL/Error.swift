@@ -18,4 +18,7 @@ public enum QueryError: ErrorType {
     
     case CastError(actual: String, expected: String, key: String)
     case MissingKeyError(key: String)
+    
+    case UnsupportedQueryArgumentType(String)
+    case QueryArgumentCountMismatch
 }

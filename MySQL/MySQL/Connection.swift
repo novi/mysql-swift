@@ -14,9 +14,15 @@ public class Connection {
         static let null = NullValue()
     }
     
-    public struct Status {
-        let affectedRows: Int
-        let insertedId: Int
+    struct EmptyRowResult: QueryResultRowType {
+        static func fromRow(r: QueryResult) throws -> EmptyRowResult {
+            return EmptyRowResult()
+        }
+    }
+    
+    public struct Status: CustomStringConvertible {
+        public let affectedRows: Int
+        public let insertedId: Int
         init(mysql: UnsafeMutablePointer<MYSQL>) {
             self.insertedId = Int(mysql_insert_id(mysql))
             let arows = mysql_affected_rows(mysql)
@@ -25,6 +31,9 @@ public class Connection {
             } else {
                 self.affectedRows = Int(arows)
             }
+        }
+        public var description: String {
+            return "inserted id = \(insertedId), affected rows = \(affectedRows)"
         }
     }
     
@@ -88,23 +97,34 @@ public class Connection {
         return mysql_stat(mysql) != nil ? true : false
     }
     
-    public func query<T: QueryResultRowType>(query: String, args:[AnyObject]) throws -> [T] {
-        let (rows, _) = try self.query(query, args: args) as ([T], Status)
+    public func query<T: QueryResultRowType>(query: String, _ args:[Any?] = []) throws -> [T] {
+        let (rows, _) = try self.query(query, args) as ([T], Status)
         return rows
     }
     
-    public func query<T: QueryResultRowType>(query: String, args:[AnyObject]) throws -> ([T], Status) {
+    public func query(query: String, _ args:[Any?] = []) throws -> Status {
+        let (_, status) = try self.query(query, args) as ([EmptyRowResult], Status)
+        return status
+    }
+    
+    public func query<T: QueryResultRowType>(query: String, _ args:[Any?] = []) throws -> ([T], Status) {
         guard let mysql = self.mysql where isConnected else {
             throw QueryError.NotConnected
         }
         
-        guard mysql_query(mysql, query) == 0 else {
+        let formatted = try SQLString.format(query, args: args)
+        print("query: \(formatted)")
+        guard mysql_query(mysql, formatted) == 0 else {
             throw QueryError.QueryError(MySQLUtil.getMySQLErrorString(mysql))
         }
         let status = Status(mysql: mysql)
         
         let res = mysql_use_result(mysql)
         guard res != nil else {
+            if mysql_field_count(mysql) == 0 {
+                // actual no result
+                return ([], status)
+            }
             throw QueryError.ResultFetchError(MySQLUtil.getMySQLErrorString(mysql))
         }
         defer {

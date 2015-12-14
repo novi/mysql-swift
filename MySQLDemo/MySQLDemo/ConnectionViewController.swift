@@ -9,6 +9,19 @@
 import Cocoa
 import MySQL
 
+/*
+
+// Demo Table Scheme
+
+CREATE TABLE `users` (
+`id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+`name` varchar(11) DEFAULT NULL,
+`age` int(11) DEFAULT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+*/
+
 
 class ConnectionViewController: NSViewController, NSTableViewDataSource {
     
@@ -25,11 +38,14 @@ class ConnectionViewController: NSViewController, NSTableViewDataSource {
         }
         
         do {
-            let rows: [Row.User] = try conn.query(queryField.stringValue, args:[])
+            let (rows, status) = try conn.query(queryField.stringValue, []) as ([Row.User], Connection.Status)
             for row in rows {
                 //print(row)
                 print("\(row.id) : \(row.userName) \(row.age)")
             }
+            
+            print(status)
+            
             self.users = rows
             tableView.reloadData()
             
@@ -39,6 +55,24 @@ class ConnectionViewController: NSViewController, NSTableViewDataSource {
                 ]))
         }
     }
+    
+    @IBAction func insertTapped(sender: AnyObject) {
+        guard let conn = self.connection else {
+            return
+        }
+        
+        do {
+            let status = try conn.query("INSERT INTO users SET name = ?, age = ?", ["test user ' ", random()%100]) as Connection.Status
+
+            print(status)
+            
+        } catch (let e) {
+            self.presentError(NSError(domain: "", code: 1, userInfo: [
+                NSLocalizedDescriptionKey: "\(e as ErrorType)"
+                ]))
+        }
+    }
+    
     
     // MARK: Table View
     
