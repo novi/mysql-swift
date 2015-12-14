@@ -6,7 +6,6 @@
 //  Copyright © 2015年 Yusuke Ito. All rights reserved.
 //
 
-import Foundation
 import MySQLConnector
 
 struct MySQLUtil {
@@ -15,7 +14,7 @@ struct MySQLUtil {
         if ch == nil {
             return "generic error"
         }
-        guard let str = NSString(UTF8String: ch) else {
+        guard let str = String.fromCString(ch) else {
             return "generic error"
         }
         return str as String
@@ -53,15 +52,15 @@ public class Database {
     public func getConnection() throws -> Connection {
         let mysql = mysql_init(nil)
         if mysql_real_connect(mysql,
-            (self.connectionInfo.host as NSString).UTF8String,
-            (self.connectionInfo.userName as NSString).UTF8String,
-            (self.connectionInfo.password as NSString).UTF8String,
-            (self.connectionInfo.database as NSString).UTF8String,
+            self.connectionInfo.host,
+            self.connectionInfo.userName,
+            self.connectionInfo.password,
+            self.connectionInfo.database,
             UInt32(self.connectionInfo.port), nil, 0) == nil {
             // error
                 throw Error.ConnectionFailed(MySQLUtil.getMySQLErrorString(mysql))
         }
-        mysql_set_character_set(mysql, ("utf8" as NSString).UTF8String)
+        mysql_set_character_set(mysql, "utf8")
         return Connection(mysql: mysql)
     }
 }

@@ -6,10 +6,13 @@
 //  Copyright © 2015年 Yusuke Ito. All rights reserved.
 //
 
-import Foundation
 import MySQLConnector
 
 public class Connection {
+    
+    class NullValue: AnyObject {
+        static let null = NullValue()
+    }
     
     public struct Status {
         let affectedRows: Int
@@ -32,10 +35,10 @@ public class Connection {
             if f.name == nil {
                 return nil
             }
-            guard let fs = NSString(UTF8String: f.name) else {
+            guard let fs = String.fromCString(f.name) else {
                 return nil
             }
-            self.name = fs as String
+            self.name = fs
             self.type = f.type
         }
         func castValue(str: String, row: Int) throws -> AnyObject {
@@ -95,7 +98,7 @@ public class Connection {
             throw QueryError.NotConnected
         }
         
-        guard mysql_query(mysql, (query as NSString).UTF8String) == 0 else {
+        guard mysql_query(mysql, query) == 0 else {
             throw QueryError.QueryError(MySQLUtil.getMySQLErrorString(mysql))
         }
         let status = Status(mysql: mysql)
@@ -140,10 +143,10 @@ public class Connection {
                 let sf = row[i]
                 let f = fields[i]
                 if sf == nil {
-                    cols[f.name] = NSNull()
+                    cols[f.name] = NullValue.null
                 } else {
-                    if let str = NSString(UTF8String: sf) {
-                        cols[f.name] = try f.castValue(str as String, row: rowCount)
+                    if let str = String.fromCString(sf) {
+                        cols[f.name] = try f.castValue(str, row: rowCount)
                     } else {
                         throw QueryError.ValueError("parse string value in \(f.name), at row: \(rowCount)")
                     }
