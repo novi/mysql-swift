@@ -14,39 +14,12 @@ public protocol QueryResultRowType {
     static func fromRow(r: QueryResult) throws -> Self //.QueryResultType
 }
 
-public enum QueryResultError: ErrorType {
-    case CastError(actual: String, expected: String, key: String)
-    case MissingKeyError(String)
-}
-
 public func <| <T>(r: QueryResult, key: String) throws -> T {
-    guard let val = r.row[key] as? T else {
-        throw QueryResultError.CastError(actual: "\(r.row[key])", expected: "\(T.self)", key: key)
-    }
-    return val
-}
-
-
-public func <| (r: QueryResult, key: String) throws -> Int {
-    guard let val = r.row[key] as? Int else {
-        throw QueryResultError.CastError(actual: "\(r.row[key])", expected: "\(Int.self)", key: key)
-    }
-    return val
+    return try r.getValue(key)
 }
 
 public func <|? <T>(r: QueryResult, key: String) throws -> T? {
-    if r.isNull(key) {
-        return nil
-    }
-    return try r <| key
-}
-
-
-public func <|? (r: QueryResult, key: String) throws -> Int? {
-    if r.isNull(key) {
-        return nil
-    }
-    return try r <| key
+    return try r.getValueNullable(key)
 }
 
 public struct QueryResult {
@@ -60,5 +33,21 @@ public struct QueryResult {
         return false
     }
     
+    public func getValueNullable<T>(key: String) throws -> T? {
+        if isNull(key) {
+            return nil
+        }
+        return try self.getValue(key) as T
+    }
+    
+    public func getValue<T>(key: String) throws -> T {
+        guard let obj = row[key] as AnyObject? else {
+            throw QueryError.MissingKeyError(key: key)
+        }
+        guard let val = obj as? T else {
+            throw QueryError.CastError(actual: "\(row[key])", expected: "\(T.self)", key: key)
+        }
+        return val
+    }
     
 }

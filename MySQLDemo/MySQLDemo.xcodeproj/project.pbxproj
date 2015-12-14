@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		520FEE031C194F2700799AFE /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215E21BDB92F7009B031A /* Model.swift */; };
+		525704921C1ED031000E4CAE /* MySQL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 525704911C1ED031000E4CAE /* MySQL.framework */; };
 		529215AE1BDB8D56009B031A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215AD1BDB8D56009B031A /* AppDelegate.swift */; };
 		529215B01BDB8D56009B031A /* DatabaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215AF1BDB8D56009B031A /* DatabaseViewController.swift */; };
 		529215B21BDB8D56009B031A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 529215B11BDB8D56009B031A /* Assets.xcassets */; };
@@ -47,6 +48,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		525704911C1ED031000E4CAE /* MySQL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MySQL.framework; path = "../../../Library/Developer/Xcode/DerivedData/MySQL-empnmpwrwbwiazaxnkeyxcwyknyw/Build/Products/Debug/MySQL.framework"; sourceTree = "<group>"; };
 		529215AA1BDB8D56009B031A /* MySQLDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MySQLDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		529215AD1BDB8D56009B031A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		529215AF1BDB8D56009B031A /* DatabaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseViewController.swift; sourceTree = "<group>"; };
@@ -68,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				525704921C1ED031000E4CAE /* MySQL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,6 +94,7 @@
 		529215A11BDB8D56009B031A = {
 			isa = PBXGroup;
 			children = (
+				525704911C1ED031000E4CAE /* MySQL.framework */,
 				529215AC1BDB8D56009B031A /* MySQLDemo */,
 				529215BE1BDB8D57009B031A /* MySQLDemoTests */,
 				529215C91BDB8D57009B031A /* MySQLDemoUITests */,
@@ -356,7 +360,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -394,7 +398,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 			};
