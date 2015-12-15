@@ -10,6 +10,89 @@
 // inspired
 // https://github.com/felixge/node-mysql/blob/master/lib/protocol/SqlString.js
 
+public protocol QueryArgumentValueType {
+    func escapedValue() throws -> String
+}
+
+public struct QueryArgumentValueDictionary: QueryArgumentValueType {
+    let dict: [String: QueryArgumentValueType]
+    public init(_ dict: [String: QueryArgumentValueType]) {
+        self.dict = dict
+    }
+    public func escapedValue() throws -> String {
+        var keyVals: [String] = []
+        for (k, v) in dict {
+            keyVals.append("\(SQLString.escapeKeyString(k)) = \(try v.escapedValue())")
+        }
+        return keyVals.joinWithSeparator(", ")
+    }
+}
+
+public struct QueryArgumentValueArray: QueryArgumentValueType {
+    let vals: [QueryArgumentValueType]
+    public init(_ vals: [QueryArgumentValueType]) {
+        self.vals = vals
+    }
+    public func escapedValue() throws -> String {
+        return try vals.map({
+            if $0 is QueryArgumentValueArray {
+                return "(" + (try $0.escapedValue()) + ")"
+            }
+            return try $0.escapedValue()
+        }).joinWithSeparator(", ")
+    }
+}
+
+public struct QueryArgumentValueString: QueryArgumentValueType {
+    let val: String?
+    public init(_ val: String?) {
+        self.val = val
+    }
+    
+    public func escapedValue() -> String {
+        guard let val = self.val else {
+            return QueryArgumentValueNull().escapedValue()
+        }
+        return SQLString.escapeString(val)
+    }
+}
+
+public struct QueryArgumentValueInt: QueryArgumentValueType {
+    let val: Int?
+    public init(_ val: Int?) {
+        self.val = val
+    }
+    public func escapedValue() -> String {
+        guard let val = self.val else {
+            return QueryArgumentValueNull().escapedValue()
+        }
+        return String(val)
+    }
+}
+
+public struct QueryArgumentValueNull: QueryArgumentValueType {
+    public init() {
+        
+    }
+    public func escapedValue() -> String {
+        return "NULL"
+    }
+}
+
+public struct QueryArgumentValueBool: QueryArgumentValueType {
+    let val: Bool?
+    public init(_ val: Bool?) {
+        self.val = val
+    }
+    public func escapedValue() -> String {
+        guard let val = self.val else {
+            return QueryArgumentValueNull().escapedValue()
+        }
+        return val ? "true" : "false"
+    }
+}
+
+/*
 struct SQLValue {
     let val: Any?
     init(_ val: Any?) {
@@ -31,10 +114,11 @@ struct SQLValue {
         }
     }
 }
+*/
 
 struct SQLString {
     
-    static func format(query: String, args: [Any?]) throws -> String {
+    static func format(query: String, args: [QueryArgumentValueType]) throws -> String {
         var out: String = ""
         var placeHolderCount: Int = 0
         for c in query.characters {
@@ -43,8 +127,8 @@ struct SQLString {
                     if placeHolderCount >= args.count {
                         throw QueryError.QueryArgumentCountMismatch
                     }
-                    let val = SQLValue(args[placeHolderCount])
-                out += " " + (try val.escape()) + " "
+                    let val = args[placeHolderCount]
+                out += " " + (try val.escapedValue()) + " "
                 placeHolderCount += 1
             default:
                 out += String(c)
@@ -54,6 +138,11 @@ struct SQLString {
             throw QueryError.QueryArgumentCountMismatch
         }
         return out
+    }
+    
+    static func escapeKeyString(str: String) -> String {
+        // TODO
+        return str
     }
     
     static func escapeString(str: String) -> String {

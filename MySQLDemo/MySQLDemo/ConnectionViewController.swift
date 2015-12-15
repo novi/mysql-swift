@@ -62,7 +62,10 @@ class ConnectionViewController: NSViewController, NSTableViewDataSource {
         }
         
         do {
-            let status = try conn.query("INSERT INTO users SET name = ?, age = ?", ["test user ' ", random()%100]) as Connection.Status
+            //let status = try conn.query("INSERT INTO users SET name = ?, age = ?", [QueryArgumentValueString("test user ' "), QueryArgumentValueInt(random()%100)]) as Connection.Status
+            
+            let user = Row.User(id: 0, userName: "test ' user", age: random()%100)
+            let status = try conn.query("INSERT INTO users SET ?", [user]) as Connection.Status
 
             print(status)
             

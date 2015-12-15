@@ -11,7 +11,7 @@ import MySQL
 
 struct Row {
     
-    struct User: QueryResultRowType {
+    struct User: QueryResultRowType, QueryArgumentValueType {
         let id: Int
         let userName: String
         let age: Int?
@@ -24,6 +24,13 @@ struct Row {
                 r <|? "age"
                 //,r <| "ages"
             )
+        }
+        func escapedValue() throws -> String {
+            return try QueryArgumentValueDictionary([
+                //"id": QueryArgumentValueInt(id), // auto increment
+                "name": QueryArgumentValueString(userName),
+                "age": QueryArgumentValueInt(age)
+            ]).escapedValue()
         }
         
     }
