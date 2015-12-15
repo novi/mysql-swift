@@ -11,7 +11,7 @@ infix operator <|? { associativity left precedence 150 }
 
 public protocol QueryResultRowType {
     //typealias QueryResultType = Self
-    static func fromRow(r: QueryResult) throws -> Self //.QueryResultType
+    static func forRow(r: QueryResult) throws -> Self //.QueryResultType
 }
 
 public func <| <T>(r: QueryResult, key: String) throws -> T {
@@ -48,6 +48,5 @@ public struct QueryResult {
             throw QueryError.CastError(actual: "\(row[key])", expected: "\(T.self)", key: key)
         }
         return val
-    }
-    
+    }    
 }

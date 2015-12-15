@@ -15,7 +15,7 @@ import MySQL
 
 CREATE TABLE `users` (
 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-`name` varchar(11) DEFAULT NULL,
+`name` varchar(50) DEFAULT NULL,
 `age` int(11) DEFAULT NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -38,7 +38,7 @@ class ConnectionViewController: NSViewController, NSTableViewDataSource {
         }
         
         do {
-            let (rows, status) = try conn.query(queryField.stringValue, []) as ([Row.User], Connection.Status)
+            let (rows, status) = try conn.query(queryField.stringValue, []) as ([Row.User], QueryStatus)
             for row in rows {
                 //print(row)
                 print("\(row.id) : \(row.userName) \(row.age)")
@@ -62,12 +62,17 @@ class ConnectionViewController: NSViewController, NSTableViewDataSource {
         }
         
         do {
-            //let status = try conn.query("INSERT INTO users SET name = ?, age = ?", [QueryArgumentValueString("test user ' "), QueryArgumentValueInt(random()%100)]) as Connection.Status
+            var optionalIntVal: Int? = random()%100
+            let status1 = try conn.query("INSERT INTO users SET name = ?, age = ?", ["test user ' " + "漢字", QueryOptional(optionalIntVal)]) as QueryStatus
             
-            let user = Row.User(id: 0, userName: "test ' user", age: random()%100)
-            let status = try conn.query("INSERT INTO users SET ?", [user]) as Connection.Status
+            print(status1)
+            
+            optionalIntVal = nil
+            
+            let user = Row.User(id: 0, userName: "test ' user 日本語 ", age: optionalIntVal)
+            let status2 = try conn.query("INSERT INTO users SET ?", [user]) as QueryStatus
 
-            print(status)
+            print(status2)
             
         } catch (let e) {
             self.presentError(NSError(domain: "", code: 1, userInfo: [

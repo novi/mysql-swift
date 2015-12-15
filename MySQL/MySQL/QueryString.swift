@@ -14,64 +14,93 @@ public protocol QueryArgumentValueType {
     func escapedValue() throws -> String
 }
 
-public struct QueryArgumentValueDictionary: QueryArgumentValueType {
-    let dict: [String: QueryArgumentValueType]
-    public init(_ dict: [String: QueryArgumentValueType]) {
+public struct QueryDictionary: QueryArgumentValueType {
+    let dict: [String: QueryArgumentValueType?]
+    public init(_ dict: [String: QueryArgumentValueType?]) {
         self.dict = dict
     }
     public func escapedValue() throws -> String {
         var keyVals: [String] = []
         for (k, v) in dict {
-            keyVals.append("\(SQLString.escapeKeyString(k)) = \(try v.escapedValue())")
+            keyVals.append("\(SQLString.escapeIdString(k)) = \(try QueryOptional(v).escapedValue())")
         }
         return keyVals.joinWithSeparator(", ")
     }
 }
 
-public struct QueryArgumentValueArray: QueryArgumentValueType {
-    let vals: [QueryArgumentValueType]
-    public init(_ vals: [QueryArgumentValueType]) {
-        self.vals = vals
+//extension Dictionary: where Value: QueryArgumentValueType, Key: StringLiteralConvertible { }
+// not yet supported
+// extension Array:QueryArgumentValueType where Element: QueryArgumentValueType { }
+
+
+public struct QueryArray: QueryArgumentValueType {
+    let arr: [QueryArgumentValueType?]
+    public init(_ arr: [QueryArgumentValueType?]) {
+        self.arr = arr
     }
     public func escapedValue() throws -> String {
-        return try vals.map({
-            if $0 is QueryArgumentValueArray {
-                return "(" + (try $0.escapedValue()) + ")"
+        return try arr.map({
+            if let arr = $0 as? QueryArray {
+                return "(" + (try arr.escapedValue()) + ")"
             }
-            return try $0.escapedValue()
+            return try QueryOptional($0).escapedValue()
         }).joinWithSeparator(", ")
     }
 }
 
-public struct QueryArgumentValueString: QueryArgumentValueType {
-    let val: String?
-    public init(_ val: String?) {
-        self.val = val
-    }
-    
+extension String: QueryArgumentValueType {
     public func escapedValue() -> String {
-        guard let val = self.val else {
-            return QueryArgumentValueNull().escapedValue()
-        }
-        return SQLString.escapeString(val)
+        return SQLString.escapeString(self)
     }
 }
 
-public struct QueryArgumentValueInt: QueryArgumentValueType {
-    let val: Int?
-    public init(_ val: Int?) {
-        self.val = val
-    }
+extension Int: QueryArgumentValueType {
     public func escapedValue() -> String {
-        guard let val = self.val else {
-            return QueryArgumentValueNull().escapedValue()
-        }
-        return String(val)
+        return String(self)
     }
 }
 
-public struct QueryArgumentValueNull: QueryArgumentValueType {
+public struct QueryOptional: QueryArgumentValueType {
+    let val: QueryArgumentValueType?
+    public init(_ val: QueryArgumentValueType?) {
+        self.val = val
+    }
+    public func escapedValue() throws -> String {
+        guard let val = self.val else {
+            return QueryArgumentValueNull().escapedValue()
+        }
+        return try val.escapedValue()
+    }
+}
+
+//extension Optional where Wrapped: QueryArgumentValueType, Optional: QueryArgumentValueType {
+    /*public func escapedValue() throws -> String {
+        switch self {
+        case .None:
+            return QueryArgumentValueNull().escapedValue()
+        case .Some(let val):
+            return try val.escapedValue()
+        }
+    }*/
+//}
+
+/*extension Optional where Wrapped: String {
+    public func escapedValue() -> String {
+        switch self {
+        case .None:
+            return QueryArgumentValueNull().escapedValue()
+        case .Some(let val):
+            return val
+        }
+    }
+}
+*/
+
+public struct QueryArgumentValueNull: QueryArgumentValueType, NilLiteralConvertible {
     public init() {
+        
+    }
+    public init(nilLiteral: ()) {
         
     }
     public func escapedValue() -> String {
@@ -79,16 +108,9 @@ public struct QueryArgumentValueNull: QueryArgumentValueType {
     }
 }
 
-public struct QueryArgumentValueBool: QueryArgumentValueType {
-    let val: Bool?
-    public init(_ val: Bool?) {
-        self.val = val
-    }
+extension Bool: QueryArgumentValueType {
     public func escapedValue() -> String {
-        guard let val = self.val else {
-            return QueryArgumentValueNull().escapedValue()
-        }
-        return val ? "true" : "false"
+        return self ? "true" : "false"
     }
 }
 
@@ -140,7 +162,7 @@ struct SQLString {
         return out
     }
     
-    static func escapeKeyString(str: String) -> String {
+    static func escapeIdString(str: String) -> String {
         // TODO
         return str
     }
