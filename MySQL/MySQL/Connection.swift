@@ -97,17 +97,17 @@ public class Connection {
         return mysql_stat(mysql) != nil ? true : false
     }
     
-    public func query<T: QueryResultRowType>(query: String, _ args:[Any?] = []) throws -> [T] {
+    public func query<T: QueryResultRowType>(query: String, _ args:[QueryArgumentValueType] = []) throws -> [T] {
         let (rows, _) = try self.query(query, args) as ([T], Status)
         return rows
     }
     
-    public func query(query: String, _ args:[Any?] = []) throws -> Status {
+    public func query(query: String, _ args:[QueryArgumentValueType] = []) throws -> Status {
         let (_, status) = try self.query(query, args) as ([EmptyRowResult], Status)
         return status
     }
     
-    public func query<T: QueryResultRowType>(query: String, _ args:[Any?] = []) throws -> ([T], Status) {
+    public func query<T: QueryResultRowType>(query: String, _ args:[QueryArgumentValueType] = []) throws -> ([T], Status) {
         guard let mysql = self.mysql where isConnected else {
             throw QueryError.NotConnected
         }
