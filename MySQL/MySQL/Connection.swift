@@ -8,6 +8,24 @@
 
 import MySQLConnector
 
+public struct QueryStatus: CustomStringConvertible {
+    public let affectedRows: Int
+    public let insertedId: Int
+    init(mysql: UnsafeMutablePointer<MYSQL>) {
+        self.insertedId = Int(mysql_insert_id(mysql))
+        let arows = mysql_affected_rows(mysql)
+        if arows == (~0) {
+            self.affectedRows = 0 // error or select statement
+        } else {
+            self.affectedRows = Int(arows)
+        }
+    }
+    public var description: String {
+        return "inserted id = \(insertedId), affected rows = \(affectedRows)"
+    }
+}
+
+
 public class Connection {
     
     class NullValue: AnyObject {
@@ -15,25 +33,8 @@ public class Connection {
     }
     
     struct EmptyRowResult: QueryResultRowType {
-        static func fromRow(r: QueryResult) throws -> EmptyRowResult {
+        static func forRow(r: QueryResult) throws -> EmptyRowResult {
             return EmptyRowResult()
-        }
-    }
-    
-    public struct Status: CustomStringConvertible {
-        public let affectedRows: Int
-        public let insertedId: Int
-        init(mysql: UnsafeMutablePointer<MYSQL>) {
-            self.insertedId = Int(mysql_insert_id(mysql))
-            let arows = mysql_affected_rows(mysql)
-            if arows == (~0) {
-                self.affectedRows = 0 // error or select statement
-            } else {
-                self.affectedRows = Int(arows)
-            }
-        }
-        public var description: String {
-            return "inserted id = \(insertedId), affected rows = \(affectedRows)"
         }
     }
     
@@ -98,26 +99,26 @@ public class Connection {
     }
     
     public func query<T: QueryResultRowType>(query: String, _ args:[QueryArgumentValueType] = []) throws -> [T] {
-        let (rows, _) = try self.query(query, args) as ([T], Status)
+        let (rows, _) = try self.query(query, args) as ([T], QueryStatus)
         return rows
     }
     
-    public func query(query: String, _ args:[QueryArgumentValueType] = []) throws -> Status {
-        let (_, status) = try self.query(query, args) as ([EmptyRowResult], Status)
+    public func query(query: String, _ args:[QueryArgumentValueType] = []) throws -> QueryStatus {
+        let (_, status) = try self.query(query, args) as ([EmptyRowResult], QueryStatus)
         return status
     }
     
-    public func query<T: QueryResultRowType>(query: String, _ args:[QueryArgumentValueType] = []) throws -> ([T], Status) {
+    public func query<T: QueryResultRowType>(query: String, _ args:[QueryArgumentValueType] = []) throws -> ([T], QueryStatus) {
         guard let mysql = self.mysql where isConnected else {
             throw QueryError.NotConnected
         }
         
         let formatted = try SQLString.format(query, args: args)
         print("query: \(formatted)")
-        guard mysql_query(mysql, formatted) == 0 else {
+        guard mysql_real_query(mysql, formatted, UInt(formatted.utf8.count)) == 0 else {
             throw QueryError.QueryError(MySQLUtil.getMySQLErrorString(mysql))
         }
-        let status = Status(mysql: mysql)
+        let status = QueryStatus(mysql: mysql)
         
         let res = mysql_use_result(mysql)
         guard res != nil else {
@@ -177,7 +178,7 @@ public class Connection {
             rows.append(cols)
         }
         
-        return try (rows.map({ try T.fromRow(QueryResult(row: $0 )) }), status)
+        return try (rows.map({ try T.forRow(QueryResult(row: $0 )) }), status)
     }
     
     func disconnect() {

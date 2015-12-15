@@ -14,10 +14,10 @@ struct Row {
     struct User: QueryResultRowType, QueryArgumentValueType {
         let id: Int
         let userName: String
-        let age: Int?
+        let age: Optional<Int>
         //let ages: Bool
         
-        static func fromRow(r: QueryResult) throws -> User {
+        static func forRow(r: QueryResult) throws -> User {
             return try build(User.init)(
                 r <| "id",
                 r <| "name",
@@ -26,10 +26,10 @@ struct Row {
             )
         }
         func escapedValue() throws -> String {
-            return try QueryArgumentValueDictionary([
-                //"id": QueryArgumentValueInt(id), // auto increment
-                "name": QueryArgumentValueString(userName),
-                "age": QueryArgumentValueInt(age)
+            return try QueryDictionary([
+                //"id": // auto increment
+                "name": userName,
+                "age": age
             ]).escapedValue()
         }
         
