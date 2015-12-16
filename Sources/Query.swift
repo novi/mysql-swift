@@ -28,7 +28,7 @@ public struct QueryStatus: CustomStringConvertible {
 
 extension Connection {
     
-    class NullValue: AnyObject {
+    struct NullValue {
         static let null = NullValue()
     }
     
