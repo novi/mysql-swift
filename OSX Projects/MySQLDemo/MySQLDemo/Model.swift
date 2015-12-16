@@ -18,7 +18,7 @@ struct Row {
         //let ages: Bool
         let createdAt: SQLDate
         
-        static func forRow(r: QueryResult) throws -> User {
+        static func decodeRow(r: QueryResult) throws -> User {
             return try build(User.init)(
                 r <| "id",
                 r <| "name",
