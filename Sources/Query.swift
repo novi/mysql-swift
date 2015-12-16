@@ -33,7 +33,7 @@ extension Connection {
     }
     
     struct EmptyRowResult: QueryResultRowType {
-        static func forRow(r: QueryResult) throws -> EmptyRowResult {
+        static func decodeRow(r: QueryResult) throws -> EmptyRowResult {
             return EmptyRowResult()
         }
     }
@@ -155,6 +155,6 @@ extension Connection {
             rows.append(cols)
         }
         
-        return try (rows.map({ try T.forRow(QueryResult(row: $0 )) }), status)
+        return try (rows.map({ try T.decodeRow(QueryResult(row: $0 )) }), status)
     }
 }
