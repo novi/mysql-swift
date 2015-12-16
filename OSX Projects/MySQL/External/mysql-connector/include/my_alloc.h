@@ -24,7 +24,7 @@
 #define ALLOC_MAX_BLOCK_USAGE_BEFORE_DROP	10
 
 /* PSI_memory_key */
-#include <mysql/psi/psi_memory.h>
+#include "mysql/psi/psi_memory.h"
 
 #ifdef __cplusplus
 extern "C" {

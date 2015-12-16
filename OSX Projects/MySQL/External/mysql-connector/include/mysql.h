@@ -61,7 +61,7 @@ typedef int my_socket;
 #include "my_list.h" /* for LISTs used in 'MYSQL' and 'MYSQL_STMT' */
 
 /* Include declarations of plug-in API */
-#include "mysql/client_plugin.h"
+//#include "mysql/client_plugin.h"
 
 extern unsigned int mysql_port;
 extern char *mysql_unix_port;
