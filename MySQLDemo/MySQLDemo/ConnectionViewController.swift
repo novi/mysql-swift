@@ -17,6 +17,7 @@ CREATE TABLE `users` (
 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
 `name` varchar(50) DEFAULT NULL,
 `age` int(11) DEFAULT NULL,
+`created_at` datetime NOT NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -41,7 +42,7 @@ class ConnectionViewController: NSViewController, NSTableViewDataSource {
             let (rows, status) = try conn.query(queryField.stringValue, []) as ([Row.User], QueryStatus)
             for row in rows {
                 //print(row)
-                print("\(row.id) : \(row.userName) \(row.age)")
+                print("\(row.id) : \(row.userName) \(row.age) \(row.createdAt)")
             }
             
             print(status)
@@ -69,7 +70,7 @@ class ConnectionViewController: NSViewController, NSTableViewDataSource {
             
             optionalIntVal = nil
             
-            let user = Row.User(id: 0, userName: "test ' user 日本語 ", age: optionalIntVal)
+            let user = Row.User(id: 0, userName: "test ' user 日本語 ", age: optionalIntVal, createdAt: conn.now())
             let status2 = try conn.query("INSERT INTO users SET ?", [user]) as QueryStatus
 
             print(status2)

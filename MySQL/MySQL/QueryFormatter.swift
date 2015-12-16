@@ -139,8 +139,44 @@ struct SQLValue {
 */
 
 struct SQLString {
+    static func escapeIdString(str: String) -> String {
+        // TODO
+        return str
+    }
     
-    static func format(query: String, args: [QueryArgumentValueType]) throws -> String {
+    static func escapeString(str: String) -> String {
+        var out: String = ""
+        for c in str.characters {
+            switch c {
+            case "\0":
+                out += "\\0"
+            case "\n":
+                out += "\\n"
+            case "\r":
+                out += "\\r"
+            case "\u{8}":
+                out += "\\b"
+            case "\t":
+                out += "\\t"
+            case "\\":
+                out += "\\\\"
+            case "'":
+                out += "\\'"
+            case "\"":
+                out += "\\\""
+            case "\u{1A}":
+                out += "\\Z"
+            default:
+                out += String(c)
+            }
+        }
+        return "'" + out + "'"
+    }
+}
+
+public struct QueryFormatter {
+    
+    public static func format(query: String, args: [QueryArgumentValueType]) throws -> String {
         var out: String = ""
         var placeHolderCount: Int = 0
         for c in query.characters {
@@ -161,38 +197,22 @@ struct SQLString {
         }
         return out
     }
+}
+
+
+extension Connection {
     
-    static func escapeIdString(str: String) -> String {
-        // TODO
-        return str
+    public func query<T: QueryResultRowType>(query: String, _ args:[QueryArgumentValueType] = []) throws -> ([T], QueryStatus) {
+        return try self.query(query: try QueryFormatter.format(query, args: args))
     }
     
-    static func escapeString(str: String) -> String {
-        var out: String = ""
-        for c in str.characters {
-            switch c {
-                case "\0":
-                out += "\\0"
-                case "\n":
-                out += "\\n"
-                case "\r":
-                out += "\\r"
-                case "\u{8}":
-                out += "\\b"
-                case "\t":
-                out += "\\t"
-                case "\\":
-                out += "\\\\"
-                case "'":
-                out += "\\'"
-                case "\"":
-                out += "\\\""
-                case "\u{1A}":
-                out += "\\Z"
-            default:
-                out += String(c)
-            }
-        }
-        return "'" + out + "'"
+    public func query<T: QueryResultRowType>(query: String, _ args:[QueryArgumentValueType] = []) throws -> [T] {
+        let (rows, _) = try self.query(query, args) as ([T], QueryStatus)
+        return rows
+    }
+    
+    public func query(query: String, _ args:[QueryArgumentValueType] = []) throws -> QueryStatus {
+        let (_, status) = try self.query(query, args) as ([EmptyRowResult], QueryStatus)
+        return status
     }
 }

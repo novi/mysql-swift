@@ -33,10 +33,10 @@ class DatabaseViewController: NSViewController {
     
     @IBAction func connectTapped(sender: AnyObject) {
         
-        let info = Database.ConnectionInfo(host: hostField.stringValue, port: Int(portField.stringValue) ?? 0, userName: userField.stringValue, password: passwordField.stringValue, database: databaseComboBox.stringValue)
-        let database = Database(info: info)
+        let options = Connection.Options(host: hostField.stringValue, port: Int(portField.stringValue) ?? 0, userName: userField.stringValue, password: passwordField.stringValue, database: databaseComboBox.stringValue)
         do {
-            let conn = try database.getConnection()
+            let conn = Connection(options: options)
+            try conn.connect()
             self.performSegueWithIdentifier("Connection", sender: conn)
             
         } catch (let e) {

@@ -14,14 +14,16 @@ struct Row {
     struct User: QueryResultRowType, QueryArgumentValueType {
         let id: Int
         let userName: String
-        let age: Optional<Int>
+        let age: Int?
         //let ages: Bool
+        let createdAt: SQLDate
         
         static func forRow(r: QueryResult) throws -> User {
             return try build(User.init)(
                 r <| "id",
                 r <| "name",
-                r <|? "age"
+                r <|? "age",
+                r <| "created_at"
                 //,r <| "ages"
             )
         }
@@ -29,7 +31,8 @@ struct Row {
             return try QueryDictionary([
                 //"id": // auto increment
                 "name": userName,
-                "age": age
+                "age": age,
+                "created_at": createdAt
             ]).escapedValue()
         }
         

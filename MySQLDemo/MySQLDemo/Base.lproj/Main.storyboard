@@ -816,7 +816,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="81" id="Qcl-Lk-7zp"/>
                                 </constraints>
-                                <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="SELECT id,name,age FROM users;" drawsBackground="YES" id="9tq-Uh-auL">
+                                <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="SELECT id,name,age,created_at FROM users;" drawsBackground="YES" id="9tq-Uh-auL">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
