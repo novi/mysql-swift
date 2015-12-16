@@ -75,7 +75,7 @@ extension SQLDate: QueryArgumentValueType {
 
 extension SQLDate : CustomStringConvertible {
     public var description: String {
-        return escapedValue() + " " + (CFTimeZoneGetName(timeZone) as String)
+        return escapedValue() + " " + (CFTimeZoneGetName(timeZone) as! String)
     }
 }
 
