@@ -8,16 +8,16 @@
 
 public enum QueryError: ErrorType {
     
-    case NotConnected
-    
-    case QueryError(String)
+    case QueryExecutionError(String)
     case ResultFetchError(String)
-    case NoField
-    case FieldFetchError
+    case ResultNoField
+    case ResultFieldFetchError
     case ValueError(String)
     
     case CastError(actual: String, expected: String, key: String)
     case MissingKeyError(key: String)
     
     case QueryArgumentCountMismatch
+    
+    case InvalidSQLDate(String)
 }

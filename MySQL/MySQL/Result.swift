@@ -24,7 +24,7 @@ public func <|? <T>(r: QueryResult, key: String) throws -> T? {
 
 public struct QueryResult {
     
-    let row: [String:AnyObject]
+    let row: [String:Any]
     
     func isNull(key: String) -> Bool {
         if row[key] is Connection.NullValue {
@@ -41,7 +41,7 @@ public struct QueryResult {
     }
     
     public func getValue<T>(key: String) throws -> T {
-        guard let obj = row[key] as AnyObject? else {
+        guard let obj = row[key] as Any? else {
             throw QueryError.MissingKeyError(key: key)
         }
         guard let val = obj as? T else {
