@@ -1,4 +1,4 @@
-module MySQLConnector [system] {
+module CMySQL [system] {
 header "../mysql-connector/include/mysql.h"
 export *
 }
