@@ -6,8 +6,11 @@
 //  Copyright © 2015年 Yusuke Ito. All rights reserved.
 //
 
+import CoreFoundation
 import XCTest
 @testable import MySQL
+
+// 
 
 class MySQLTests: XCTestCase {
     
@@ -21,16 +24,24 @@ class MySQLTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    
+    // https://github.com/felixge/node-mysql/blob/master/test/unit/protocol/test-SqlString.js
+    func testEscape() {
+        XCTAssertEqual(SQLString.escapeString("Sup'er"), "'Sup\\'er'")
+    
+        
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock {
-            // Put the code you want to measure the time of here.
-        }
+    func testSQLDate() {
+        let expected = "2003-01-02 03:04:05"
+        let date = SQLDate(absoluteTime: 63169445)
+        XCTAssertEqual(date.escapedValue(), "'\(expected)'")
+        
+        let sqlDate = try! SQLDate(sqlDate: expected, timeZoneOffset: 60*60*9)
+        XCTAssertEqual(sqlDate.absoluteTime, 63169445 - 60*60*9, "create date from sql string")
+        XCTAssertEqual(sqlDate.escapedValue(), "'\(expected)'")
+        
+        let sqlYear = try! SQLDate(sqlDate: "2021")
+        XCTAssertEqual(sqlYear.escapedValue(), "'2021-01-01 00:00:00'")
     }
-    
 }
