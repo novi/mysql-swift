@@ -6,7 +6,7 @@
 //  Copyright © 2015年 Yusuke Ito. All rights reserved.
 //
 
-import MySQLConnector
+import CMySQL
 
 public struct QueryStatus: CustomStringConvertible {
     public let affectedRows: Int

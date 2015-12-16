@@ -6,7 +6,7 @@
 //  Copyright © 2015年 Yusuke Ito. All rights reserved.
 //
 
-import MySQLConnector
+import CMySQL
 
 struct MySQLUtil {
     static func getMySQLErrorString(mysql: UnsafeMutablePointer<MYSQL>) -> String {
