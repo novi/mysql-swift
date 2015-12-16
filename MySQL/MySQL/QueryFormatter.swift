@@ -140,37 +140,54 @@ struct SQLValue {
 
 struct SQLString {
     static func escapeIdString(str: String) -> String {
-        // TODO
-        return str
+        var step1: [Character] = []
+        for c in str.characters {
+            switch c {
+                case "`":
+                step1.appendContentsOf("``".characters)
+            default:
+                step1.append(c)
+            }
+        }
+        var out: [Character] = []
+        for c in step1 {
+            switch c {
+                case ".":
+                out.appendContentsOf("`.`".characters)
+                default:
+                out.append(c)
+            }
+        }
+        return "`" + String(out) + "`"
     }
     
     static func escapeString(str: String) -> String {
-        var out: String = ""
+        var out: [Character] = []
         for c in str.characters {
             switch c {
             case "\0":
-                out += "\\0"
+                out.appendContentsOf("\\0".characters)
             case "\n":
-                out += "\\n"
+                out.appendContentsOf("\\n".characters)
             case "\r":
-                out += "\\r"
+                out.appendContentsOf("\\r".characters)
             case "\u{8}":
-                out += "\\b"
+                out.appendContentsOf("\\b".characters)
             case "\t":
-                out += "\\t"
+                out.appendContentsOf("\\t".characters)
             case "\\":
-                out += "\\\\"
+                out.appendContentsOf("\\\\".characters)
             case "'":
-                out += "\\'"
+                out.appendContentsOf("\\'".characters)
             case "\"":
-                out += "\\\""
+                out.appendContentsOf("\\\"".characters)
             case "\u{1A}":
-                out += "\\Z"
+                out.appendContentsOf("\\Z".characters)
             default:
-                out += String(c)
+                out.append(c)
             }
         }
-        return "'" + out + "'"
+        return "'" + String(out) + "'"
     }
 }
 
