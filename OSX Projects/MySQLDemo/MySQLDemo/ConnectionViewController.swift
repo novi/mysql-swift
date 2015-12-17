@@ -70,7 +70,7 @@ class ConnectionViewController: NSViewController, NSTableViewDataSource {
             
             optionalIntVal = nil
             
-            let user = Row.User(id: 0, userName: "test ' user 日本語 _ % ", age: optionalIntVal, createdAt: conn.now())
+            let user = Row.User(id: 0, userName: "test ' user 日本語 _ % ", age: optionalIntVal, createdAt: SQLDate.now(timeZone: conn.options.timeZone))
             let status2 = try conn.query("INSERT INTO users SET ?", [user]) as QueryStatus
 
             print(status2)

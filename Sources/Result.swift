@@ -18,19 +18,40 @@ public func <| <T>(r: QueryResult, key: String) throws -> T {
     return try r.getValue(key)
 }
 
+public func <| <T>(r: QueryResult, index: Int) throws -> T {
+    return try r.getValue(index)
+}
+
 public func <|? <T>(r: QueryResult, key: String) throws -> T? {
     return try r.getValueNullable(key)
 }
 
+public func <|? <T>(r: QueryResult, index: Int) throws -> T? {
+    return try r.getValueNullable(index)
+}
+
 public struct QueryResult {
     
-    let row: [String:Any]
+    let row: ([String:Any], [Any])
+    
+    init(_ row: ([String:Any], [Any])) {
+        self.row = row
+    }
     
     func isNull(key: String) -> Bool {
-        if row[key] is Connection.NullValue {
+        if row.0[key] is Connection.NullValue {
             return true
         }
         return false
+    }
+    
+    // TODO: check bounds of array
+    
+    public func getValueNullable<T>(index: Int) throws -> T? {
+        if row.1[index] is Connection.NullValue {
+            return nil
+        }
+        return try self.getValue(index) as T
     }
     
     public func getValueNullable<T>(key: String) throws -> T? {
@@ -40,12 +61,22 @@ public struct QueryResult {
         return try self.getValue(key) as T
     }
     
+    public func getValue<T>(index: Int) throws -> T {
+        guard let obj = row.1[index] as Any? else {
+            throw QueryError.MissingKeyError(key: "\(index)")
+        }
+        guard let val = obj as? T else {
+            throw QueryError.CastError(actual: "\(row.1[index])", expected: "\(T.self)", key: "\(index)")
+        }
+        return val
+    }
+    
     public func getValue<T>(key: String) throws -> T {
-        guard let obj = row[key] as Any? else {
+        guard let obj = row.0[key] as Any? else {
             throw QueryError.MissingKeyError(key: key)
         }
         guard let val = obj as? T else {
-            throw QueryError.CastError(actual: "\(row[key])", expected: "\(T.self)", key: key)
+            throw QueryError.CastError(actual: "\(row.0[key])", expected: "\(T.self)", key: key)
         }
         return val
     }    

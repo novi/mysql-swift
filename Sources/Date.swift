@@ -9,24 +9,16 @@
 import CoreFoundation
 
 public struct SQLDate {
-    public let absoluteTime: CFAbsoluteTime
+    let absoluteTime: CFAbsoluteTime
     let timeZone: CFTimeZoneRef
     
-    init(absoluteTime: CFAbsoluteTime, timeZoneOffset: CFTimeInterval = 0) {
+    init(absoluteTime: CFAbsoluteTime, timeZone: CFTimeZoneRef) {
         self.absoluteTime = absoluteTime
-        if timeZoneOffset == 0 {
-            self.timeZone = self.dynamicType.UTCTimeZone
-        } else {
-            self.timeZone = CFTimeZoneCreateWithTimeIntervalFromGMT(nil, timeZoneOffset)
-        }
+        self.timeZone = timeZone
     }
     
-    init(sqlDate: String, timeZoneOffset: CFTimeInterval = 0) throws {
-        if timeZoneOffset == 0 {
-            self.timeZone = self.dynamicType.UTCTimeZone
-        } else {
-            self.timeZone = CFTimeZoneCreateWithTimeIntervalFromGMT(nil, timeZoneOffset)
-        }
+    init(sqlDate: String, timeZone: CFTimeZoneRef) throws {
+        self.timeZone = timeZone
         
         if let year = Int32(sqlDate) where sqlDate.characters.count == 4 {
             let date = CFGregorianDate(year: year, month: 1, day: 1, hour: 0, minute: 0, second: 0)
@@ -41,6 +33,9 @@ public struct SQLDate {
             let minute = Int8(String(chars[14...15])),
             let second = Int8(String(chars[17...18])) where chars.count == 19 {
             let date = CFGregorianDate(year: year, month: month, day: day, hour: hour, minute: minute, second: Double(second))
+                if CFGregorianDateIsValid(date, CFGregorianUnitFlags.AllUnits.rawValue) == false {
+                    //throw QueryError.InvalidSQLDate(sqlDate)
+                }
             self.absoluteTime = CFGregorianDateGetAbsoluteTime(date, timeZone)
             return
         }
@@ -56,17 +51,19 @@ public struct SQLDate {
     
     func padNum(num: Int, digits: Int = 2) -> String {
         var str = String(num)
+        if num < 0 {
+            return str
+        }
         while str.characters.count < digits {
             str = "0" + str
         }
         return str
     }
-    
-    static let UTCTimeZone = CFTimeZoneCreateWithTimeIntervalFromGMT(nil, 0)
 }
 
 extension SQLDate: QueryArgumentValueType {
     public func escapedValue() -> String {
+        
         let cal = CFAbsoluteTimeGetGregorianDate(absoluteTime, timeZone)
         // YYYY-MM-DD HH:MM:SS
         return "'\(padNum(cal.year, digits: 4))-\(padNum(cal.month))-\(padNum(cal.day)) \(padNum(cal.hour)):\(padNum(cal.minute)):\(padNum(Int(cal.second)))'"
@@ -79,12 +76,8 @@ extension SQLDate : CustomStringConvertible {
     }
 }
 
-extension Connection {
-    public func now() -> SQLDate {
-        return SQLDate(absoluteTime: CFAbsoluteTimeGetCurrent(), timeZoneOffset: Double(options.timeZone))
-    }
-    
-    public func date(absoluteTime absoluteTime:CFAbsoluteTime) -> SQLDate {
-        return SQLDate(absoluteTime: absoluteTime, timeZoneOffset: Double(options.timeZone))
+extension SQLDate {
+    public static func now(timeZone timeZone: Connection.TimeZone) -> SQLDate {
+        return SQLDate(absoluteTime: CFAbsoluteTimeGetCurrent(), timeZone: timeZone.timeZone)
     }
 }

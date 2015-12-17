@@ -51,7 +51,7 @@ extension Connection {
             self.name = fs
             self.type = f.type
         }
-        func castValue(str: String, row: Int) throws -> Any {
+        func castValue(str: String, row: Int, timeZone: TimeZone) throws -> Any {
             if type == MYSQL_TYPE_TINY ||
                 type == MYSQL_TYPE_SHORT ||
                 type == MYSQL_TYPE_LONG ||
@@ -82,7 +82,7 @@ extension Connection {
                 type == MYSQL_TYPE_TIME2 ||
                 type == MYSQL_TYPE_TIMESTAMP ||
                 type == MYSQL_TYPE_TIMESTAMP2 {
-                return try SQLDate(sqlDate: str, timeZoneOffset: 0) // TODO: timezone
+                return try SQLDate(sqlDate: str, timeZone: timeZone.timeZone)
             }
             return str
         }
@@ -128,7 +128,7 @@ extension Connection {
         }
         
         // fetch rows
-        var rows:[[String:Any]] = []
+        var rows:[ ([String:Any], [Any]) ] = []
         
         var rowCount: Int = 0
         while true {
@@ -137,14 +137,18 @@ extension Connection {
                 break
             }
             var cols:[String:Any] = [:]
+            var colArray: [Any] = []
             for i in 0..<fieldCount {
                 let sf = row[i]
                 let f = fields[i]
                 if sf == nil {
                     cols[f.name] = NullValue.null
+                    colArray.append(NullValue.null)
                 } else {
                     if let str = String.fromCString(sf) {
-                        cols[f.name] = try f.castValue(str, row: rowCount)
+                        let val = try f.castValue(str, row: rowCount, timeZone: options.timeZone)
+                        cols[f.name] = val
+                        colArray.append(val)
                     } else {
                         throw QueryError.ValueError("parse string value in \(f.name), at row: \(rowCount)")
                     }
@@ -152,9 +156,9 @@ extension Connection {
                 
             }
             rowCount++
-            rows.append(cols)
+            rows.append( (cols, colArray) )
         }
         
-        return try (rows.map({ try T.decodeRow(QueryResult(row: $0 )) }), status)
+        return try (rows.map({ try T.decodeRow(QueryResult($0)) }), status)
     }
 }
