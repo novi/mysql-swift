@@ -91,7 +91,6 @@ extension Connection {
     public func query<T: QueryResultRowType>(query formattedQuery: String) throws -> ([T], QueryStatus) {
         let mysql = try connectIfNeeded()
     
-        print("query: \(formattedQuery)")
         guard mysql_real_query(mysql, formattedQuery, UInt(formattedQuery.utf8.count)) == 0 else {
             throw QueryError.QueryExecutionError(MySQLUtil.getMySQLErrorString(mysql))
         }

@@ -14,6 +14,7 @@ public enum QueryError: ErrorType {
     case ResultFieldFetchError
     case ValueError(String)
     
+    case FieldIndexOutOfBounds(fieldCount: Int, attemped: Int)
     case CastError(actual: String, expected: String, key: String)
     case MissingKeyError(key: String)
     

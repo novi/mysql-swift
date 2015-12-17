@@ -18,9 +18,9 @@ struct Row {
         
         static func decodeRow(r: QueryResult) throws -> User {
             return try build(User.init)(
-                r <| 0,
-                r <| "name",
-                r <|? 2,
+                r <| 0, // access with index
+                r <| "name", // access with key
+                r <|? 3,
                 r <| "created_at"
             )
         }
