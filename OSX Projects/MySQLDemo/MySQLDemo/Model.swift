@@ -6,36 +6,33 @@
 //  Copyright © 2015年 Yusuke Ito. All rights reserved.
 //
 
-import Foundation
 import MySQL
 
 struct Row {
     
-    struct User: QueryResultRowType, QueryArgumentValueType {
+    struct User: QueryResultRowType, QueryArgumentDictionaryType {
         let id: Int
         let userName: String
         let age: Int?
-        //let ages: Bool
         let createdAt: SQLDate
         
         static func decodeRow(r: QueryResult) throws -> User {
             return try build(User.init)(
-                r <| "id",
+                r <| 0,
                 r <| "name",
-                r <|? "age",
+                r <|? 2,
                 r <| "created_at"
-                //,r <| "ages"
             )
         }
-        func escapedValue() throws -> String {
-            return try QueryDictionary([
+        
+        func queryValues() throws -> QueryDictionary {
+            return QueryDictionary([
                 //"id": // auto increment
                 "name": userName,
                 "age": age,
                 "created_at": createdAt
-            ]).escapedValue()
+            ])
         }
-        
     }
     
 }

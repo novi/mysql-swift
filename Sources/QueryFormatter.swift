@@ -14,6 +14,16 @@ public protocol QueryArgumentValueType {
     func escapedValue() throws -> String
 }
 
+public protocol QueryArgumentDictionaryType: QueryArgumentValueType {
+    func queryValues() throws -> QueryDictionary
+}
+
+public extension QueryArgumentDictionaryType {
+    func escapedValue() throws -> String {
+        return try queryValues().escapedValue()
+    }
+}
+
 public struct QueryDictionary: QueryArgumentValueType {
     let dict: [String: QueryArgumentValueType?]
     public init(_ dict: [String: QueryArgumentValueType?]) {
@@ -57,6 +67,12 @@ extension String: QueryArgumentValueType {
 extension Int: QueryArgumentValueType {
     public func escapedValue() -> String {
         return String(self)
+    }
+}
+
+extension Bool: QueryArgumentValueType {
+    public func escapedValue() -> String {
+        return self ? "true" : "false"
     }
 }
 
@@ -108,35 +124,6 @@ public struct QueryArgumentValueNull: QueryArgumentValueType, NilLiteralConverti
     }
 }
 
-extension Bool: QueryArgumentValueType {
-    public func escapedValue() -> String {
-        return self ? "true" : "false"
-    }
-}
-
-/*
-struct SQLValue {
-    let val: Any?
-    init(_ val: Any?) {
-        self.val = val
-    }
-    
-    func escape() throws -> String {
-        switch val {
-        case nil:
-            return "NULL"
-        case let v as Bool:
-            return v ? "true" : "false"
-        case let v as Int:
-            return String(v)
-        case let v as String:
-            return SQLString.escapeString(v)
-        default:
-            throw QueryError.UnsupportedQueryArgumentType("\(val.self)")
-        }
-    }
-}
-*/
 
 struct SQLString {
     static func escapeIdString(str: String) -> String {

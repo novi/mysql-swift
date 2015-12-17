@@ -7,6 +7,7 @@
 //
 
 import CMySQL
+import CoreFoundation
 
 struct MySQLUtil {
     static func getMySQLErrorString(mysql: UnsafeMutablePointer<MYSQL>) -> String {
@@ -24,14 +25,25 @@ struct MySQLUtil {
 
 
 extension Connection {
+    
+    public struct TimeZone {
+        let timeZone: CFTimeZoneRef
+        public init(name: String) {
+            self.timeZone = CFTimeZoneCreateWithName(nil, name, true)
+        }
+        public init(GMTOffset: Int) {
+            self.timeZone = CFTimeZoneCreateWithTimeIntervalFromGMT(nil, Double(GMTOffset))
+        }
+    }
+    
     public struct Options {
         public let host: String
         public let port: Int
         public let userName: String
         public let password: String
         public let database: String
-        public let timeZone: Int // GMT Offset
-        public init(host: String, port: Int, userName: String, password: String, database: String, timeZone: Int = 0) {
+        public let timeZone: TimeZone
+        public init(host: String, port: Int, userName: String, password: String, database: String, timeZone: TimeZone = TimeZone(GMTOffset: 0)) {
             self.host = host
             self.port = port
             self.userName = userName
@@ -46,7 +58,7 @@ public class Connection {
     
     
     var mysql_: UnsafeMutablePointer<MYSQL>
-    let options: Connection.Options
+    public let options: Connection.Options
     
     public init(options: Connection.Options) {
         self.options = options
@@ -98,7 +110,7 @@ public class Connection {
         return mysql_stat(mysql) != nil ? true : false
     }
     
-    func disconnect() {
+    public func disconnect() {
         guard let mysql = mysql else {
             return
         }

@@ -33,15 +33,19 @@ class MySQLTests: XCTestCase {
     }
     
     func testSQLDate() {
+        
+        let gmtTimeZone = CFTimeZoneCreateWithTimeIntervalFromGMT(nil, 0)
+        let timeZone = CFTimeZoneCreateWithName(nil, "America/Los_Angeles", true)
         let expected = "2003-01-02 03:04:05"
-        let date = SQLDate(absoluteTime: 63169445)
+        let date = SQLDate(absoluteTime: 63169445, timeZone: gmtTimeZone)
         XCTAssertEqual(date.escapedValue(), "'\(expected)'")
         
-        let sqlDate = try! SQLDate(sqlDate: expected, timeZoneOffset: 60*60*9)
-        XCTAssertEqual(sqlDate.absoluteTime, 63169445 - 60*60*9, "create date from sql string")
+        let sqlDate = try! SQLDate(sqlDate: expected, timeZone: timeZone)
+        XCTAssertEqual(sqlDate.absoluteTime, 63169445 + 60*60*8, "create date from sql string")
         XCTAssertEqual(sqlDate.escapedValue(), "'\(expected)'")
         
-        let sqlYear = try! SQLDate(sqlDate: "2021")
+        
+        let sqlYear = try! SQLDate(sqlDate: "2021", timeZone: gmtTimeZone)
         XCTAssertEqual(sqlYear.escapedValue(), "'2021-01-01 00:00:00'")
     }
 }
