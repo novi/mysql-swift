@@ -811,17 +811,6 @@
                                     <action selector="runTapped:" target="ay4-lV-qcx" id="mlb-UC-xBV"/>
                                 </connections>
                             </button>
-                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="phf-Ek-6mF">
-                                <rect key="frame" x="20" y="299" width="410" height="81"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="81" id="Qcl-Lk-7zp"/>
-                                </constraints>
-                                <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="SELECT id,name,age,created_at FROM users;" drawsBackground="YES" id="9tq-Uh-auL">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                             <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bV0-Rw-XZh">
                                 <rect key="frame" x="20" y="120" width="410" height="138"/>
                                 <clipView key="contentView" id="Ieg-aE-MfM">
@@ -912,6 +901,17 @@
                                 <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <font key="titleFont" metaFont="system"/>
                             </box>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="phf-Ek-6mF">
+                                <rect key="frame" x="20" y="299" width="410" height="81"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="81" id="Qcl-Lk-7zp"/>
+                                </constraints>
+                                <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="SELECT id,name,created_at,age FROM users WHERE age &gt; ? OR age is NULL;" drawsBackground="YES" id="9tq-Uh-auL">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstItem="phf-Ek-6mF" firstAttribute="leading" secondItem="B2W-Vm-Y1N" secondAttribute="leading" constant="20" id="6yM-nB-wT5"/>

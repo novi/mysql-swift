@@ -15,6 +15,7 @@
 		529215B51BDB8D56009B031A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 529215B31BDB8D56009B031A /* Main.storyboard */; };
 		529215C01BDB8D57009B031A /* MySQLDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215BF1BDB8D57009B031A /* MySQLDemoTests.swift */; };
 		529215CB1BDB8D57009B031A /* MySQLDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215CA1BDB8D57009B031A /* MySQLDemoUITests.swift */; };
+		52B2AF691C231A6C0004BD07 /* Examples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B2AF681C231A6C0004BD07 /* Examples.swift */; };
 		52F722031BDDB5CB0066B725 /* ConnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F722021BDDB5CB0066B725 /* ConnectionViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -62,6 +63,7 @@
 		529215CA1BDB8D57009B031A /* MySQLDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySQLDemoUITests.swift; sourceTree = "<group>"; };
 		529215CC1BDB8D57009B031A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		529215E21BDB92F7009B031A /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		52B2AF681C231A6C0004BD07 /* Examples.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Examples.swift; sourceTree = "<group>"; };
 		52F722021BDDB5CB0066B725 /* ConnectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -119,6 +121,7 @@
 				529215AF1BDB8D56009B031A /* DatabaseViewController.swift */,
 				52F722021BDDB5CB0066B725 /* ConnectionViewController.swift */,
 				529215E21BDB92F7009B031A /* Model.swift */,
+				52B2AF681C231A6C0004BD07 /* Examples.swift */,
 				529215B11BDB8D56009B031A /* Assets.xcassets */,
 				529215B31BDB8D56009B031A /* Main.storyboard */,
 				529215B61BDB8D56009B031A /* Info.plist */,
@@ -277,6 +280,7 @@
 				52F722031BDDB5CB0066B725 /* ConnectionViewController.swift in Sources */,
 				529215B01BDB8D56009B031A /* DatabaseViewController.swift in Sources */,
 				529215AE1BDB8D56009B031A /* AppDelegate.swift in Sources */,
+				52B2AF691C231A6C0004BD07 /* Examples.swift in Sources */,
 				520FEE031C194F2700799AFE /* Model.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

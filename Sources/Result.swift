@@ -45,9 +45,15 @@ public struct QueryResult {
         return false
     }
     
-    // TODO: check bounds of array
+    func checkFieldBounds(index: Int) throws {
+        guard row.1.count > index else {
+            throw QueryError.FieldIndexOutOfBounds(fieldCount: row.1.count, attemped: index)
+        }
+    }
     
     public func getValueNullable<T>(index: Int) throws -> T? {
+        try checkFieldBounds(index)
+        
         if row.1[index] is Connection.NullValue {
             return nil
         }
@@ -62,10 +68,8 @@ public struct QueryResult {
     }
     
     public func getValue<T>(index: Int) throws -> T {
-        guard let obj = row.1[index] as Any? else {
-            throw QueryError.MissingKeyError(key: "\(index)")
-        }
-        guard let val = obj as? T else {
+        try checkFieldBounds(index)
+        guard let val = row.1[index] as? T else {
             throw QueryError.CastError(actual: "\(row.1[index])", expected: "\(T.self)", key: "\(index)")
         }
         return val

@@ -48,6 +48,15 @@ public struct QueryArray: QueryArgumentValueType {
     public init(_ arr: [QueryArgumentValueType?]) {
         self.arr = arr
     }
+    public init(_ arr: [QueryArgumentValueType]) {
+        self.arr = arr.map { QueryOptional($0) }
+    }
+    public init(_ arr: [Int]) {
+        self.arr = arr.map { $0 as QueryArgumentValueType }
+    }
+    public init(_ arr: [String]) {
+        self.arr = arr.map { $0 as QueryArgumentValueType }
+    }
     public func escapedValue() throws -> String {
         return try arr.map({
             if let arr = $0 as? QueryArray {

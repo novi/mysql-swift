@@ -39,10 +39,11 @@ class ConnectionViewController: NSViewController, NSTableViewDataSource {
         }
         
         do {
-            let (rows, status) = try conn.query(queryField.stringValue, []) as ([Row.User], QueryStatus)
+            let ageMin: Int = random()%100
+            let (rows, status) = try conn.query(queryField.stringValue, [ageMin]) as ([Row.User], QueryStatus)
             for row in rows {
-                //print(row)
-                print("\(row.id) : \(row.userName) \(row.age) \(row.createdAt)")
+                print(row)
+                //print("\(row.id) : \(row.userName) \(row.age) \(row.createdAt)")
             }
             
             print(status)
