@@ -81,3 +81,12 @@ extension SQLDate {
         return SQLDate(absoluteTime: CFAbsoluteTimeGetCurrent(), timeZone: timeZone.timeZone)
     }
 }
+
+extension SQLDate: Equatable {
+    
+}
+
+public func ==(lhs: SQLDate, rhs: SQLDate) -> Bool {
+    return Int(lhs.absoluteTime) == Int(rhs.absoluteTime)
+}
+
