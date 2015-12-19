@@ -15,7 +15,7 @@ import MySQL
 
 CREATE TABLE `users` (
 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-`name` varchar(50) DEFAULT NULL,
+`name` varchar(50) DEFAULT NOT NULL,
 `age` int(11) DEFAULT NULL,
 `created_at` datetime NOT NULL,
 PRIMARY KEY (`id`)
