@@ -32,7 +32,7 @@ public struct QueryDictionary: QueryArgumentValueType {
     public func escapedValue() throws -> String {
         var keyVals: [String] = []
         for (k, v) in dict {
-            keyVals.append("\(SQLString.escapeIdString(k)) = \(try QueryOptional(v).escapedValue())")
+            keyVals.append("\(SQLString.escapeId(k)) = \(try QueryOptional(v).escapedValue())")
         }
         return keyVals.joinWithSeparator(", ")
     }
@@ -69,7 +69,7 @@ public struct QueryArray: QueryArgumentValueType {
 
 extension String: QueryArgumentValueType {
     public func escapedValue() -> String {
-        return SQLString.escapeString(self)
+        return SQLString.escape(self)
     }
 }
 
@@ -135,7 +135,7 @@ public struct QueryArgumentValueNull: QueryArgumentValueType, NilLiteralConverti
 
 
 struct SQLString {
-    static func escapeIdString(str: String) -> String {
+    static func escapeId(str: String) -> String {
         var step1: [Character] = []
         for c in str.characters {
             switch c {
@@ -157,7 +157,7 @@ struct SQLString {
         return "`" + String(out) + "`"
     }
     
-    static func escapeString(str: String) -> String {
+    static func escape(str: String) -> String {
         var out: [Character] = []
         for c in str.characters {
             switch c {
