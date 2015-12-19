@@ -9,6 +9,19 @@
 import XCTest
 @testable import MySQL
 
+/*
+// You need `Constants.swift` includes `TestConstants`
+
+struct TestConstants: TestConstantsType {
+    let host: String = ""
+    let port: Int = 3306
+    let user: String = ""
+    let password: String = ""
+    let database: String = "test"
+    let tableName: String = "unit_test_db_3894"
+}
+
+*/
 
 protocol TestConstantsType {
     var host: String { get }
