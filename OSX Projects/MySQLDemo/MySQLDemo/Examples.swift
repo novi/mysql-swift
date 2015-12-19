@@ -16,7 +16,7 @@ struct Examples {
         let nameParam: String = "test"
         let ids: [Int] = [1, 2, 3, 4, 5, 6]
         let optional:Int? = nil
-        let rows: [Row.User] = try conn.query("SELECT id,name,created_at,age FROM users WHERE (age > ? OR age is ?) OR name = ? OR id in (?)", [50, QueryOptional(optional), nameParam, QueryArray(ids) ])
+        let rows: [Row.User] = try conn.query("SELECT id,name,created_at,age FROM users WHERE (age > ? OR age is ?) OR name = ? OR id IN (?)", [50, QueryOptional(optional), nameParam, QueryArray(ids) ])
         return rows
     }
     
@@ -26,6 +26,7 @@ struct Examples {
         let status = try conn.query("INSERT INTO users SET ?", [user]) as QueryStatus
         if status.affectedRows != 1 {
             // insert failed
+            // throw error if you want
         }
         return status.insertedId
     }
