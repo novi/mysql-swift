@@ -13,10 +13,14 @@ struct Examples {
     var conn: Connection!
     
     func selectRows() throws -> [Row.User] {
-        let nameParam: String = "test"
         let ids: [Int] = [1, 2, 3, 4, 5, 6]
-        let optional:Int? = nil
-        let rows: [Row.User] = try conn.query("SELECT id,name,created_at,age FROM users WHERE (age > ? OR age is ?) OR name = ? OR id IN (?)", [50, optional, nameParam, QueryArray(ids) ])
+        let params: (Int, String, QueryArray<Int>, Int?) = (
+            50,
+            "test",
+            QueryArray<Int>(ids),
+            nil
+        )
+        let rows: [Row.User] = try conn.query("SELECT id,name,created_at,age FROM users WHERE (age > ? OR age is ?) OR name = ? OR id IN (?)", buildParam(params) )
         return rows
     }
     
