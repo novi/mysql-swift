@@ -42,8 +42,11 @@ public struct QueryDictionary: QueryArgumentValueType {
 // not yet supported
 // extension Array:QueryArgumentValueType where Element: QueryArgumentValueType { }
 
+protocol QueryArrayType: QueryArgumentValueType {
+    
+}
 
-public struct QueryArray<T: QueryArgumentValueType> : QueryArgumentValueType {
+public struct QueryArray<T: QueryArgumentValueType> : QueryArgumentValueType, QueryArrayType {
     let arr: [T?]
     public init(_ arr: [T?]) {
         self.arr = arr
@@ -53,10 +56,10 @@ public struct QueryArray<T: QueryArgumentValueType> : QueryArgumentValueType {
     }
     public func escapedValue() throws -> String {
         return try arr.map({
-            if let arr = $0 as? QueryArray {
-                return "(" + (try arr.escapedValue()) + ")"
+            if let val = $0 as? QueryArrayType {
+                return "(" + (try val.escapedValue()) + ")"
             }
-            return try QueryOptional($0).escapedValue()
+            return try $0.escapedValue()
         }).joinWithSeparator(", ")
     }
 }

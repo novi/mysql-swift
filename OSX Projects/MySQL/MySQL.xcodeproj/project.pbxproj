@@ -14,6 +14,7 @@
 		527023481C25AB38003EBD9A /* ConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527023471C25AB38003EBD9A /* ConnectionTests.swift */; };
 		5270234A1C25ADEA003EBD9A /* QueryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527023491C25ADEA003EBD9A /* QueryTests.swift */; };
 		5270234C1C2679B1003EBD9A /* ParameterBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270234B1C2679B1003EBD9A /* ParameterBuilder.swift */; };
+		5270234E1C268AF6003EBD9A /* QueryFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270234D1C268AF6003EBD9A /* QueryFormatterTests.swift */; };
 		5292158B1BDB8CD6009B031A /* MySQL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5292158A1BDB8CD6009B031A /* MySQL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		529215921BDB8CD6009B031A /* MySQL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 529215871BDB8CD6009B031A /* MySQL.framework */; };
 		529215971BDB8CD6009B031A /* MySQLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215961BDB8CD6009B031A /* MySQLTests.swift */; };
@@ -58,6 +59,7 @@
 		527023471C25AB38003EBD9A /* ConnectionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionTests.swift; sourceTree = "<group>"; };
 		527023491C25ADEA003EBD9A /* QueryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryTests.swift; sourceTree = "<group>"; };
 		5270234B1C2679B1003EBD9A /* ParameterBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterBuilder.swift; sourceTree = "<group>"; };
+		5270234D1C268AF6003EBD9A /* QueryFormatterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryFormatterTests.swift; sourceTree = "<group>"; };
 		529215871BDB8CD6009B031A /* MySQL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MySQL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5292158A1BDB8CD6009B031A /* MySQL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MySQL.h; sourceTree = "<group>"; };
 		5292158C1BDB8CD6009B031A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 				527023451C25AB23003EBD9A /* Model.swift */,
 				527023471C25AB38003EBD9A /* ConnectionTests.swift */,
 				527023491C25ADEA003EBD9A /* QueryTests.swift */,
+				5270234D1C268AF6003EBD9A /* QueryFormatterTests.swift */,
 				527023411C25A92F003EBD9A /* DateTests.swift */,
 				527023431C25A9C0003EBD9A /* EscapeTests.swift */,
 				529215981BDB8CD6009B031A /* Info.plist */,
@@ -275,6 +278,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				527023461C25AB23003EBD9A /* Model.swift in Sources */,
+				5270234E1C268AF6003EBD9A /* QueryFormatterTests.swift in Sources */,
 				5270234A1C25ADEA003EBD9A /* QueryTests.swift in Sources */,
 				527023481C25AB38003EBD9A /* ConnectionTests.swift in Sources */,
 				527023441C25A9C0003EBD9A /* EscapeTests.swift in Sources */,
