@@ -61,7 +61,7 @@ public struct SQLDate {
     }
 }
 
-extension SQLDate: QueryArgumentValueType {
+extension SQLDate: QueryParameter {
     public func escapedValue() -> String {
         
         let cal = CFAbsoluteTimeGetGregorianDate(absoluteTime, timeZone)

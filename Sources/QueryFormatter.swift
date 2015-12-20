@@ -10,23 +10,23 @@
 // inspired
 // https://github.com/felixge/node-mysql/blob/master/lib/protocol/SqlString.js
 
-public protocol QueryArgumentValueType {
+public protocol QueryParameter {
     func escapedValue() throws -> String
 }
 
-public protocol QueryArgumentDictionaryType: QueryArgumentValueType {
-    func queryArgument() throws -> QueryDictionary
+public protocol QueryParameterDictionaryType: QueryParameter {
+    func queryParameter() throws -> QueryDictionary
 }
 
-public extension QueryArgumentDictionaryType {
+public extension QueryParameterDictionaryType {
     func escapedValue() throws -> String {
-        return try queryArgument().escapedValue()
+        return try queryParameter().escapedValue()
     }
 }
 
-public struct QueryDictionary: QueryArgumentValueType {
-    let dict: [String: QueryArgumentValueType?]
-    public init(_ dict: [String: QueryArgumentValueType?]) {
+public struct QueryDictionary: QueryParameter {
+    let dict: [String: QueryParameter?]
+    public init(_ dict: [String: QueryParameter?]) {
         self.dict = dict
     }
     public func escapedValue() throws -> String {
@@ -38,15 +38,15 @@ public struct QueryDictionary: QueryArgumentValueType {
     }
 }
 
-//extension Dictionary: where Value: QueryArgumentValueType, Key: StringLiteralConvertible { }
+//extension Dictionary: where Value: QueryParameter, Key: StringLiteralConvertible { }
 // not yet supported
-// extension Array:QueryArgumentValueType where Element: QueryArgumentValueType { }
+// extension Array:QueryParameter where Element: QueryParameter { }
 
-protocol QueryArrayType: QueryArgumentValueType {
+protocol QueryArrayType: QueryParameter {
     
 }
 
-public struct QueryArray<T: QueryArgumentValueType> : QueryArgumentValueType, QueryArrayType {
+public struct QueryArray<T: QueryParameter> : QueryParameter, QueryArrayType {
     let arr: [T?]
     public init(_ arr: [T?]) {
         self.arr = arr
@@ -64,53 +64,53 @@ public struct QueryArray<T: QueryArgumentValueType> : QueryArgumentValueType, Qu
     }
 }
 
-extension String: QueryArgumentValueType {
+extension String: QueryParameter {
     public func escapedValue() -> String {
         return SQLString.escape(self)
     }
 }
 
-extension Int: QueryArgumentValueType {
+extension Int: QueryParameter {
     public func escapedValue() -> String {
         return String(self)
     }
 }
 
-extension Bool: QueryArgumentValueType {
+extension Bool: QueryParameter {
     public func escapedValue() -> String {
         return self ? "true" : "false"
     }
 }
 
-extension Optional : QueryArgumentValueType {
+extension Optional : QueryParameter {
     
     public func escapedValue() throws -> String {
         guard let value = self else {
-            return QueryArgumentValueNull().escapedValue()
+            return QueryParameterNull().escapedValue()
         }
-        guard let val = value as? QueryArgumentValueType else {
-            throw QueryError.CastError(actual: "\(value.self)", expected: "QueryArgumentValueType", key: "")
+        guard let val = value as? QueryParameter else {
+            throw QueryError.CastError(actual: "\(value.self)", expected: "QueryParameter", key: "")
         }
         return try val.escapedValue()
     }
 }
 
 
-struct QueryOptional<T: QueryArgumentValueType>: QueryArgumentValueType {
+struct QueryOptional<T: QueryParameter>: QueryParameter {
     let val: T?
     init(_ val: T?) {
         self.val = val
     }
     func escapedValue() throws -> String {
         guard let val = self.val else {
-            return QueryArgumentValueNull().escapedValue()
+            return QueryParameterNull().escapedValue()
         }
         return try val.escapedValue()
     }
 }
 
 
-public struct QueryArgumentValueNull: QueryArgumentValueType, NilLiteralConvertible {
+public struct QueryParameterNull: QueryParameter, NilLiteralConvertible {
     public init() {
         
     }
@@ -178,8 +178,8 @@ struct SQLString {
 
 public struct QueryFormatter {
     
-    public static func format<S: SequenceType where S.Generator.Element == QueryArgumentValueType>(query: String, args argsg: S) throws -> String {
-        var args: [QueryArgumentValueType] = []
+    public static func format<S: SequenceType where S.Generator.Element == QueryParameter>(query: String, args argsg: S) throws -> String {
+        var args: [QueryParameter] = []
         for a in argsg {
             args.append(a)
         }
@@ -190,7 +190,7 @@ public struct QueryFormatter {
             switch c {
                 case "?":
                     if placeHolderCount >= args.count {
-                        throw QueryError.QueryArgumentCountMismatch
+                        throw QueryError.QueryParameterCountMismatch
                     }
                     let val = args[placeHolderCount]
                 out += " " + (try val.escapedValue()) + " "
@@ -200,7 +200,7 @@ public struct QueryFormatter {
             }
         }
         if placeHolderCount != args.count {
-            throw QueryError.QueryArgumentCountMismatch
+            throw QueryError.QueryParameterCountMismatch
         }
         return out
     }
@@ -208,16 +208,16 @@ public struct QueryFormatter {
 
 extension Connection {
     
-    public func query<T: QueryRowResultType>(query: String, _ args: [QueryArgumentValueType] = []) throws -> ([T], QueryStatus) {
+    public func query<T: QueryRowResultType>(query: String, _ args: [QueryParameter] = []) throws -> ([T], QueryStatus) {
         return try self.query(query: try QueryFormatter.format(query, args: args))
     }
     
-    public func query<T: QueryRowResultType>(query: String, _ args: [QueryArgumentValueType] = []) throws -> [T] {
+    public func query<T: QueryRowResultType>(query: String, _ args: [QueryParameter] = []) throws -> [T] {
         let (rows, _) = try self.query(query, args) as ([T], QueryStatus)
         return rows
     }
     
-    public func query(query: String, _ args: [QueryArgumentValueType] = []) throws -> QueryStatus {
+    public func query(query: String, _ args: [QueryParameter] = []) throws -> QueryStatus {
         let (_, status) = try self.query(query, args) as ([EmptyRowResult], QueryStatus)
         return status
     }
