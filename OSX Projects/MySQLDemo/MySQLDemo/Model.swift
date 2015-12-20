@@ -25,7 +25,7 @@ struct Row {
             )
         }
         
-        func queryValues() throws -> QueryDictionary {
+        func queryArgument() throws -> QueryDictionary {
             return QueryDictionary([
                 //"id": // auto increment
                 "name": userName,
