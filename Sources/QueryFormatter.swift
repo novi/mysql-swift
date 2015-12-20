@@ -15,12 +15,12 @@ public protocol QueryArgumentValueType {
 }
 
 public protocol QueryArgumentDictionaryType: QueryArgumentValueType {
-    func queryValues() throws -> QueryDictionary
+    func queryArgument() throws -> QueryDictionary
 }
 
 public extension QueryArgumentDictionaryType {
     func escapedValue() throws -> String {
-        return try queryValues().escapedValue()
+        return try queryArgument().escapedValue()
     }
 }
 
