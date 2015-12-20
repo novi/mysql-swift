@@ -85,12 +85,26 @@ extension Bool: QueryArgumentValueType {
     }
 }
 
-public struct QueryOptional: QueryArgumentValueType {
+extension Optional : QueryArgumentValueType {
+    
+    public func escapedValue() throws -> String {
+        guard let value = self else {
+            return QueryArgumentValueNull().escapedValue()
+        }
+        guard let val = value as? QueryArgumentValueType else {
+            throw QueryError.CastError(actual: "\(value.self)", expected: "QueryArgumentValueType", key: "")
+        }
+        return try val.escapedValue()
+    }
+}
+
+
+struct QueryOptional: QueryArgumentValueType {
     let val: QueryArgumentValueType?
-    public init(_ val: QueryArgumentValueType?) {
+    init(_ val: QueryArgumentValueType?) {
         self.val = val
     }
-    public func escapedValue() throws -> String {
+    func escapedValue() throws -> String {
         guard let val = self.val else {
             return QueryArgumentValueNull().escapedValue()
         }
@@ -98,28 +112,6 @@ public struct QueryOptional: QueryArgumentValueType {
     }
 }
 
-//extension Optional where Wrapped: QueryArgumentValueType, Optional: QueryArgumentValueType {
-    /*public func escapedValue() throws -> String {
-        switch self {
-        case .None:
-            return QueryArgumentValueNull().escapedValue()
-        case .Some(let val):
-            return try val.escapedValue()
-        }
-    }*/
-//}
-
-/*extension Optional where Wrapped: String {
-    public func escapedValue() -> String {
-        switch self {
-        case .None:
-            return QueryArgumentValueNull().escapedValue()
-        case .Some(let val):
-            return val
-        }
-    }
-}
-*/
 
 public struct QueryArgumentValueNull: QueryArgumentValueType, NilLiteralConvertible {
     public init() {

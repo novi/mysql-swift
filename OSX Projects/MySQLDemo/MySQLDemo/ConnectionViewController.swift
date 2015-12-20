@@ -23,7 +23,6 @@ PRIMARY KEY (`id`)
 
 */
 
-
 class ConnectionViewController: NSViewController, NSTableViewDataSource {
     
     var connection: Connection?
@@ -65,7 +64,13 @@ class ConnectionViewController: NSViewController, NSTableViewDataSource {
         
         do {
             var optionalIntVal: Int? = random()%100
-            let status1 = try conn.query("INSERT INTO users SET name = ?, age = ?", ["test user ' " + "漢字", QueryOptional(optionalIntVal)]) as QueryStatus
+            let params: (String, Int?, SQLDate) = (
+                "test user",
+                optionalIntVal,
+                SQLDate.now(timeZone: conn.options.timeZone)
+            )            
+            
+            let status1 = try conn.query("INSERT INTO users SET name = ?, age = ?, created_at = ?", buildParam(params) ) as QueryStatus
             
             print(status1)
             
