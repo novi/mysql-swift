@@ -43,19 +43,13 @@ public struct QueryDictionary: QueryArgumentValueType {
 // extension Array:QueryArgumentValueType where Element: QueryArgumentValueType { }
 
 
-public struct QueryArray: QueryArgumentValueType {
-    let arr: [QueryArgumentValueType?]
-    public init(_ arr: [QueryArgumentValueType?]) {
+public struct QueryArray<T: QueryArgumentValueType> : QueryArgumentValueType {
+    let arr: [T?]
+    public init(_ arr: [T?]) {
         self.arr = arr
     }
-    public init(_ arr: [QueryArgumentValueType]) {
-        self.arr = arr.map { QueryOptional($0) }
-    }
-    public init(_ arr: [Int]) {
-        self.arr = arr.map { $0 as QueryArgumentValueType }
-    }
-    public init(_ arr: [String]) {
-        self.arr = arr.map { $0 as QueryArgumentValueType }
+    public init(_ arr: [T]) {
+        self.arr = arr.map { Optional($0) }
     }
     public func escapedValue() throws -> String {
         return try arr.map({
@@ -99,9 +93,9 @@ extension Optional : QueryArgumentValueType {
 }
 
 
-struct QueryOptional: QueryArgumentValueType {
-    let val: QueryArgumentValueType?
-    init(_ val: QueryArgumentValueType?) {
+struct QueryOptional<T: QueryArgumentValueType>: QueryArgumentValueType {
+    let val: T?
+    init(_ val: T?) {
         self.val = val
     }
     func escapedValue() throws -> String {
