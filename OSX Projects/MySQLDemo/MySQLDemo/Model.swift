@@ -10,13 +10,13 @@ import MySQL
 
 struct Row {
     
-    struct User: QueryResultRowType, QueryArgumentDictionaryType {
+    struct User: QueryRowResultType, QueryArgumentDictionaryType {
         let id: Int
         let userName: String
         let age: Int?
         let createdAt: SQLDate
         
-        static func decodeRow(r: QueryResult) throws -> User {
+        static func decodeRow(r: QueryRowResult) throws -> User {
             return try build(User.init)(
                 r <| 0, // access with index
                 r <| "name", // access with key

@@ -208,11 +208,11 @@ public struct QueryFormatter {
 
 extension Connection {
     
-    public func query<T: QueryResultRowType>(query: String, _ args: [QueryArgumentValueType] = []) throws -> ([T], QueryStatus) {
+    public func query<T: QueryRowResultType>(query: String, _ args: [QueryArgumentValueType] = []) throws -> ([T], QueryStatus) {
         return try self.query(query: try QueryFormatter.format(query, args: args))
     }
     
-    public func query<T: QueryResultRowType>(query: String, _ args: [QueryArgumentValueType] = []) throws -> [T] {
+    public func query<T: QueryRowResultType>(query: String, _ args: [QueryArgumentValueType] = []) throws -> [T] {
         let (rows, _) = try self.query(query, args) as ([T], QueryStatus)
         return rows
     }
