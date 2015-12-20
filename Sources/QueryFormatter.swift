@@ -189,7 +189,12 @@ struct SQLString {
 
 public struct QueryFormatter {
     
-    public static func format(query: String, args: [QueryArgumentValueType]) throws -> String {
+    public static func format<S: SequenceType where S.Generator.Element == QueryArgumentValueType>(query: String, args argsg: S) throws -> String {
+        var args: [QueryArgumentValueType] = []
+        for a in argsg {
+            args.append(a)
+        }
+        
         var out: String = ""
         var placeHolderCount: Int = 0
         for c in query.characters {
@@ -212,19 +217,18 @@ public struct QueryFormatter {
     }
 }
 
-
 extension Connection {
     
-    public func query<T: QueryResultRowType>(query: String, _ args:[QueryArgumentValueType] = []) throws -> ([T], QueryStatus) {
+    public func query<T: QueryResultRowType>(query: String, _ args: [QueryArgumentValueType] = []) throws -> ([T], QueryStatus) {
         return try self.query(query: try QueryFormatter.format(query, args: args))
     }
     
-    public func query<T: QueryResultRowType>(query: String, _ args:[QueryArgumentValueType] = []) throws -> [T] {
+    public func query<T: QueryResultRowType>(query: String, _ args: [QueryArgumentValueType] = []) throws -> [T] {
         let (rows, _) = try self.query(query, args) as ([T], QueryStatus)
         return rows
     }
     
-    public func query(query: String, _ args:[QueryArgumentValueType] = []) throws -> QueryStatus {
+    public func query(query: String, _ args: [QueryArgumentValueType] = []) throws -> QueryStatus {
         let (_, status) = try self.query(query, args) as ([EmptyRowResult], QueryStatus)
         return status
     }
