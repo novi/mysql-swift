@@ -6,20 +6,20 @@
 //  Copyright © 2015 Yusuke Ito. All rights reserved.
 //
 
-public func buildParam<A: QueryArgumentValueType>(p: (A) ) -> [QueryArgumentValueType] {
+public func buildParam<A: QueryParameter>(p: (A) ) -> [QueryParameter] {
     return [
         p
     ]
 }
 
-public func buildParam<A: QueryArgumentValueType, B: QueryArgumentValueType>(p: (A, B) ) -> [QueryArgumentValueType] {
+public func buildParam<A: QueryParameter, B: QueryParameter>(p: (A, B) ) -> [QueryParameter] {
     return [
         p.0,
         p.1
     ]
 }
 
-public func buildParam<A: QueryArgumentValueType, B: QueryArgumentValueType, C: QueryArgumentValueType>(p: (A, B, C) ) -> [QueryArgumentValueType] {
+public func buildParam<A: QueryParameter, B: QueryParameter, C: QueryParameter>(p: (A, B, C) ) -> [QueryParameter] {
     return [
         p.0,
         p.1,
@@ -27,7 +27,7 @@ public func buildParam<A: QueryArgumentValueType, B: QueryArgumentValueType, C: 
     ]
 }
 
-public func buildParam<A: QueryArgumentValueType, B: QueryArgumentValueType, C: QueryArgumentValueType, D: QueryArgumentValueType>(p: (A, B, C, D) ) -> [QueryArgumentValueType] {
+public func buildParam<A: QueryParameter, B: QueryParameter, C: QueryParameter, D: QueryParameter>(p: (A, B, C, D) ) -> [QueryParameter] {
     return [
         p.0,
         p.1,
@@ -36,7 +36,7 @@ public func buildParam<A: QueryArgumentValueType, B: QueryArgumentValueType, C: 
     ]
 }
 
-public func buildParam<A: QueryArgumentValueType, B: QueryArgumentValueType, C: QueryArgumentValueType, D: QueryArgumentValueType, E: QueryArgumentValueType>(p: (A, B, C, D, E) ) -> [QueryArgumentValueType] {
+public func buildParam<A: QueryParameter, B: QueryParameter, C: QueryParameter, D: QueryParameter, E: QueryParameter>(p: (A, B, C, D, E) ) -> [QueryParameter] {
     return [
         p.0,
         p.1,
@@ -46,7 +46,7 @@ public func buildParam<A: QueryArgumentValueType, B: QueryArgumentValueType, C: 
     ]
 }
 
-public func buildParam<A: QueryArgumentValueType, B: QueryArgumentValueType, C: QueryArgumentValueType, D: QueryArgumentValueType, E: QueryArgumentValueType, F: QueryArgumentValueType>(p: (A, B, C, D, E, F) ) -> [QueryArgumentValueType] {
+public func buildParam<A: QueryParameter, B: QueryParameter, C: QueryParameter, D: QueryParameter, E: QueryParameter, F: QueryParameter>(p: (A, B, C, D, E, F) ) -> [QueryParameter] {
     return [
         p.0,
         p.1,

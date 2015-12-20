@@ -10,7 +10,7 @@ import MySQL
 
 struct Row {
     
-    struct UserDecodeWithIndex: QueryRowResultType, QueryArgumentDictionaryType {
+    struct UserDecodeWithIndex: QueryRowResultType, QueryParameterDictionaryType {
         let id: Int
         
         let name: String
@@ -35,7 +35,7 @@ struct Row {
             )
         }
         
-        func queryArgument() throws -> QueryDictionary {
+        func queryParameter() throws -> QueryDictionary {
             return QueryDictionary([
                 //"id": // auto increment
                 "name": name,
