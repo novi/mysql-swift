@@ -9,28 +9,28 @@
 infix operator <| { associativity left precedence 150 }
 infix operator <|? { associativity left precedence 150 }
 
-public protocol QueryResultRowType {
+public protocol QueryRowResultType {
     //typealias QueryResultType = Self
-    static func decodeRow(r: QueryResult) throws -> Self //.QueryResultType
+    static func decodeRow(r: QueryRowResult) throws -> Self //.QueryResultType
 }
 
-public func <| <T>(r: QueryResult, key: String) throws -> T {
+public func <| <T>(r: QueryRowResult, key: String) throws -> T {
     return try r.getValue(key)
 }
 
-public func <| <T>(r: QueryResult, index: Int) throws -> T {
+public func <| <T>(r: QueryRowResult, index: Int) throws -> T {
     return try r.getValue(index)
 }
 
-public func <|? <T>(r: QueryResult, key: String) throws -> T? {
+public func <|? <T>(r: QueryRowResult, key: String) throws -> T? {
     return try r.getValueNullable(key)
 }
 
-public func <|? <T>(r: QueryResult, index: Int) throws -> T? {
+public func <|? <T>(r: QueryRowResult, index: Int) throws -> T? {
     return try r.getValueNullable(index)
 }
 
-public struct QueryResult {
+public struct QueryRowResult {
     
     let row: ([String:Any], [Any])
     

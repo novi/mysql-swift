@@ -10,7 +10,7 @@ import MySQL
 
 struct Row {
     
-    struct UserDecodeWithIndex: QueryResultRowType, QueryArgumentDictionaryType {
+    struct UserDecodeWithIndex: QueryRowResultType, QueryArgumentDictionaryType {
         let id: Int
         
         let name: String
@@ -21,7 +21,7 @@ struct Row {
         let ageOptional: Int?
         let createdAtOptional: SQLDate?
         
-        static func decodeRow(r: QueryResult) throws -> UserDecodeWithIndex {
+        static func decodeRow(r: QueryRowResult) throws -> UserDecodeWithIndex {
             return try build(UserDecodeWithIndex.init)(
                 r <| 0,
                 
@@ -49,7 +49,7 @@ struct Row {
         }
     }
     
-    struct UserDecodeWithKey: QueryResultRowType {
+    struct UserDecodeWithKey: QueryRowResultType {
         let id: Int
         
         let name: String
@@ -60,7 +60,7 @@ struct Row {
         let ageOptional: Int?
         let createdAtOptional: SQLDate?
         
-        static func decodeRow(r: QueryResult) throws -> UserDecodeWithKey {
+        static func decodeRow(r: QueryRowResult) throws -> UserDecodeWithKey {
             return try build(UserDecodeWithKey.init)(
                 r <| "id",
                 

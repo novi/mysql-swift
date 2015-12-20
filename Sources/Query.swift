@@ -32,8 +32,8 @@ extension Connection {
         static let null = NullValue()
     }
     
-    struct EmptyRowResult: QueryResultRowType {
-        static func decodeRow(r: QueryResult) throws -> EmptyRowResult {
+    struct EmptyRowResult: QueryRowResultType {
+        static func decodeRow(r: QueryRowResult) throws -> EmptyRowResult {
             return EmptyRowResult()
         }
     }
@@ -88,7 +88,7 @@ extension Connection {
         }
     }
     
-    public func query<T: QueryResultRowType>(query formattedQuery: String) throws -> ([T], QueryStatus) {
+    public func query<T: QueryRowResultType>(query formattedQuery: String) throws -> ([T], QueryStatus) {
         let mysql = try connectIfNeeded()
     
         guard mysql_real_query(mysql, formattedQuery, UInt(formattedQuery.utf8.count)) == 0 else {
@@ -158,6 +158,6 @@ extension Connection {
             rows.append( (cols, colArray) )
         }
         
-        return try (rows.map({ try T.decodeRow(QueryResult($0)) }), status)
+        return try (rows.map({ try T.decodeRow(QueryRowResult($0)) }), status)
     }
 }
