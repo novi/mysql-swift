@@ -14,7 +14,7 @@ _Note:_ No asynchronous support currently. It depends libmysqlclient.
 ```swift
 // Declare a model
 
-struct User: QueryRowResultType, QueryArgumentDictionaryType {
+struct User: QueryRowResultType, QueryParameterDictionaryType {
     let id: Int
     let userName: String
     let age: Int?
@@ -33,7 +33,7 @@ struct User: QueryRowResultType, QueryArgumentDictionaryType {
     
     // Use the model as a query paramter
     // see inserting sample
-    func queryValues() throws -> QueryDictionary {
+    func queryParameter() throws -> QueryDictionary {
         return QueryDictionary([
             //"id": // auto increment
             "name": userName,
