@@ -14,7 +14,7 @@ _Note:_ No asynchronous support currently. It depends libmysqlclient.
 ```swift
 // Declare a model
 
-struct User: QueryResultRowType, QueryArgumentDictionaryType {
+struct User: QueryRowResultType, QueryArgumentDictionaryType {
     let id: Int
     let userName: String
     let age: Int?
@@ -22,7 +22,7 @@ struct User: QueryResultRowType, QueryArgumentDictionaryType {
     
     // Decode query results (selecting rows) to the model
     // see selecting sample
-    static func decodeRow(r: QueryResult) throws -> User {
+    static func decodeRow(r: QueryRowResult) throws -> User {
         return try build(User.init)(
             r <| 0, // as index
             r <| "name", // as field name
