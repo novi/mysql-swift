@@ -1,6 +1,9 @@
 mysql-swift
 ===========
 
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+
+
 MySQL client library for Swift.
 This is inspired by Node.js' [mysql](https://github.com/felixge/node-mysql) and [Himotoki](https://github.com/ikesyo/Himotoki) as decoding results.
 
@@ -76,6 +79,15 @@ try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
 # Dependencies
 
 * libmysqlclient 6.1.6 or Later (named CMySQL in Swift)
+
+# Installation
+
+## Cocoa (OS X)
+
+Simply use Carthage.
+
+* Add `github "novi/mysql-swift" ~> 0.1.0` to your Cartfile.
+* Run `carthage update`.
 
 # License
 
