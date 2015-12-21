@@ -1,6 +1,4 @@
 language: objective-c
 script:
-  - xcodebuild -project ./OSX\ Projects/MySQL/MySQL.xcodeproj -scheme MySQL build
-  - xcodebuild -project ./OSX\ Projects/MySQL/MySQL.xcodeproj -scheme MySQL test
-  
+  - xcodebuild -project ./OSX\ Projects/MySQL/MySQL.xcodeproj -scheme MySQL build  
   
