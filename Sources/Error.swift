@@ -19,6 +19,7 @@ public enum QueryError: ErrorType {
     case MissingKeyError(key: String)
     
     case QueryParameterCountMismatch
+    case QueryParameterIdTypeError
     
     case InvalidSQLDate(String)
 }

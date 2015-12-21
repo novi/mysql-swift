@@ -184,25 +184,32 @@ public struct QueryFormatter {
             args.append(a)
         }
         
-        var out: String = ""
         var placeHolderCount: Int = 0
-        for c in query.characters {
-            switch c {
-                case "?":
-                    if placeHolderCount >= args.count {
-                        throw QueryError.QueryParameterCountMismatch
-                    }
-                    let val = args[placeHolderCount]
-                out += " " + (try val.escapedValue()) + " "
-                placeHolderCount += 1
-            default:
-                out += String(c)
+        
+        var formatted = query + ""
+        while let r = formatted.rangeOfString("??") {
+            if placeHolderCount >= args.count {
+                throw QueryError.QueryParameterCountMismatch
             }
+            guard let val = args[placeHolderCount] as? String else {
+                throw QueryError.QueryParameterIdTypeError
+            }
+            formatted.replaceRange(r, with: SQLString.escapeId(val))
+            placeHolderCount += 1
+        }
+        
+        while let r = formatted.rangeOfString("?") {
+            if placeHolderCount >= args.count {
+                throw QueryError.QueryParameterCountMismatch
+            }
+            let val = args[placeHolderCount]
+            formatted.replaceRange(r, with: try val.escapedValue())
+            placeHolderCount += 1
         }
         if placeHolderCount != args.count {
             throw QueryError.QueryParameterCountMismatch
         }
-        return out
+        return formatted
     }
 }
 
