@@ -6,6 +6,7 @@
 //  Copyright © 2015 Yusuke Ito. All rights reserved.
 //
 
+import Foundation
 
 // inspired
 // https://github.com/felixge/node-mysql/blob/master/lib/protocol/SqlString.js
