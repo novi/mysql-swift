@@ -52,14 +52,8 @@ extension Connection {
             self.type = f.type
         }
         func castValue(str: String, row: Int, timeZone: TimeZone) throws -> Any {
-            if type == MYSQL_TYPE_TINY {
-                guard let val = Int(str) else {
-                    throw QueryError.ValueError("parse error: \(str) as \(self.type) in \(self.name) at \(row)")
-                }
-                return val == 0 ? false : true
-            }
-            
-            if type == MYSQL_TYPE_SHORT ||
+            if type == MYSQL_TYPE_TINY ||
+                type == MYSQL_TYPE_SHORT ||
                 type == MYSQL_TYPE_LONG ||
                 type == MYSQL_TYPE_INT24 {
                     guard let v = Int(str) else {

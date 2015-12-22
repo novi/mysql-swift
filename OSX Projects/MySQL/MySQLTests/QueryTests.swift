@@ -23,8 +23,6 @@ class QueryTestBase: MySQLTests {
         "`name_Optional` varchar(50) DEFAULT NULL," +
         "`age_Optional` int(11) DEFAULT NULL," +
         "`created_at_Optional` datetime DEFAULT NULL," +
-        "`done` tinyint(1) NOT NULL DEFAULT 0," +
-        "`done_Optional` tinyint(1) DEFAULT NULL," +
         "PRIMARY KEY (`id`)" +
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8;"
         
@@ -64,15 +62,15 @@ class QueryTests: QueryTestBase {
         let name = "name 's"
         let age = 25
         
-        let userNil = User(id: 0, name: name, age: age, createdAt: now, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil)
+        let userNil = User(id: 0, name: name, age: age, createdAt: now, nameOptional: nil, ageOptional: nil, createdAtOptional: nil)
         let status: QueryStatus = try! connection.query("INSERT INTO \(constants.tableName) SET ? ", [userNil])
         XCTAssertEqual(status.insertedId, 1)
         
-        let userFill = User(id: 0, name: name, age: age, createdAt: now, nameOptional: "fuga", ageOptional: 50, createdAtOptional: anotherDate, done: true, doneOptional: false)
+        let userFill = User(id: 0, name: name, age: age, createdAt: now, nameOptional: "fuga", ageOptional: 50, createdAtOptional: anotherDate)
         let status2: QueryStatus = try! connection.query("INSERT INTO \(constants.tableName) SET ? ", [userFill])
         XCTAssertEqual(status2.insertedId, 2)
         
-        let rows:[User] = try! connection.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional FROM \(constants.tableName)")
+        let rows:[User] = try! connection.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional FROM \(constants.tableName)")
         
         XCTAssertEqual(rows.count, 2)
         
@@ -85,9 +83,6 @@ class QueryTests: QueryTestBase {
         XCTAssertNil(rows[0].nameOptional)
         XCTAssertNil(rows[0].ageOptional)
         XCTAssertNil(rows[0].createdAtOptional)
-        
-        XCTAssertFalse(rows[0].done)
-        XCTAssertNil(rows[0].doneOptional)
         
         // second row
         XCTAssertEqual(rows[1].id, 2)
@@ -102,9 +97,6 @@ class QueryTests: QueryTestBase {
         XCTAssertEqual(rows[1].nameOptional, "fuga")
         XCTAssertEqual(rows[1].ageOptional, 50)
         XCTAssertEqual(rows[1].createdAtOptional, anotherDate)
-        
-        XCTAssertTrue(rows[1].done)
-        XCTAssertFalse(rows[1].doneOptional!)
     }
     
     func testSelectingWithFieldKey() {
@@ -127,9 +119,6 @@ class QueryTests: QueryTestBase {
         XCTAssertNil(rows[0].ageOptional)
         XCTAssertNil(rows[0].createdAtOptional)
         
-        XCTAssertFalse(rows[0].done)
-        XCTAssertNil(rows[0].doneOptional)
-        
         // second row
         XCTAssertEqual(rows[1].id, 2)
         XCTAssertEqual(rows[1].name, name)
@@ -143,9 +132,6 @@ class QueryTests: QueryTestBase {
         XCTAssertEqual(rows[1].nameOptional, "fuga")
         XCTAssertEqual(rows[1].ageOptional, 50)
         XCTAssertEqual(rows[1].createdAtOptional, anotherDate)
-        
-        XCTAssertTrue(rows[1].done)
-        XCTAssertFalse(rows[1].doneOptional!)
     }
     
     
