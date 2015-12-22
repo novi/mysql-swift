@@ -54,7 +54,7 @@ extension Connection {
     }
 }
 
-public class Connection {
+final public class Connection {
     
     
     var mysql_: UnsafeMutablePointer<MYSQL>
