@@ -18,7 +18,7 @@ func Sync<T>(mutex: UnsafeMutablePointer<pthread_mutex_t>, @noescape _ block: ()
 final public class ConnectionPool: CustomStringConvertible {
     
     
-    public var initialConnections: Int = 5 {
+    public var initialConnections: Int = 1 {
         didSet {
             while pool.count < initialConnections {
                 preparedNewConnection()

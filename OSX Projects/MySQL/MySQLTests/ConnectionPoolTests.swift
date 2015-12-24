@@ -14,7 +14,7 @@ class ConnectionPoolTests: MySQLTests {
 
     func testGetConnection() {
         
-        let initialConnection = 5
+        let initialConnection = 1
         
         XCTAssertEqual(pool.pool.count, initialConnection)
         XCTAssertEqual(pool.inUseConnections, 0)
