@@ -19,16 +19,12 @@ struct TestConstants: TestConstantsType {
     let password: String = ""
     let database: String = "test"
     let tableName: String = "unit_test_db_3894"
+    let timeZone: Connection.TimeZone = Connection.TimeZone(GMTOffset: 60 * 60 * 9) // JST
 }
 
 */
 
-protocol TestConstantsType {
-    var host: String { get }
-    var port: Int { get }
-    var user: String { get }
-    var password: String { get }
-    var database: String { get }
+protocol TestConstantsType: ConnectionOption {
     var tableName: String { get }
 }
 
@@ -42,10 +38,9 @@ class MySQLTests: XCTestCase {
         super.setUp()
         
         self.constants = TestConstants()
+        self.pool = ConnectionPool(options: constants)
         
-        let tz = Connection.TimeZone(GMTOffset: 60 * 60 * 9) // JST
-        let options = Connection.Options(host: constants.host, port: constants.port, userName: constants.user, password: constants.password, database: constants.database, timeZone: tz)
-        self.pool = ConnectionPool(options: options)
+        XCTAssertEqual(constants.timeZone, Connection.TimeZone(GMTOffset: 60 * 60 * 9) )
     }
     
     override func tearDown() {

@@ -30,10 +30,18 @@ class DatabaseViewController: NSViewController {
         }
     }
     
+    struct Options: ConnectionOption {
+        let host: String
+        let port: Int
+        let user: String
+        let password: String
+        let database: String
+    }
     
     @IBAction func connectTapped(sender: AnyObject) {
         
-        let options = Connection.Options(host: hostField.stringValue, port: Int(portField.stringValue) ?? 0, userName: userField.stringValue, password: passwordField.stringValue, database: databaseComboBox.stringValue)
+        
+        let options = Options(host: hostField.stringValue, port: Int(portField.stringValue) ?? 0, user: userField.stringValue, password: passwordField.stringValue, database: databaseComboBox.stringValue)
         do {
             let pool = ConnectionPool(options: options)
             self.performSegueWithIdentifier("Connection", sender: pool)

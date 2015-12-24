@@ -30,8 +30,8 @@ final public class ConnectionPool: CustomStringConvertible {
     var pool: [Connection] = []
     var mutex: UnsafeMutablePointer<pthread_mutex_t> = nil
     
-    public let options: Connection.Options
-    public init(options: Connection.Options) {
+    public let options: ConnectionOption
+    public init(options: ConnectionOption) {
         self.options = options
         
         mutex = UnsafeMutablePointer.alloc(sizeof(pthread_mutex_t))

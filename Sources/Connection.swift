@@ -23,10 +23,24 @@ struct MySQLUtil {
 }
 
 
+public protocol ConnectionOption {
+    var host: String { get }
+    var port: Int { get }
+    var user: String { get }
+    var password: String { get }
+    var database: String { get }
+    var timeZone: Connection.TimeZone { get }
+}
+
+public extension ConnectionOption {
+    var timeZone: Connection.TimeZone {
+        return Connection.TimeZone(GMTOffset: 0)
+    }
+}
 
 extension Connection {
     
-    public struct TimeZone {
+    public struct TimeZone: Equatable {
         let timeZone: CFTimeZoneRef
         public init(name: String) {
             self.timeZone = CFTimeZoneCreateWithName(nil, name, true)
@@ -36,22 +50,12 @@ extension Connection {
         }
     }
     
-    public struct Options {
-        public let host: String
-        public let port: Int
-        public let userName: String
-        public let password: String
-        public let database: String
-        public let timeZone: TimeZone
-        public init(host: String, port: Int, userName: String, password: String, database: String, timeZone: TimeZone = TimeZone(GMTOffset: 0)) {
-            self.host = host
-            self.port = port
-            self.userName = userName
-            self.password = password
-            self.database = database
-            self.timeZone = timeZone
-        }
-    }
+}
+
+public func ==(lhs: Connection.TimeZone, rhs: Connection.TimeZone) -> Bool {
+    return CFEqual(lhs.timeZone, rhs.timeZone) ||
+    CFTimeZoneGetSecondsFromGMT(lhs.timeZone, 0) == CFTimeZoneGetSecondsFromGMT(rhs.timeZone, 0) ||
+        (CFTimeZoneGetName(lhs.timeZone) as String) == (CFTimeZoneGetName(rhs.timeZone) as String)
 }
 
 extension Connection {
@@ -69,9 +73,9 @@ final public class Connection {
     var mysql_: UnsafeMutablePointer<MYSQL>
     
     let pool: ConnectionPool
-    public let options: Connection.Options
+    public let options: ConnectionOption
     
-    init(options: Connection.Options, pool: ConnectionPool) {
+    init(options: ConnectionOption, pool: ConnectionPool) {
         self.options = options
         self.pool = pool
         self.mysql_ = nil
@@ -87,7 +91,7 @@ final public class Connection {
         let mysql = mysql_init(nil)
         if mysql_real_connect(mysql,
             self.options.host,
-            self.options.userName,
+            self.options.user,
             self.options.password,
             self.options.database,
             UInt32(self.options.port), nil, 0) == nil {

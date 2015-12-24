@@ -122,7 +122,7 @@ let package = Package(
 4. Back the connection to the pool (as `release`),
 
 ```swift
-	let options = Connection.Options(host: "db.example.tokyo"...)
+	let options = Options(host: "db.example.tokyo"...)
 	let pool = ConnectionPool(options: options) // Create pool with options
 	
 	let conn = try pool.getConnection() // Get free connection
@@ -142,7 +142,7 @@ or You can just use `pool.execute()`. It automatically get and release connectio
 ## Transaction
 
 ```swift
-	let options = Connection.Options(host: "db.example.tokyo"...)
+	let options = Options(host: "db.example.tokyo"...)
 	let pool = ConnectionPool(options: options) // Create pool with options
 	
 	let wholeStaus: QueryStatus = try pool.transaction { conn in
