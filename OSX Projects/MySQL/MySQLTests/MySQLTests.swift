@@ -36,21 +36,20 @@ protocol TestConstantsType {
 class MySQLTests: XCTestCase {
     
     var constants: TestConstantsType!
+    var pool: ConnectionPool!
     
     override func setUp() {
         super.setUp()
         
         self.constants = TestConstants()
+        
+        let tz = Connection.TimeZone(GMTOffset: 60 * 60 * 9) // JST
+        let options = Connection.Options(host: constants.host, port: constants.port, userName: constants.user, password: constants.password, database: constants.database, timeZone: tz)
+        self.pool = ConnectionPool(options: options)
     }
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
-    }
-    
-    func createConnection() -> MySQL.Connection {
-        let tz = Connection.TimeZone(GMTOffset: 60 * 60 * 9) // JST
-        let options = Connection.Options(host: constants.host, port: constants.port, userName: constants.user, password: constants.password, database: constants.database, timeZone: tz)
-        return Connection(options: options)
     }
 }

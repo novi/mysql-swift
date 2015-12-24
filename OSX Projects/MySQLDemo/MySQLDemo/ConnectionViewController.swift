@@ -25,7 +25,7 @@ PRIMARY KEY (`id`)
 
 class ConnectionViewController: NSViewController, NSTableViewDataSource {
     
-    var connection: Connection?
+    var pool: ConnectionPool!
     
     @IBOutlet weak var queryField: NSTextField!
     @IBOutlet weak var tableView: NSTableView!
@@ -33,53 +33,71 @@ class ConnectionViewController: NSViewController, NSTableViewDataSource {
     var users: [Row.User] = []
     
     @IBAction func runTapped(sender: AnyObject) {
-        guard let conn = self.connection else {
-            return
-        }
-        
-        do {
-            let ageMin: Int = random()%100
-            let (rows, status) = try conn.query(queryField.stringValue, [ageMin]) as ([Row.User], QueryStatus)
-            for row in rows {
-                print(row)
-                //print("\(row.id) : \(row.userName) \(row.age) \(row.createdAt)")
+        let query = queryField.stringValue
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
+            do {
+                print("before execute", self.pool)
+                
+                let ageMin: Int = random()%100
+                let (rows, status): ([Row.User], QueryStatus) = try self.pool.execute { conn in
+                    let res = try conn.query(query, [ageMin]) as ([Row.User], QueryStatus)
+                    sleep(UInt32(random()%10))
+                    return res
+                }
+                
+                for row in rows {
+                    print(row)
+                }
+                
+                print(status)
+                
+                print("after execute", self.pool)
+                
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.users = rows
+                    self.tableView.reloadData()
+                })
+                
+            } catch (let e) {
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.presentError(NSError(domain: "", code: 1, userInfo: [
+                        NSLocalizedDescriptionKey: "\(e as ErrorType)"
+                        ]))
+                }
             }
-            
-            print(status)
-            
-            self.users = rows
-            tableView.reloadData()
-            
-        } catch (let e) {
-            self.presentError(NSError(domain: "", code: 1, userInfo: [
-                NSLocalizedDescriptionKey: "\(e as ErrorType)"
-                ]))
         }
     }
     
     @IBAction func insertTapped(sender: AnyObject) {
-        guard let conn = self.connection else {
-            return
-        }
-        
+
         do {
             var optionalIntVal: Int? = random()%100
             let params: (String, Int?, SQLDate) = (
                 "test user",
                 optionalIntVal,
-                SQLDate.now(timeZone: conn.options.timeZone)
+                SQLDate.now(timeZone: pool.options.timeZone)
             )            
             
-            let status1 = try conn.query("INSERT INTO users SET name = ?, age = ?, created_at = ?", buildParam(params) ) as QueryStatus
+            let status1 = try pool.execute { conn in
+                try conn.query("INSERT INTO users SET name = ?, age = ?, created_at = ?", buildParam(params) ) as QueryStatus
+            }
             
             print(status1)
             
             optionalIntVal = nil
             
-            let user = Row.User(id: 0, userName: "test ' user 日本語 _ % ", age: optionalIntVal, createdAt: SQLDate.now(timeZone: conn.options.timeZone))
-            let status2 = try conn.query("INSERT INTO users SET ?", [user]) as QueryStatus
-
+            let status2 = try pool.transaction { conn in
+                
+                let user = Row.User(id: 0, userName: "test ' user 日本語 _ % ", age: optionalIntVal, createdAt: SQLDate.now(timeZone: conn.options.timeZone))
+                
+                let status = try conn.query("INSERT INTO users SET ?", [user])
+                
+                try conn.query("IN VALID Query;;;")
+                return status
+            } as QueryStatus
+            
             print(status2)
+            
             
         } catch (let e) {
             self.presentError(NSError(domain: "", code: 1, userInfo: [

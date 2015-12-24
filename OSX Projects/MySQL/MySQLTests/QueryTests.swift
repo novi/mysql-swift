@@ -14,7 +14,7 @@ class QueryTestBase: MySQLTests {
     func createTestTable() throws {
         try dropTestTable()
         
-        let conn = createConnection()
+        let conn = try pool.getConnection()
         let query = "CREATE TABLE `\(constants.tableName)` (" +
             "`id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
             "`name` varchar(50) NOT NULL DEFAULT ''," +
@@ -32,47 +32,53 @@ class QueryTestBase: MySQLTests {
     }
     
     func dropTestTable() throws {
-        let conn = createConnection()
+        let conn = try pool.getConnection()
         try conn.query("DROP TABLE IF EXISTS \(constants.tableName)")
     }
 }
 
 class QueryTests: QueryTestBase {
     
-    var now: SQLDate!
-    var connection: Connection!
-    
     override func setUp() {
         super.setUp()
-        self.connection = createConnection()
-        if now == nil {
-            self.now = SQLDate.now(timeZone: connection.options.timeZone)
-        }
     }
     
     func testCreateAndDrop() {
         try! createTestTable()
     }
     
+    var someDate: SQLDate {
+        return try! SQLDate(sqlDate: "2015-12-27 16:54:00", timeZone: pool.options.timeZone.timeZone)
+    }
+    
     var anotherDate: SQLDate {
-        return SQLDate(absoluteTime: 60*60*24*67, timeZone: connection.options.timeZone.timeZone)
+        return SQLDate(absoluteTime: 60*60*24*67, timeZone: pool.options.timeZone.timeZone)
     }
     
     func testInsertRow() {
+        
+        //let conn = try! pool.getConnection()
+        
         typealias User = Row.UserDecodeWithIndex
         
         let name = "name 's"
         let age = 25
         
-        let userNil = User(id: 0, name: name, age: age, createdAt: now, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil)
-        let status: QueryStatus = try! connection.query("INSERT INTO \(constants.tableName) SET ? ", [userNil])
+        let userNil = User(id: 0, name: name, age: age, createdAt: someDate, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil)
+        let status: QueryStatus = try! pool.execute { conn in
+            try conn.query("INSERT INTO \(constants.tableName) SET ? ", [userNil])
+        }
         XCTAssertEqual(status.insertedId, 1)
         
-        let userFill = User(id: 0, name: name, age: age, createdAt: now, nameOptional: "fuga", ageOptional: 50, createdAtOptional: anotherDate, done: true, doneOptional: false)
-        let status2: QueryStatus = try! connection.query("INSERT INTO \(constants.tableName) SET ? ", [userFill])
+        let userFill = User(id: 0, name: name, age: age, createdAt: someDate, nameOptional: "fuga", ageOptional: 50, createdAtOptional: anotherDate, done: true, doneOptional: false)
+        let status2: QueryStatus = try! pool.execute { conn in
+            try conn.query("INSERT INTO \(constants.tableName) SET ? ", [userFill])
+        }
         XCTAssertEqual(status2.insertedId, 2)
         
-        let rows:[User] = try! connection.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional FROM \(constants.tableName)")
+        let rows:[User] = try! pool.execute { conn in
+            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional FROM \(constants.tableName)")
+        }
         
         XCTAssertEqual(rows.count, 2)
         
@@ -80,7 +86,7 @@ class QueryTests: QueryTestBase {
         XCTAssertEqual(rows[0].id, 1)
         XCTAssertEqual(rows[0].name, name)
         XCTAssertEqual(rows[0].age, age)
-        XCTAssertEqual(rows[0].createdAt, now)
+        XCTAssertEqual(rows[0].createdAt, someDate)
         
         XCTAssertNil(rows[0].nameOptional)
         XCTAssertNil(rows[0].ageOptional)
@@ -93,7 +99,7 @@ class QueryTests: QueryTestBase {
         XCTAssertEqual(rows[1].id, 2)
         XCTAssertEqual(rows[1].name, name)
         XCTAssertEqual(rows[1].age, age)
-        XCTAssertEqual(rows[1].createdAt, now)
+        XCTAssertEqual(rows[1].createdAt, someDate)
         
         XCTAssertNotNil(rows[1].nameOptional)
         XCTAssertNotNil(rows[1].ageOptional)
@@ -113,7 +119,9 @@ class QueryTests: QueryTestBase {
         let age = 25
         
         typealias User = Row.UserDecodeWithKey
-        let rows:[User] = try! connection.query("SELECT * FROM \(constants.tableName) LIMIT ?", [2])
+        let rows:[User] = try! pool.execute { conn in
+            try conn.query("SELECT * FROM \(constants.tableName) LIMIT ?", [2])
+        }
         
         XCTAssertEqual(rows.count, 2)
         
@@ -121,7 +129,7 @@ class QueryTests: QueryTestBase {
         XCTAssertEqual(rows[0].id, 1)
         XCTAssertEqual(rows[0].name, name)
         XCTAssertEqual(rows[0].age, age)
-        XCTAssertEqual(rows[0].createdAt, now)
+        XCTAssertEqual(rows[0].createdAt, someDate)
         
         XCTAssertNil(rows[0].nameOptional)
         XCTAssertNil(rows[0].ageOptional)
@@ -134,7 +142,7 @@ class QueryTests: QueryTestBase {
         XCTAssertEqual(rows[1].id, 2)
         XCTAssertEqual(rows[1].name, name)
         XCTAssertEqual(rows[1].age, age)
-        XCTAssertEqual(rows[1].createdAt, now)
+        XCTAssertEqual(rows[1].createdAt, someDate)
         
         XCTAssertNotNil(rows[1].nameOptional)
         XCTAssertNotNil(rows[1].ageOptional)

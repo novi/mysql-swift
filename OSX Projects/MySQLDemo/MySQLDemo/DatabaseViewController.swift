@@ -35,9 +35,8 @@ class DatabaseViewController: NSViewController {
         
         let options = Connection.Options(host: hostField.stringValue, port: Int(portField.stringValue) ?? 0, userName: userField.stringValue, password: passwordField.stringValue, database: databaseComboBox.stringValue)
         do {
-            let conn = Connection(options: options)
-            try conn.connect()
-            self.performSegueWithIdentifier("Connection", sender: conn)
+            let pool = ConnectionPool(options: options)
+            self.performSegueWithIdentifier("Connection", sender: pool)
             
         } catch (let e) {
             print("\(e as ErrorType)")
@@ -50,8 +49,8 @@ class DatabaseViewController: NSViewController {
     }
     
     override func prepareForSegue(segue: NSStoryboardSegue, sender: AnyObject?) {
-        if let dst = segue.destinationController as? ConnectionViewController, let conn = sender as? Connection {
-            dst.connection = conn
+        if let dst = segue.destinationController as? ConnectionViewController, let pool = sender as? ConnectionPool {
+            dst.pool = pool
         }
     }
 

@@ -54,24 +54,35 @@ extension Connection {
     }
 }
 
-final public class Connection {
-    
-    
-    var mysql_: UnsafeMutablePointer<MYSQL>
-    public let options: Connection.Options
-    
-    public init(options: Connection.Options) {
-        self.options = options
-        self.mysql_ = nil
-    }
-    
+extension Connection {
     public enum Error: ErrorType {
         case GenericError(String)
         case ConnectionFailed(String)
+        case ConnectionGetError
+    }
+}
+
+final public class Connection {
+    
+    var isInTransaction: Int = 0
+    var isInUse: Bool = false
+    var mysql_: UnsafeMutablePointer<MYSQL>
+    
+    let pool: ConnectionPool
+    public let options: Connection.Options
+    
+    init(options: Connection.Options, pool: ConnectionPool) {
+        self.options = options
+        self.pool = pool
+        self.mysql_ = nil
     }
     
-    public func connect() throws {
-        disconnect()
+    public func release() {
+        pool.releaseConnection(self)
+    }
+    
+    func connect() throws {
+        dispose()
         
         let mysql = mysql_init(nil)
         if mysql_real_connect(mysql,
@@ -88,12 +99,14 @@ final public class Connection {
     }
     
     func connectIfNeeded() throws -> UnsafeMutablePointer<MYSQL> {
-        if isConnected == false {
-            try connect()
-            return mysql_
-        } else {
+        if isConnected == true {
             return mysql_
         }
+        if isConnected == true && ping == true {
+            return mysql_
+        }
+        try connect()
+        return mysql_
     }
     
     var mysql: UnsafeMutablePointer<MYSQL>? {
@@ -110,7 +123,14 @@ final public class Connection {
         return mysql_stat(mysql) != nil ? true : false
     }
     
-    public func disconnect() {
+    var ping: Bool {
+        guard let mysql = mysql else {
+            return false
+        }
+        return mysql_ping(mysql) == 0
+    }
+    
+    func dispose() {
         guard let mysql = mysql else {
             return
         }
@@ -119,7 +139,7 @@ final public class Connection {
     }
     
     deinit {
-        disconnect()
+        dispose()
     }
 }
 
