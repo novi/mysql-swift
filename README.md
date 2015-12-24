@@ -86,7 +86,7 @@ try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
 
 Simply use Carthage.
 
-* Place `libmysqlclient` and openssl on `/usr/local` with `brew install mysql openssl` 
+* Place `libmysqlclient` and `openssl` on `/usr/local` with `brew install mysql openssl` 
 * Add `github "novi/mysql-swift" ~> 0.1.3` to your `Cartfile`.
 * Run `carthage update`.
 
@@ -116,10 +116,10 @@ let package = Package(
 
 ## Connection & Querying
 
-1. Create a pool with options (hostname, port, password,...)
-2. Get a connection from the pool
-3. Execute query and fetch rows or status
-4. Back the connection to the pool (as release)
+1. Create a pool with options (hostname, port, password,...).
+2. Get a connection from the pool.
+3. Execute query and fetch rows or status.
+4. Back the connection to the pool (as `release`),
 
 ```swift
 	let options = Connection.Options(host: "db.example.tokyo"...)
@@ -134,7 +134,7 @@ or You can just use `pool.execute()`. It automatically get and release connectio
 
 ```swift
 	let rows: [User] = try pool.execute { conn in
-		// The connection is hold in this block
+		// The connection is held in this block
 		try conn.query("SELECT * FROM users;") // And also it returns result to outside execute block
 	}
 ```
