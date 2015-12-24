@@ -12,13 +12,12 @@ import XCTest
 class ConnectionTests: MySQLTests {
     
     func testConnect() {
-        let conn = createConnection()
-        try! conn.connect()
+        let conn = try! pool.getConnection()
         XCTAssertTrue(conn.isConnected)
     }
     
-    func testAutoConnect() {
-        let conn = createConnection()
+    func testConnect2() {
+        let conn = try! pool.getConnection()
         try! conn.query("SELECT 1;")
         XCTAssertTrue(conn.isConnected)
     }

@@ -29,7 +29,7 @@ struct User: QueryRowResultType, QueryParameterDictionaryType {
         return try build(User.init)(
             r <| 0, // as index
             r <| "name", // as field name
-            r <|? 3,
+            r <|? 3, // nullable field
             r <| "created_at"
         )
     }
@@ -86,7 +86,7 @@ try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
 
 Simply use Carthage.
 
-* Place `libmysqlclient` and openssl on `/usr/local` with `brew install mysql openssl` 
+* Place `libmysqlclient` and `openssl` on `/usr/local` with `brew install mysql openssl` 
 * Add `github "novi/mysql-swift" ~> 0.1.3` to your `Cartfile`.
 * Run `carthage update`.
 
@@ -111,6 +111,49 @@ let package = Package(
     ]
 )
 ```
+
+# Usage
+
+## Connection & Querying
+
+1. Create a pool with options (hostname, port, password,...).
+2. Get a connection from the pool.
+3. Execute query and fetch rows or status.
+4. Back the connection to the pool (as `release`),
+
+```swift
+	let options = Connection.Options(host: "db.example.tokyo"...)
+	let pool = ConnectionPool(options: options) // Create pool with options
+	
+	let conn = try pool.getConnection() // Get free connection
+	conn.query("SELECT 1 + 2;")
+	conn.release() // Release and back connection to the pool
+```
+
+or You can just use `pool.execute()`. It automatically get and release connection. 
+
+```swift
+	let rows: [User] = try pool.execute { conn in
+		// The connection is held in this block
+		try conn.query("SELECT * FROM users;") // And also it returns result to outside execute block
+	}
+```
+
+## Transaction
+
+```swift
+	let options = Connection.Options(host: "db.example.tokyo"...)
+	let pool = ConnectionPool(options: options) // Create pool with options
+	
+	let wholeStaus: QueryStatus = try pool.transaction { conn in
+		let status = try conn.query("INSERT INTO users SET ?;", [user]) as QueryStatus // Create a user
+		let userId = status.insertedId // the user's id
+		try conn.query("UPDATE info SET val = ? WHERE key = 'latest_user_id' ", [userId]) // Store user's id that we have created the above
+	}
+	wholeStaus.affectedRows == 1 // true
+```
+
+
 
 # License
 
