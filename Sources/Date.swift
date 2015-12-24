@@ -20,25 +20,31 @@ public struct SQLDate {
     init(sqlDate: String, timeZone: CFTimeZoneRef) throws {
         self.timeZone = timeZone
         
-        if let year = Int32(sqlDate) where sqlDate.characters.count == 4 {
-            let date = CFGregorianDate(year: year, month: 1, day: 1, hour: 0, minute: 0, second: 0)
-            self.absoluteTime = CFGregorianDateGetAbsoluteTime(date, timeZone)
-            return
+        switch sqlDate.characters.count {
+        case 4:
+            if let year = Int32(sqlDate) {
+                let date = CFGregorianDate(year: year, month: 1, day: 1, hour: 0, minute: 0, second: 0)
+                self.absoluteTime = CFGregorianDateGetAbsoluteTime(date, timeZone)
+                return
+            }
+        case 19:
+            let chars:[Character] = Array(sqlDate.characters)
+            if let year = Int32(String(chars[0...3])),
+                let month = Int8(String(chars[5...6])),
+                let day = Int8(String(chars[8...9])),
+                let hour = Int8(String(chars[11...12])),
+                let minute = Int8(String(chars[14...15])),
+                let second = Int8(String(chars[17...18])) {
+                    let date = CFGregorianDate(year: year, month: month, day: day, hour: hour, minute: minute, second: Double(second))
+                    if CFGregorianDateIsValid(date, CFGregorianUnitFlags.AllUnits.rawValue) == false {
+                        //throw QueryError.InvalidSQLDate(sqlDate)
+                    }
+                    self.absoluteTime = CFGregorianDateGetAbsoluteTime(date, timeZone)
+                    return
+            }
+        default: break
         }
-        let chars:[Character] = Array(sqlDate.characters)
-        if let year = Int32(String(chars[0...3])),
-            let month = Int8(String(chars[5...6])),
-            let day = Int8(String(chars[8...9])),
-            let hour = Int8(String(chars[11...12])),
-            let minute = Int8(String(chars[14...15])),
-            let second = Int8(String(chars[17...18])) where chars.count == 19 {
-            let date = CFGregorianDate(year: year, month: month, day: day, hour: hour, minute: minute, second: Double(second))
-                if CFGregorianDateIsValid(date, CFGregorianUnitFlags.AllUnits.rawValue) == false {
-                    //throw QueryError.InvalidSQLDate(sqlDate)
-                }
-            self.absoluteTime = CFGregorianDateGetAbsoluteTime(date, timeZone)
-            return
-        }
+        
         throw QueryError.InvalidSQLDate(sqlDate)
     }
     
