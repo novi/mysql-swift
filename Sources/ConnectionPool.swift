@@ -66,7 +66,7 @@ final public class ConnectionPool: CustomStringConvertible {
             return nil
         }
         guard let conn = connection else {
-            throw Connection.Error.ConnectionGetError
+            throw Connection.Error.ConnectionPoolGetConnectionError
         }
         return conn
     }

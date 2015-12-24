@@ -30,11 +30,16 @@ public protocol ConnectionOption {
     var password: String { get }
     var database: String { get }
     var timeZone: Connection.TimeZone { get }
+    var encoding: Connection.Encoding { get }
 }
 
 public extension ConnectionOption {
+    // Provide default options
     var timeZone: Connection.TimeZone {
         return Connection.TimeZone(GMTOffset: 0)
+    }
+    var encoding: Connection.Encoding {
+        return .UTF8
     }
 }
 
@@ -50,6 +55,11 @@ extension Connection {
         }
     }
     
+    public enum Encoding: String {
+        case UTF8 = "utf8"
+        case UTF8MB4 = "utf8mb4"
+    }
+    
 }
 
 public func ==(lhs: Connection.TimeZone, rhs: Connection.TimeZone) -> Bool {
@@ -61,8 +71,8 @@ public func ==(lhs: Connection.TimeZone, rhs: Connection.TimeZone) -> Bool {
 extension Connection {
     public enum Error: ErrorType {
         case GenericError(String)
-        case ConnectionFailed(String)
-        case ConnectionGetError
+        case ConnectionError(String)
+        case ConnectionPoolGetConnectionError
     }
 }
 
@@ -90,15 +100,15 @@ final public class Connection {
         
         let mysql = mysql_init(nil)
         if mysql_real_connect(mysql,
-            self.options.host,
-            self.options.user,
-            self.options.password,
-            self.options.database,
-            UInt32(self.options.port), nil, 0) == nil {
+            options.host,
+            options.user,
+            options.password,
+            options.database,
+            UInt32(options.port), nil, 0) == nil {
             // error
-                throw Error.ConnectionFailed(MySQLUtil.getMySQLErrorString(mysql))
+                throw Error.ConnectionError(MySQLUtil.getMySQLErrorString(mysql))
         }
-        mysql_set_character_set(mysql, "utf8")
+        mysql_set_character_set(mysql, options.encoding.rawValue)
         self.mysql_ = mysql
     }
     
