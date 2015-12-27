@@ -6,6 +6,10 @@
 //  Copyright © 2015 Yusuke Ito. All rights reserved.
 //
 
+#if os(Linux)
+    import Glibc
+#endif
+
 import CMySQL
 
 func Sync<T>(mutex: UnsafeMutablePointer<pthread_mutex_t>, @noescape _ block: () -> T) -> T {
