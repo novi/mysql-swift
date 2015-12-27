@@ -52,7 +52,7 @@ extension Connection {
             self.type = f.type
         }
         func castValue(str: String, row: Int, timeZone: TimeZone) throws -> Any {
-            if type == MYSQL_TYPE_TINY ||
+            /*if type == MYSQL_TYPE_TINY ||
                 type == MYSQL_TYPE_SHORT ||
                 type == MYSQL_TYPE_LONG ||
                 type == MYSQL_TYPE_INT24 {
@@ -74,7 +74,7 @@ extension Connection {
                     throw QueryError.ValueError("parse error: \(str) as \(self.type) in \(self.name) at \(row)")
                 }
                 return v
-            }
+            }*/
             if type == MYSQL_TYPE_DATE ||
                 type == MYSQL_TYPE_DATETIME ||
                 type == MYSQL_TYPE_DATETIME2 ||
@@ -127,7 +127,7 @@ extension Connection {
         }
         
         // fetch rows
-        var rows:[ ([String:Any], [Any]) ] = []
+        var rows:[QueryRowResult] = []
         
         var rowCount: Int = 0
         while true {
@@ -135,29 +135,28 @@ extension Connection {
             if row == nil {
                 break
             }
-            var cols:[String:Any] = [:]
-            var colArray: [Any] = []
+            var cols:[Any] = []
             for i in 0..<fieldCount {
                 let sf = row[i]
                 let f = fields[i]
                 if sf == nil {
-                    cols[f.name] = NullValue.null
-                    colArray.append(NullValue.null)
+                    cols.append(NullValue.null)
                 } else {
                     if let str = String.fromCString(sf) {
-                        let val = try f.castValue(str, row: rowCount, timeZone: options.timeZone)
-                        cols[f.name] = val
-                        colArray.append(val)
+                        cols.append(try f.castValue(str, row: rowCount, timeZone: options.timeZone))
                     } else {
-                        throw QueryError.ValueError("parse string value in \(f.name), at row: \(rowCount)")
+                        throw QueryError.ResultParseError("in \(f.name), at row: \(rowCount)")
                     }
                 }
                 
             }
             rowCount++
-            rows.append( (cols, colArray) )
+            if fields.count != cols.count {
+                throw QueryError.ResultParseError("")
+            }
+            rows.append(QueryRowResult(fields: fields, cols: cols))
         }
         
-        return try (rows.map({ try T.decodeRow(QueryRowResult($0)) }), status)
+        return try (rows.map({ try T.decodeRow($0) }), status)
     }
 }
