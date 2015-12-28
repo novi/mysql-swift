@@ -52,29 +52,6 @@ extension Connection {
             self.type = f.type
         }
         func castValue(str: String, row: Int, timeZone: TimeZone) throws -> Any {
-            /*if type == MYSQL_TYPE_TINY ||
-                type == MYSQL_TYPE_SHORT ||
-                type == MYSQL_TYPE_LONG ||
-                type == MYSQL_TYPE_INT24 {
-                    guard let v = Int(str) else {
-                        throw QueryError.ValueError("parse error: \(str) as \(self.type) in \(self.name) at \(row)")
-                    }
-                    return v
-            }
-            if type == MYSQL_TYPE_FLOAT ||
-                type == MYSQL_TYPE_DECIMAL ||
-                type == MYSQL_TYPE_NEWDECIMAL {
-                guard let v = Float(str) else {
-                    throw QueryError.ValueError("parse error: \(str) as \(self.type) in \(self.name) at \(row)")
-                }
-                return v
-            }
-            if type == MYSQL_TYPE_DOUBLE {
-                guard let v = Double(str) else {
-                    throw QueryError.ValueError("parse error: \(str) as \(self.type) in \(self.name) at \(row)")
-                }
-                return v
-            }*/
             if type == MYSQL_TYPE_DATE ||
                 type == MYSQL_TYPE_DATETIME ||
                 type == MYSQL_TYPE_DATETIME2 ||
@@ -83,6 +60,10 @@ extension Connection {
                 type == MYSQL_TYPE_TIMESTAMP ||
                 type == MYSQL_TYPE_TIMESTAMP2 {
                 return try SQLDate(sqlDate: str, timeZone: timeZone.timeZone)
+            }
+            if type == MYSQL_TYPE_BLOB ||
+                type == MYSQL_TYPE_BIT {
+                    throw QueryError.ResultParseError("blob type is not supported")
             }
             return str
         }

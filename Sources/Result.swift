@@ -31,25 +31,7 @@ public func <|? <T: StringConstructible>(r: QueryRowResult, index: Int) throws -
 }
 
 public protocol StringConstructible {
-    static func from(text text: String) -> Self?
-}
-
-extension Int: StringConstructible {
-    public static func from(text text: String) -> Int? {
-        return Int(text)
-    }
-}
-
-extension String: StringConstructible {
-    public static func from(text text: String) -> String? {
-        return text
-    }
-}
-
-extension SQLDate: StringConstructible {
-    public static func from(text text: String) -> SQLDate? {
-        return nil
-    }
+    static func from(string string: String) -> Self?
 }
 
 public struct QueryRowResult {
@@ -82,7 +64,7 @@ public struct QueryRowResult {
     }
     
     func castOrFail<T: StringConstructible>(obj: String, key: String) throws -> T {
-        guard let val = T.from(text: obj) as T? else {
+        guard let val = T.from(string: obj) as T? else {
             throw QueryError.CastError(actual: obj, expected: "\(T.self)", key: key)
         }
         return val
