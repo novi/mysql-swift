@@ -20,7 +20,7 @@ class QueryFormatterTests: XCTestCase {
             "user's",
             nil
         )
-        let formatted = try! QueryFormatter.format("SELECT name,??,id FROM users WHERE ?? = ? OR name = ? OR age is ?;", args: buildParam(params))
+        let formatted = try! QueryFormatter.format("SELECT name,??,id FROM users WHERE ?? = ? OR name = ? OR age is ?;", args: build(params))
         XCTAssertEqual(formatted, "SELECT name,`i`.`d`,id FROM users WHERE `id` = 1 OR name = 'user\\'s' OR age is NULL;")
     }
     

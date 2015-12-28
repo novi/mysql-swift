@@ -21,6 +21,8 @@
 		527023481C25AB38003EBD9A /* ConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527023471C25AB38003EBD9A /* ConnectionTests.swift */; };
 		5270234A1C25ADEA003EBD9A /* QueryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527023491C25ADEA003EBD9A /* QueryTests.swift */; };
 		5270234E1C268AF6003EBD9A /* QueryFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270234D1C268AF6003EBD9A /* QueryFormatterTests.swift */; };
+		528860371C310E2300DFDA99 /* ResultType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528860361C310E2300DFDA99 /* ResultType.swift */; };
+		528860391C310FE200DFDA99 /* QueryParameterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528860381C310FE200DFDA99 /* QueryParameterType.swift */; };
 		5292158B1BDB8CD6009B031A /* MySQL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5292158A1BDB8CD6009B031A /* MySQL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		529215921BDB8CD6009B031A /* MySQL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 529215871BDB8CD6009B031A /* MySQL.framework */; };
 		529215971BDB8CD6009B031A /* MySQLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215961BDB8CD6009B031A /* MySQLTests.swift */; };
@@ -73,7 +75,9 @@
 		527023451C25AB23003EBD9A /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		527023471C25AB38003EBD9A /* ConnectionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionTests.swift; sourceTree = "<group>"; };
 		527023491C25ADEA003EBD9A /* QueryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryTests.swift; sourceTree = "<group>"; };
-		5270234D1C268AF6003EBD9A /* QueryFormatterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryFormatterTests.swift; sourceTree = "<group>"; };
+		5270234D1C268AF6003EBD9A /* QueryFormatterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = QueryFormatterTests.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		528860361C310E2300DFDA99 /* ResultType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultType.swift; sourceTree = "<group>"; };
+		528860381C310FE200DFDA99 /* QueryParameterType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryParameterType.swift; sourceTree = "<group>"; };
 		529215871BDB8CD6009B031A /* MySQL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MySQL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5292158A1BDB8CD6009B031A /* MySQL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MySQL.h; sourceTree = "<group>"; };
 		5292158C1BDB8CD6009B031A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -85,7 +89,7 @@
 		52C0D3B31C27D45100857DFA /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		52C0D3B41C27D45100857DFA /* Date.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		52C0D3B51C27D45100857DFA /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
-		52C0D3B61C27D45100857DFA /* ParameterBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterBuilder.swift; sourceTree = "<group>"; };
+		52C0D3B61C27D45100857DFA /* ParameterBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ParameterBuilder.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		52C0D3B71C27D45100857DFA /* Query.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Query.swift; sourceTree = "<group>"; };
 		52C0D3B81C27D45100857DFA /* QueryFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryFormatter.swift; sourceTree = "<group>"; };
 		52C0D3B91C27D45100857DFA /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
@@ -123,8 +127,8 @@
 				523CBAB21C295EE500B01A6C /* libcrypto.a */,
 				523CBAB31C295EE500B01A6C /* libssl.a */,
 				523CBAB01C295E6D00B01A6C /* libmysqlclient.a */,
-				52B2AF671C21A0900004BD07 /* Package.swift */,
 				52F722001BDBD4C50066B725 /* libstdc++.tbd */,
+				52B2AF671C21A0900004BD07 /* Package.swift */,
 				52C0D3B11C27D45100857DFA /* Sources */,
 				529215891BDB8CD6009B031A /* MySQL */,
 				529215951BDB8CD6009B031A /* MySQLTests */,
@@ -178,7 +182,9 @@
 				52C0D3B61C27D45100857DFA /* ParameterBuilder.swift */,
 				52C0D3B71C27D45100857DFA /* Query.swift */,
 				52C0D3B81C27D45100857DFA /* QueryFormatter.swift */,
+				528860381C310FE200DFDA99 /* QueryParameterType.swift */,
 				52C0D3B91C27D45100857DFA /* Result.swift */,
+				528860361C310E2300DFDA99 /* ResultType.swift */,
 				52EF0E1D1C2B19C8004C8BD2 /* Transaction.swift */,
 			);
 			name = Sources;
@@ -302,8 +308,10 @@
 				52C0D3BC1C27D45100857DFA /* Date.swift in Sources */,
 				52C0D3BF1C27D45100857DFA /* Query.swift in Sources */,
 				52C0D3C11C27D45100857DFA /* Result.swift in Sources */,
+				528860391C310FE200DFDA99 /* QueryParameterType.swift in Sources */,
 				52EF0E1E1C2B19C8004C8BD2 /* Transaction.swift in Sources */,
 				52C0D3BB1C27D45100857DFA /* Connection.swift in Sources */,
+				528860371C310E2300DFDA99 /* ResultType.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

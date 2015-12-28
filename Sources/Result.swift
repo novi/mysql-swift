@@ -14,74 +14,100 @@ public protocol QueryRowResultType {
     static func decodeRow(r: QueryRowResult) throws -> Self //.QueryResultType
 }
 
-public func <| <T>(r: QueryRowResult, key: String) throws -> T {
+public func <| <T: StringConstructible>(r: QueryRowResult, key: String) throws -> T {
     return try r.getValue(key)
 }
 
-public func <| <T>(r: QueryRowResult, index: Int) throws -> T {
+public func <| <T: StringConstructible>(r: QueryRowResult, index: Int) throws -> T {
     return try r.getValue(index)
 }
 
-public func <|? <T>(r: QueryRowResult, key: String) throws -> T? {
+public func <|? <T: StringConstructible>(r: QueryRowResult, key: String) throws -> T? {
     return try r.getValueNullable(key)
 }
 
-public func <|? <T>(r: QueryRowResult, index: Int) throws -> T? {
+public func <|? <T: StringConstructible>(r: QueryRowResult, index: Int) throws -> T? {
     return try r.getValueNullable(index)
+}
+
+public protocol StringConstructible {
+    static func from(string string: String) -> Self?
 }
 
 public struct QueryRowResult {
     
-    let row: ([String:Any], [Any])
+    let fields: [Connection.Field]
+    let cols: [Any]
+    let columnMap: [String: Any]
     
-    init(_ row: ([String:Any], [Any])) {
-        self.row = row
+    init(fields: [Connection.Field], cols: [Any]) {
+        self.fields = fields
+        self.cols = cols
+        var map:[String: Any] = [:]
+        for i in 0..<cols.count {
+            map[fields[i].name] = cols[i]
+        }
+        self.columnMap = map
     }
     
     func isNull(key: String) -> Bool {
-        if row.0[key] is Connection.NullValue {
+        if columnMap[key] is Connection.NullValue {
             return true
         }
         return false
     }
     
     func checkFieldBounds(index: Int) throws {
-        guard row.1.count > index else {
-            throw QueryError.FieldIndexOutOfBounds(fieldCount: row.1.count, attemped: index)
+        guard cols.count > index else {
+            throw QueryError.FieldIndexOutOfBounds(fieldCount: cols.count, attemped: index)
         }
     }
     
-    public func getValueNullable<T>(index: Int) throws -> T? {
+    func castOrFail<T: StringConstructible>(obj: String, key: String) throws -> T {
+        guard let val = T.from(string: obj) as T? else {
+            throw QueryError.CastError(actual: obj, expected: "\(T.self)", key: key)
+        }
+        return val
+    }
+    
+    public func getValueNullable<T: StringConstructible>(index: Int) throws -> T? {
         try checkFieldBounds(index)
         
-        if row.1[index] is Connection.NullValue {
+        if cols[index] is Connection.NullValue {
             return nil
         }
         return try self.getValue(index) as T
     }
     
-    public func getValueNullable<T>(key: String) throws -> T? {
+    public func getValueNullable<T: StringConstructible>(key: String) throws -> T? {
         if isNull(key) {
             return nil
         }
         return try self.getValue(key) as T
     }
     
-    public func getValue<T>(index: Int) throws -> T {
+    public func getValue<T: StringConstructible>(index: Int) throws -> T {
         try checkFieldBounds(index)
-        guard let val = row.1[index] as? T else {
-            throw QueryError.CastError(actual: "\(row.1[index])", expected: "\(T.self)", key: "\(index)")
+        if let obj = cols[index] as? T {
+            return obj
         }
-        return val
+        let key = "\(index)"
+        guard let val = cols[index] as? String else {
+            throw QueryError.CastError(actual: "\(cols[index])", expected: "\(String.self)", key: key)
+        }
+        return try castOrFail(val, key: key)
     }
     
-    public func getValue<T>(key: String) throws -> T {
-        guard let obj = row.0[key] as Any? else {
+    public func getValue<T: StringConstructible>(key: String) throws -> T {
+        if let obj = columnMap[key] as? T {
+            return obj
+        }
+        if columnMap[key] == nil {
             throw QueryError.MissingKeyError(key: key)
         }
-        guard let val = obj as? T else {
-            throw QueryError.CastError(actual: "\(row.0[key])", expected: "\(T.self)", key: key)
+        guard let obj = columnMap[key] as? String else {
+            throw QueryError.CastError(actual: "\(columnMap[key])", expected: "\(String.self)", key: key)
         }
-        return val
+        return try castOrFail(obj, key: key)
     }    
 }
