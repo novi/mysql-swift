@@ -12,7 +12,7 @@ public enum QueryError: ErrorType {
     case ResultFetchError(String)
     case ResultNoField
     case ResultFieldFetchError
-    case ValueError(String)
+    case ResultParseError(String)
     
     case FieldIndexOutOfBounds(fieldCount: Int, attemped: Int)
     case CastError(actual: String, expected: String, key: String)

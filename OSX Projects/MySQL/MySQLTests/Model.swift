@@ -36,8 +36,8 @@ struct Row {
                 r <|? 5,
                 r <|? 6,
                 
-                (r <| 7 as Int) == 0 ? false : true,
-                (r <|? 8 as Int?).map { $0 == 0 ? false : true }
+                r <| 7,
+                r <|? 8
             )
         }
         
@@ -84,8 +84,8 @@ struct Row {
                 r <|? "age_Optional",
                 r <|? "created_at_Optional",
                 
-                (r <| "done" as Int) == 0 ? false : true,
-                (r <|? "done_Optional" as Int?).map { $0 == 0 ? false : true }
+                r <| "done",
+                r <|? "done_Optional"
             )
         }
     }
