@@ -56,7 +56,7 @@ let params: (Int, Int?, String, QueryArray<Int>) = (
 	nameParam,
 	QueryArray<Int>(ids)
 )	
-let rows: [User] = try conn.query("SELECT id,name,created_at,age FROM users WHERE (age > ? OR age is ?) OR name = ? OR id IN (?)", buildParam(params) ])
+let rows: [User] = try conn.query("SELECT id,name,created_at,age FROM users WHERE (age > ? OR age is ?) OR name = ? OR id IN (?)", build(params) ])
 
 // Inserting
 let age: Int? = 26

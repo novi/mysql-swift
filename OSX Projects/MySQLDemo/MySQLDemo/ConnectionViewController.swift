@@ -79,7 +79,7 @@ class ConnectionViewController: NSViewController, NSTableViewDataSource {
             )            
             
             let status1 = try pool.execute { conn in
-                try conn.query("INSERT INTO users SET name = ?, age = ?, created_at = ?", buildParam(params) ) as QueryStatus
+                try conn.query("INSERT INTO users SET name = ?, age = ?, created_at = ?", build(params) ) as QueryStatus
             }
             
             print(status1)
