@@ -31,6 +31,8 @@ public protocol ConnectionOption {
     var database: String { get }
     var timeZone: Connection.TimeZone { get }
     var encoding: Connection.Encoding { get }
+    var timeout: Int { get }
+    var reconnect: Bool { get }
 }
 
 public extension ConnectionOption {
@@ -40,6 +42,12 @@ public extension ConnectionOption {
     }
     var encoding: Connection.Encoding {
         return .UTF8
+    }
+    var timeout: Int {
+        return 10
+    }
+    var reconnect: Bool {
+        return false
     }
 }
 
@@ -100,17 +108,15 @@ final public class Connection {
         
         let mysql = mysql_init(nil)
         
-        let timeout: Int = 10
         let timeoutPtr = UnsafeMutablePointer<Int>.alloc(1)
-        timeoutPtr.memory = timeout
+        timeoutPtr.memory = options.timeout
         defer {
             timeoutPtr.dealloc(1)
         }
         mysql_options(mysql, MYSQL_OPT_CONNECT_TIMEOUT, timeoutPtr)
         
-        let reconnect: my_bool = 1
         let reconnectPtr = UnsafeMutablePointer<my_bool>.alloc(1)
-        reconnectPtr.memory = reconnect
+        reconnectPtr.memory = options.reconnect == false ? 0 : 1
         defer {
             reconnectPtr.dealloc(1)
         }

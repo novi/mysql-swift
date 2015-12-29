@@ -34,9 +34,16 @@ final public class ConnectionPool: CustomStringConvertible {
     var pool: [Connection] = []
     var mutex: UnsafeMutablePointer<pthread_mutex_t> = nil
     
+    static var libraryInitialized: Bool = false
+    
     public let options: ConnectionOption
     public init(options: ConnectionOption) {
         self.options = options
+        
+        if self.dynamicType.libraryInitialized == false && mysql_server_init(0, nil, nil) != 0 { // mysql_library_init
+            fatalError("could not initialize MySQL library")
+        }
+        self.dynamicType.libraryInitialized = true
         
         mutex = UnsafeMutablePointer.alloc(sizeof(pthread_mutex_t))
         pthread_mutex_init(mutex, nil)
@@ -97,7 +104,7 @@ final public class ConnectionPool: CustomStringConvertible {
                 }
             }
             return count
-        } as Int
+            } as Int
     }
     
     public var description: String {
