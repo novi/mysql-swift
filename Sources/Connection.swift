@@ -99,6 +99,22 @@ final public class Connection {
         dispose()
         
         let mysql = mysql_init(nil)
+        
+        let timeout: Int = 10
+        let timeoutPtr = UnsafeMutablePointer<Int>.alloc(1)
+        timeoutPtr.memory = timeout
+        defer {
+            timeoutPtr.dealloc(1)
+        }
+        mysql_options(mysql, MYSQL_OPT_CONNECT_TIMEOUT, timeoutPtr)
+        
+        let reconnect: my_bool = 1
+        let reconnectPtr = UnsafeMutablePointer<my_bool>.alloc(1)
+        reconnectPtr.memory = reconnect
+        defer {
+            reconnectPtr.dealloc(1)
+        }
+        
         if mysql_real_connect(mysql,
             options.host,
             options.user,
