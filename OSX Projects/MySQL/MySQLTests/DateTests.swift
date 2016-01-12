@@ -41,4 +41,11 @@ class DateTests : XCTestCase {
         XCTAssertEqual(sqlYear.escapedValue(), "'2021-01-01 00:00:00'")
     }
     
+    func testSQLCalendar() {
+        let gmt = CFTimeZoneCreateWithTimeIntervalFromGMT(nil, 100)
+        let cal1 = SQLDateCalender.calendarFor(gmt)
+        let cal2 = SQLDateCalender.calendarFor(gmt)
+        XCTAssertTrue(unsafeAddressOf(cal1) == unsafeAddressOf(cal2))
+    }
+    
 }

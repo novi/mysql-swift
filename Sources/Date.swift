@@ -14,8 +14,10 @@ final class SQLDateCalender {
     
     static var cals = NSMutableDictionary()
     static func calendarFor(timeZone: CFTimeZoneRef) -> NSCalendar {
-        if let cal = cals.objectForKey(NSValue(pointer: unsafeAddressOf(timeZone))) as? NSCalendar {
-            return cal
+        if let cal = cals.objectForKey(unsafeAddressOf(timeZone).hashValue) as? NSCalendar {
+            if cal.timeZone.isEqualToTimeZone(timeZone) {
+                return cal
+            }
         }
         let newCal = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
         newCal.timeZone = timeZone
@@ -24,7 +26,7 @@ final class SQLDateCalender {
     }
     
     static func saveCalendar(cal: NSCalendar, forTimeZone timeZone: CFTimeZoneRef) {
-        cals.setObject(cal, forKey: NSValue(pointer: unsafeAddressOf(timeZone)))
+        cals.setObject(cal, forKey: unsafeAddressOf(timeZone).hashValue)
     }
 }
 
