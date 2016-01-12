@@ -52,7 +52,7 @@ class QueryTests: QueryTestBase {
     }
     
     var anotherDate: SQLDate {
-        return SQLDate(absoluteTime: 60*60*24*67, timeZone: pool.options.timeZone.timeZone)
+        return SQLDate(date: NSDate(timeIntervalSinceReferenceDate: 60*60*24*67) , timeZone: pool.options.timeZone.timeZone)
     }
     
     func testInsertRow() {
@@ -76,8 +76,14 @@ class QueryTests: QueryTestBase {
         }
         XCTAssertEqual(status2.insertedId, 2)
         
-        let rows:[User] = try! pool.execute { conn in
+        var rows:[User]!
+        
+        do {
+            rows = try pool.execute { conn in
             try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional FROM \(constants.tableName)")
+        }
+        } catch (let e) {
+            print(e)
         }
         
         XCTAssertEqual(rows.count, 2)
