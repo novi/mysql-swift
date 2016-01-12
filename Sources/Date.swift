@@ -9,20 +9,42 @@
 import CoreFoundation
 import Foundation
 
+final class SQLDateCalender {
+    static let mutex = Mutex()
+    
+    static var cals = NSMutableDictionary()
+    static func calendarFor(timeZone: CFTimeZoneRef) -> NSCalendar {
+        if let cal = cals.objectForKey(NSValue(pointer: unsafeAddressOf(timeZone))) as? NSCalendar {
+            return cal
+        }
+        let newCal = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
+        newCal.timeZone = timeZone
+        self.saveCalendar(newCal, forTimeZone: timeZone)
+        return newCal
+    }
+    
+    static func saveCalendar(cal: NSCalendar, forTimeZone timeZone: CFTimeZoneRef) {
+        cals.setObject(cal, forKey: NSValue(pointer: unsafeAddressOf(timeZone)))
+    }
+}
 
 public struct SQLDate {
     let date: NSTimeInterval
-    let cal: NSCalendar
+    let timeZone: CFTimeZoneRef
     
     init(date: NSDate, timeZone: CFTimeZoneRef) {
         self.date = date.timeIntervalSince1970
-        self.cal = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
-        self.cal.timeZone = timeZone
+        self.timeZone = timeZone
     }
     
     init(sqlDate: String, timeZone: CFTimeZoneRef) throws {
-        self.cal = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
-        self.cal.timeZone = timeZone
+        self.timeZone = timeZone
+        
+        SQLDateCalender.mutex.lock()
+        
+        defer {
+            SQLDateCalender.mutex.unlock()
+        }
         
         switch sqlDate.characters.count {
         case 4:
@@ -34,6 +56,7 @@ public struct SQLDate {
                 comp.hour = 0
                 comp.minute = 0
                 comp.second = 0
+                let cal = SQLDateCalender.calendarFor(timeZone)
                 if let date = cal.dateFromComponents(comp) {
                     self.date = date.timeIntervalSince1970
                     return
@@ -54,6 +77,7 @@ public struct SQLDate {
                     comp.hour = hour
                     comp.minute = minute
                     comp.second = second
+                    let cal = SQLDateCalender.calendarFor(timeZone)
                     if let date = cal.dateFromComponents(comp) {
                         self.date = date.timeIntervalSince1970
                         return
@@ -86,7 +110,10 @@ public struct SQLDate {
 
 extension SQLDate: QueryParameter {
     public func escapedValue() -> String {
-        let comp = cal.components([ .Year, .Month,  .Day,  .Hour, .Minute, .Second], fromDate: NSDate(timeIntervalSince1970: date))
+        let comp = SQLDateCalender.mutex.sync { () -> NSDateComponents in
+            let cal = SQLDateCalender.calendarFor(timeZone)
+            return cal.components([ .Year, .Month,  .Day,  .Hour, .Minute, .Second], fromDate: NSDate(timeIntervalSince1970: date))
+        }
         // YYYY-MM-DD HH:MM:SS
         return "'\(padNum(comp.year, digits: 4))-\(padNum(comp.month))-\(padNum(comp.day)) \(padNum(comp.hour)):\(padNum(comp.minute)):\(padNum(comp.second))'"
     }
@@ -94,7 +121,7 @@ extension SQLDate: QueryParameter {
 
 extension SQLDate : CustomStringConvertible {
     public var description: String {
-        return escapedValue() + " " + (CFTimeZoneGetName(cal.timeZone) as! String)
+        return escapedValue() + " " + (CFTimeZoneGetName(timeZone) as! String)
     }
 }
 
