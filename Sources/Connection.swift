@@ -62,7 +62,7 @@ extension Connection {
             self.timeZone = CFTimeZoneCreateWithTimeIntervalFromGMT(nil, Double(GMTOffset))
         }
         public var hashValue: Int {
-            return unsafeAddressOf(self).hashValue
+            return Int(bitPattern: CFHash(timeZone))
         }
     }
     
