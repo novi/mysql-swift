@@ -15,30 +15,37 @@ class DateTests : XCTestCase {
     func testSQLDate() {
         
         let gmt = CFTimeZoneCreateWithTimeIntervalFromGMT(nil, 0)
-        let timeZone = CFTimeZoneCreateWithName(nil, "America/Los_Angeles", true)
+        let losAngeles = CFTimeZoneCreateWithName(nil, "America/Los_Angeles", true)
         
         let expected = "2003-01-02 03:04:05" // no timezone
         
-        let date = SQLDate(absoluteTime: 63169445, timeZone: gmt) // "2003-01-02 03:04:05" at GMT
+        let date = SQLDate(date: NSDate(timeIntervalSince1970: 1041476645), timeZone: gmt) // "2003-01-02 03:04:05" at GMT
         XCTAssertEqual(date.escapedValue(), "'\(expected)'")
         
-        let sqlDate = try! SQLDate(sqlDate: expected, timeZone: timeZone)
-        let dateAtLos = SQLDate(absoluteTime: 63169445 + 60*60*8, timeZone: timeZone)
+        let sqlDate = try! SQLDate(sqlDate: expected, timeZone: losAngeles)
+        let dateAtLos = SQLDate(date: NSDate(timeIntervalSince1970: 1041476645 + 3600*8), timeZone: losAngeles)
         
-        XCTAssertEqual(sqlDate.absoluteTime, dateAtLos.absoluteTime, "create date from sql string")
+        XCTAssertEqual(sqlDate.date, dateAtLos.date, "create date from sql string")
         XCTAssertEqual(sqlDate.escapedValue(), "'\(expected)'")
         
         XCTAssertEqual(sqlDate, dateAtLos)
         
-        XCTAssertNotEqual(try! SQLDate(sqlDate: expected, timeZone: timeZone),
+        XCTAssertNotEqual(try! SQLDate(sqlDate: expected, timeZone: losAngeles),
             try! SQLDate(sqlDate: expected, timeZone: gmt))
         
-        XCTAssertEqual(try! SQLDate(sqlDate: expected, timeZone: timeZone),
-            try! SQLDate(sqlDate: expected, timeZone: timeZone))
+        XCTAssertEqual(try! SQLDate(sqlDate: expected, timeZone: losAngeles),
+            try! SQLDate(sqlDate: expected, timeZone: losAngeles))
         
         
         let sqlYear = try! SQLDate(sqlDate: "2021", timeZone: gmt)
         XCTAssertEqual(sqlYear.escapedValue(), "'2021-01-01 00:00:00'")
+    }
+    
+    func testSQLCalendar() {
+        let gmt = CFTimeZoneCreateWithTimeIntervalFromGMT(nil, 100)
+        let cal1 = SQLDateCalender.calendarFor(gmt)
+        let cal2 = SQLDateCalender.calendarFor(gmt)
+        XCTAssertTrue(unsafeAddressOf(cal1) == unsafeAddressOf(cal2))
     }
     
 }

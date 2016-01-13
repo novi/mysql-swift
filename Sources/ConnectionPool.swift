@@ -12,6 +12,7 @@
 
 import CMySQL
 
+// TODO: use Mutex class
 func Sync<T>(mutex: UnsafeMutablePointer<pthread_mutex_t>, @noescape _ block: () -> T) -> T {
     pthread_mutex_lock(mutex)
     let result = block()

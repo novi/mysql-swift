@@ -7,40 +7,83 @@
 //
 
 import CoreFoundation
+import Foundation
+
+final class SQLDateCalender {
+    static let mutex = Mutex()
+    
+    static var cals = NSMutableDictionary()
+    static func calendarFor(timeZone: CFTimeZoneRef) -> NSCalendar {
+        if let cal = cals.objectForKey(unsafeAddressOf(timeZone).hashValue) as? NSCalendar {
+            if cal.timeZone.isEqualToTimeZone(timeZone) {
+                return cal
+            }
+        }
+        let newCal = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
+        newCal.timeZone = timeZone
+        self.saveCalendar(newCal, forTimeZone: timeZone)
+        return newCal
+    }
+    
+    static func saveCalendar(cal: NSCalendar, forTimeZone timeZone: CFTimeZoneRef) {
+        cals.setObject(cal, forKey: unsafeAddressOf(timeZone).hashValue)
+    }
+}
 
 public struct SQLDate {
-    let absoluteTime: CFAbsoluteTime
+    let date: NSTimeInterval
     let timeZone: CFTimeZoneRef
     
-    init(absoluteTime: CFAbsoluteTime, timeZone: CFTimeZoneRef) {
-        self.absoluteTime = absoluteTime
+    init(date: NSDate, timeZone: CFTimeZoneRef) {
+        self.date = date.timeIntervalSince1970
         self.timeZone = timeZone
     }
     
     init(sqlDate: String, timeZone: CFTimeZoneRef) throws {
         self.timeZone = timeZone
         
+        SQLDateCalender.mutex.lock()
+        
+        defer {
+            SQLDateCalender.mutex.unlock()
+        }
+        
         switch sqlDate.characters.count {
         case 4:
-            if let year = Int32(sqlDate) {
-                let date = CFGregorianDate(year: year, month: 1, day: 1, hour: 0, minute: 0, second: 0)
-                self.absoluteTime = CFGregorianDateGetAbsoluteTime(date, timeZone)
-                return
+            if let year = Int(sqlDate) {
+                let comp = NSDateComponents()
+                comp.year = year
+                comp.month = 1
+                comp.day = 1
+                comp.hour = 0
+                comp.minute = 0
+                comp.second = 0
+                let cal = SQLDateCalender.calendarFor(timeZone)
+                if let date = cal.dateFromComponents(comp) {
+                    self.date = date.timeIntervalSince1970
+                    return
+                }
             }
         case 19:
             let chars:[Character] = Array(sqlDate.characters)
-            if let year = Int32(String(chars[0...3])),
-                let month = Int8(String(chars[5...6])),
-                let day = Int8(String(chars[8...9])),
-                let hour = Int8(String(chars[11...12])),
-                let minute = Int8(String(chars[14...15])),
-                let second = Int8(String(chars[17...18])) {
-                    let date = CFGregorianDate(year: year, month: month, day: day, hour: hour, minute: minute, second: Double(second))
-                    if CFGregorianDateIsValid(date, CFGregorianUnitFlags.AllUnits.rawValue) == false {
-                        //throw QueryError.InvalidSQLDate(sqlDate)
+            if let year = Int(String(chars[0...3])),
+                let month = Int(String(chars[5...6])),
+                let day = Int(String(chars[8...9])),
+                let hour = Int(String(chars[11...12])),
+                let minute = Int(String(chars[14...15])),
+                let second = Int(String(chars[17...18])) where year > 0 && day > 0 && month > 0 {
+                    let comp = NSDateComponents()
+                    comp.year = year
+                    comp.month = month
+                    comp.day = day
+                    comp.hour = hour
+                    comp.minute = minute
+                    comp.second = second
+                    let cal = SQLDateCalender.calendarFor(timeZone)
+                    if let date = cal.dateFromComponents(comp) {
+                        self.date = date.timeIntervalSince1970
+                        return
                     }
-                    self.absoluteTime = CFGregorianDateGetAbsoluteTime(date, timeZone)
-                    return
             }
         default: break
         }
@@ -69,10 +112,12 @@ public struct SQLDate {
 
 extension SQLDate: QueryParameter {
     public func escapedValue() -> String {
-        
-        let cal = CFAbsoluteTimeGetGregorianDate(absoluteTime, timeZone)
+        let comp = SQLDateCalender.mutex.sync { () -> NSDateComponents in
+            let cal = SQLDateCalender.calendarFor(timeZone)
+            return cal.components([ .Year, .Month,  .Day,  .Hour, .Minute, .Second], fromDate: NSDate(timeIntervalSince1970: date))
+        }
         // YYYY-MM-DD HH:MM:SS
-        return "'\(padNum(cal.year, digits: 4))-\(padNum(cal.month))-\(padNum(cal.day)) \(padNum(cal.hour)):\(padNum(cal.minute)):\(padNum(Int(cal.second)))'"
+        return "'\(padNum(comp.year, digits: 4))-\(padNum(comp.month))-\(padNum(comp.day)) \(padNum(comp.hour)):\(padNum(comp.minute)):\(padNum(comp.second))'"
     }
 }
 
@@ -84,7 +129,7 @@ extension SQLDate : CustomStringConvertible {
 
 extension SQLDate {
     public static func now(timeZone timeZone: Connection.TimeZone) -> SQLDate {
-        return SQLDate(absoluteTime: CFAbsoluteTimeGetCurrent(), timeZone: timeZone.timeZone)
+        return SQLDate(date: NSDate(), timeZone: timeZone.timeZone)
     }
 }
 
@@ -93,6 +138,6 @@ extension SQLDate: Equatable {
 }
 
 public func ==(lhs: SQLDate, rhs: SQLDate) -> Bool {
-    return Int(lhs.absoluteTime) == Int(rhs.absoluteTime)
+    return lhs.date == rhs.date
 }
 
