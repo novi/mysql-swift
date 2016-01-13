@@ -41,7 +41,7 @@ extension Bool: StringConstructible {
         guard let val = Int(string) else {
             return nil
         }
-        return Bool(val)
+        return Bool(val == 0 ? false : true )
     }
 }
 

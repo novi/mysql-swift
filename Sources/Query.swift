@@ -54,12 +54,15 @@ extension Connection {
         func castValue(str: String, row: Int, timeZone: TimeZone) throws -> Any {
             if type == MYSQL_TYPE_DATE ||
                 type == MYSQL_TYPE_DATETIME ||
-                type == MYSQL_TYPE_DATETIME2 ||
                 type == MYSQL_TYPE_TIME ||
-                type == MYSQL_TYPE_TIME2 ||
-                type == MYSQL_TYPE_TIMESTAMP ||
-                type == MYSQL_TYPE_TIMESTAMP2 {
-                return try SQLDate(sqlDate: str, timeZone: timeZone.timeZone)
+                type == MYSQL_TYPE_TIMESTAMP
+                
+                //type == MYSQL_TYPE_TIME2 ||
+                //type == MYSQL_TYPE_DATETIME2 ||
+                //type == MYSQL_TYPE_TIMESTAMP2
+            
+            {
+                return try SQLDate(sqlDate: str, timeZone: timeZone)
             }
             if type == MYSQL_TYPE_BLOB ||
                 type == MYSQL_TYPE_BIT {
@@ -131,7 +134,7 @@ extension Connection {
                 }
                 
             }
-            rowCount++
+            rowCount += 1
             if fields.count != cols.count {
                 throw QueryError.ResultParseError("")
             }

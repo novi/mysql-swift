@@ -12,34 +12,33 @@ import Foundation
 final class SQLDateCalender {
     static let mutex = Mutex()
     
-    static var cals = NSMutableDictionary()
-    static func calendarFor(timeZone: CFTimeZoneRef) -> NSCalendar {
-        if let cal = cals.objectForKey(unsafeAddressOf(timeZone).hashValue) as? NSCalendar {
-            if cal.timeZone.isEqualToTimeZone(timeZone) {
-                return cal
-            }
+    static var cals: [Connection.TimeZone:NSCalendar] = [:]
+    
+    static func calendarFor(timeZone: Connection.TimeZone) -> NSCalendar {
+        if let cal = cals[timeZone] {
+            return cal
         }
         let newCal = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
-        newCal.timeZone = timeZone
+        newCal.timeZone = timeZone.timeZone as! NSTimeZone
         self.saveCalendar(newCal, forTimeZone: timeZone)
         return newCal
     }
     
-    static func saveCalendar(cal: NSCalendar, forTimeZone timeZone: CFTimeZoneRef) {
-        cals.setObject(cal, forKey: unsafeAddressOf(timeZone).hashValue)
+    static func saveCalendar(cal: NSCalendar, forTimeZone timeZone: Connection.TimeZone) {
+        cals[timeZone] = cal
     }
 }
 
 public struct SQLDate {
     let date: NSTimeInterval
-    let timeZone: CFTimeZoneRef
+    let timeZone: Connection.TimeZone
     
-    init(date: NSDate, timeZone: CFTimeZoneRef) {
+    init(date: NSDate, timeZone: Connection.TimeZone) {
         self.date = date.timeIntervalSince1970
         self.timeZone = timeZone
     }
     
-    init(sqlDate: String, timeZone: CFTimeZoneRef) throws {
+    init(sqlDate: String, timeZone: Connection.TimeZone) throws {
         self.timeZone = timeZone
         
         SQLDateCalender.mutex.lock()
@@ -112,10 +111,11 @@ public struct SQLDate {
 
 extension SQLDate: QueryParameter {
     public func escapedValue() -> String {
-        let comp = SQLDateCalender.mutex.sync { () -> NSDateComponents in
+        let comp = SQLDateCalender.mutex.sync { () -> NSDateComponents? in
             let cal = SQLDateCalender.calendarFor(timeZone)
             return cal.components([ .Year, .Month,  .Day,  .Hour, .Minute, .Second], fromDate: NSDate(timeIntervalSince1970: date))
-        }
+        }! // TODO: in Linux
+        
         // YYYY-MM-DD HH:MM:SS
         return "'\(padNum(comp.year, digits: 4))-\(padNum(comp.month))-\(padNum(comp.day)) \(padNum(comp.hour)):\(padNum(comp.minute)):\(padNum(comp.second))'"
     }
@@ -123,13 +123,13 @@ extension SQLDate: QueryParameter {
 
 extension SQLDate : CustomStringConvertible {
     public var description: String {
-        return escapedValue() + " " + (CFTimeZoneGetName(timeZone) as! String)
+        return escapedValue() + " " + (CFTimeZoneGetName(timeZone.timeZone) as! String)
     }
 }
 
 extension SQLDate {
     public static func now(timeZone timeZone: Connection.TimeZone) -> SQLDate {
-        return SQLDate(date: NSDate(), timeZone: timeZone.timeZone)
+        return SQLDate(date: NSDate(), timeZone: timeZone)
     }
 }
 

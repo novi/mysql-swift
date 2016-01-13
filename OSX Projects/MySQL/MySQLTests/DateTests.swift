@@ -14,8 +14,8 @@ class DateTests : XCTestCase {
     
     func testSQLDate() {
         
-        let gmt = CFTimeZoneCreateWithTimeIntervalFromGMT(nil, 0)
-        let losAngeles = CFTimeZoneCreateWithName(nil, "America/Los_Angeles", true)
+        let gmt = Connection.TimeZone(GMTOffset: 0)
+        let losAngeles = Connection.TimeZone(name: "America/Los_Angeles")
         
         let expected = "2003-01-02 03:04:05" // no timezone
         
@@ -42,7 +42,7 @@ class DateTests : XCTestCase {
     }
     
     func testSQLCalendar() {
-        let gmt = CFTimeZoneCreateWithTimeIntervalFromGMT(nil, 100)
+        let gmt = Connection.TimeZone(GMTOffset: 100)
         let cal1 = SQLDateCalender.calendarFor(gmt)
         let cal2 = SQLDateCalender.calendarFor(gmt)
         XCTAssertTrue(unsafeAddressOf(cal1) == unsafeAddressOf(cal2))
