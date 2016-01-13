@@ -56,7 +56,7 @@ extension Connection {
     public final class TimeZone: Equatable, Hashable {
         let timeZone: CFTimeZoneRef
         public init(name: String) {
-            self.timeZone = CFTimeZoneCreateWithName(nil, name as! CFStringRef, true)
+            self.timeZone = CFTimeZoneCreateWithName(nil, unsafeBitCast(name as NSString, CFStringRef.self), true)
         }
         public init(GMTOffset: Int) {
             self.timeZone = CFTimeZoneCreateWithTimeIntervalFromGMT(nil, Double(GMTOffset))
@@ -76,7 +76,7 @@ extension Connection {
 public func ==(lhs: Connection.TimeZone, rhs: Connection.TimeZone) -> Bool {
     return CFEqual(lhs.timeZone, rhs.timeZone) ||
     CFTimeZoneGetSecondsFromGMT(lhs.timeZone, 0) == CFTimeZoneGetSecondsFromGMT(rhs.timeZone, 0) ||
-        (CFTimeZoneGetName(lhs.timeZone) as! String) == (CFTimeZoneGetName(rhs.timeZone) as! String)
+        CFStringCompare(CFTimeZoneGetName(lhs.timeZone), CFTimeZoneGetName(rhs.timeZone), []) == .CompareEqualTo
 }
 
 extension Connection {

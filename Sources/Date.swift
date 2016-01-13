@@ -19,7 +19,7 @@ final class SQLDateCalender {
             return cal
         }
         let newCal = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
-        newCal.timeZone = timeZone.timeZone as! NSTimeZone
+        newCal.timeZone = unsafeBitCast(timeZone.timeZone, NSTimeZone.self) // TODO: in Linux
         self.saveCalendar(newCal, forTimeZone: timeZone)
         return newCal
     }
@@ -123,7 +123,7 @@ extension SQLDate: QueryParameter {
 
 extension SQLDate : CustomStringConvertible {
     public var description: String {
-        return escapedValue() + " " + (CFTimeZoneGetName(timeZone.timeZone) as! String)
+        return NSDate(timeIntervalSince1970: date).description + "/" + "\(CFTimeZoneGetName(timeZone.timeZone))"
     }
 }
 
