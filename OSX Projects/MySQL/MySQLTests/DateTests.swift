@@ -46,6 +46,8 @@ class DateTests : XCTestCase {
         let cal1 = SQLDateCalender.calendarFor(gmt)
         let cal2 = SQLDateCalender.calendarFor(gmt)
         XCTAssertTrue(unsafeAddressOf(cal1) == unsafeAddressOf(cal2))
+        XCTAssertEqual(cal1, cal2)
+        XCTAssertEqual(cal1.hashValue, cal2.hashValue)
     }
     
 }
