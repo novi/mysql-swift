@@ -53,13 +53,16 @@ public extension ConnectionOption {
 
 extension Connection {
     
-    public struct TimeZone: Equatable {
+    public final class TimeZone: Equatable, Hashable {
         let timeZone: CFTimeZoneRef
         public init(name: String) {
-            self.timeZone = CFTimeZoneCreateWithName(nil, name, true)
+            self.timeZone = CFTimeZoneCreateWithName(nil, name as! CFStringRef, true)
         }
         public init(GMTOffset: Int) {
             self.timeZone = CFTimeZoneCreateWithTimeIntervalFromGMT(nil, Double(GMTOffset))
+        }
+        public var hashValue: Int {
+            return unsafeAddressOf(self).hashValue
         }
     }
     
@@ -73,7 +76,7 @@ extension Connection {
 public func ==(lhs: Connection.TimeZone, rhs: Connection.TimeZone) -> Bool {
     return CFEqual(lhs.timeZone, rhs.timeZone) ||
     CFTimeZoneGetSecondsFromGMT(lhs.timeZone, 0) == CFTimeZoneGetSecondsFromGMT(rhs.timeZone, 0) ||
-        (CFTimeZoneGetName(lhs.timeZone) as String) == (CFTimeZoneGetName(rhs.timeZone) as String)
+        (CFTimeZoneGetName(lhs.timeZone) as! String) == (CFTimeZoneGetName(rhs.timeZone) as! String)
 }
 
 extension Connection {
@@ -84,7 +87,7 @@ extension Connection {
     }
 }
 
-final public class Connection {
+public final class Connection {
     
     var isInTransaction: Int = 0
     var isInUse: Bool = false

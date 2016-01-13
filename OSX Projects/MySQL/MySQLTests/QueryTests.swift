@@ -48,11 +48,11 @@ class QueryTests: QueryTestBase {
     }
     
     var someDate: SQLDate {
-        return try! SQLDate(sqlDate: "2015-12-27 16:54:00", timeZone: pool.options.timeZone.timeZone)
+        return try! SQLDate(sqlDate: "2015-12-27 16:54:00", timeZone: pool.options.timeZone)
     }
     
     var anotherDate: SQLDate {
-        return SQLDate(date: NSDate(timeIntervalSinceReferenceDate: 60*60*24*67) , timeZone: pool.options.timeZone.timeZone)
+        return SQLDate(date: NSDate(timeIntervalSinceReferenceDate: 60*60*24*67) , timeZone: pool.options.timeZone)
     }
     
     func testInsertRow() {

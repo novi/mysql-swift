@@ -6,7 +6,9 @@
 //  Copyright © 2016 Yusuke Ito. All rights reserved.
 //
 
-
+#if os(Linux)
+    import Glibc
+#endif
 
 final class Mutex {
     var mutex = pthread_mutex_t()
