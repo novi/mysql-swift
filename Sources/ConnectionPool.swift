@@ -12,14 +12,6 @@
 
 import CMySQL
 
-// TODO: use Mutex class
-func Sync<T>(mutex: UnsafeMutablePointer<pthread_mutex_t>, @noescape _ block: () -> T) -> T {
-    pthread_mutex_lock(mutex)
-    let result = block()
-    pthread_mutex_unlock(mutex)
-    return result
-}
-
 final public class ConnectionPool: CustomStringConvertible {
     
     
@@ -33,7 +25,7 @@ final public class ConnectionPool: CustomStringConvertible {
     public var maxConnections: Int = 10
     
     var pool: [Connection] = []
-    var mutex: UnsafeMutablePointer<pthread_mutex_t> = nil
+    var mutex = Mutex()
     
     static var libraryInitialized: Bool = false
     
@@ -46,8 +38,6 @@ final public class ConnectionPool: CustomStringConvertible {
         }
         self.dynamicType.libraryInitialized = true
         
-        mutex = UnsafeMutablePointer.alloc(sizeof(pthread_mutex_t))
-        pthread_mutex_init(mutex, nil)
         
         for _ in 0..<initialConnections {
             preparedNewConnection()
@@ -63,7 +53,7 @@ final public class ConnectionPool: CustomStringConvertible {
     
     public func getConnection() throws -> Connection {
         let connection: Connection? =
-        Sync(mutex) {
+        mutex.sync {
             for c in pool {
                 if c.isInUse == false && c.ping {
                     c.isInUse = true
@@ -91,13 +81,13 @@ final public class ConnectionPool: CustomStringConvertible {
                 print("rollback failed in release connection: \(e)")
             }
         }
-        Sync(mutex) {
+        mutex.sync {
             conn.isInUse = false
         }
     }
     
     var inUseConnections: Int {
-        return Sync(mutex) {
+        return mutex.sync {
             var count: Int = 0
             for c in pool {
                 if c.isInUse {
@@ -111,11 +101,6 @@ final public class ConnectionPool: CustomStringConvertible {
     public var description: String {
         return "initial: \(initialConnections), max: \(maxConnections), in use: \(inUseConnections)"
     }
-    
-    deinit {
-        pthread_mutex_destroy(mutex)
-    }
-    
 }
 
 
