@@ -8,6 +8,8 @@
 
 #if os(Linux)
     import Glibc
+#elseif os(OSX)
+    import Darwin.C
 #endif
 
 final class Mutex {

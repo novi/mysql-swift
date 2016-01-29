@@ -56,7 +56,17 @@ extension Connection {
     public final class TimeZone: Equatable, Hashable {
         let timeZone: CFTimeZoneRef
         public init(name: String) {
-            self.timeZone = CFTimeZoneCreateWithName(nil, unsafeBitCast(name as NSString, CFStringRef.self), true)
+#if os(Linux)
+                let s = name.withCString { p in
+                    CFStringCreateWithCString(nil, p, UInt32(kCFStringEncodingUTF8))
+                }
+#elseif os(OSX)
+                let s = name.withCString { p in
+                    CFStringCreateWithCString(nil, p, CFStringBuiltInEncodings.UTF8.rawValue)
+                }
+#endif
+            
+            self.timeZone = CFTimeZoneCreateWithName(nil, s, true)
         }
         public init(GMTOffset: Int) {
             self.timeZone = CFTimeZoneCreateWithTimeIntervalFromGMT(nil, Double(GMTOffset))
@@ -74,9 +84,15 @@ extension Connection {
 }
 
 public func ==(lhs: Connection.TimeZone, rhs: Connection.TimeZone) -> Bool {
+#if os(Linux)
     return CFEqual(lhs.timeZone, rhs.timeZone) ||
-    CFTimeZoneGetSecondsFromGMT(lhs.timeZone, 0) == CFTimeZoneGetSecondsFromGMT(rhs.timeZone, 0) ||
+        CFTimeZoneGetSecondsFromGMT(lhs.timeZone, 0) == CFTimeZoneGetSecondsFromGMT(rhs.timeZone, 0) ||
+        CFStringCompare(CFTimeZoneGetName(lhs.timeZone), CFTimeZoneGetName(rhs.timeZone), 0) == kCFCompareEqualTo
+#elseif os(OSX)
+    return CFEqual(lhs.timeZone, rhs.timeZone) ||
+        CFTimeZoneGetSecondsFromGMT(lhs.timeZone, 0) == CFTimeZoneGetSecondsFromGMT(rhs.timeZone, 0) ||
         CFStringCompare(CFTimeZoneGetName(lhs.timeZone), CFTimeZoneGetName(rhs.timeZone), []) == .CompareEqualTo
+#endif
 }
 
 extension Connection {

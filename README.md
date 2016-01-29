@@ -90,14 +90,23 @@ Simply use Carthage.
 * Add `github "novi/mysql-swift" "master"` to your `Cartfile`.
 * Run `carthage update`.
 
-## Swift 2.2
+## Swift 2.2 or later
 
-* Install `libmysqlclient`.
+### OS X
 
-for OS X
+* Install `mysql`(includes libmysqlclient).
+
 
 ```sh
 $ brew install mysql
+```
+
+### Ubuntu Linux
+
+* Install `libmysqlclient`
+
+```sh
+$ sudo apt-get install libmysqlclient-dev
 ```
 
 * Add `mysql-swift` to `Package.swift` of your project.
