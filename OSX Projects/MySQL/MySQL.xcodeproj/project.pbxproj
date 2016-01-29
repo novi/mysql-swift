@@ -7,26 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5202A1BA1C2C1FF30043D620 /* ConnectionPoolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5202A1B91C2C1FF30043D620 /* ConnectionPoolTests.swift */; };
 		523CBAB11C295E6D00B01A6C /* libmysqlclient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 523CBAB01C295E6D00B01A6C /* libmysqlclient.a */; };
 		523CBAB41C295EE500B01A6C /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 523CBAB21C295EE500B01A6C /* libcrypto.a */; };
 		523CBAB51C295EE500B01A6C /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 523CBAB31C295EE500B01A6C /* libssl.a */; };
 		523CBAB61C295F4300B01A6C /* libcrypto.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = 523CBAB21C295EE500B01A6C /* libcrypto.a */; };
 		523CBAB71C295F4300B01A6C /* libssl.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = 523CBAB31C295EE500B01A6C /* libssl.a */; };
 		523CBAB81C295F4300B01A6C /* libmysqlclient.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = 523CBAB01C295E6D00B01A6C /* libmysqlclient.a */; };
-		527023401C25A814003EBD9A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270233F1C25A814003EBD9A /* Constants.swift */; };
-		527023421C25A92F003EBD9A /* DateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527023411C25A92F003EBD9A /* DateTests.swift */; };
-		527023441C25A9C0003EBD9A /* EscapeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527023431C25A9C0003EBD9A /* EscapeTests.swift */; };
-		527023461C25AB23003EBD9A /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527023451C25AB23003EBD9A /* Model.swift */; };
-		527023481C25AB38003EBD9A /* ConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527023471C25AB38003EBD9A /* ConnectionTests.swift */; };
-		5270234A1C25ADEA003EBD9A /* QueryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527023491C25ADEA003EBD9A /* QueryTests.swift */; };
-		5270234E1C268AF6003EBD9A /* QueryFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5270234D1C268AF6003EBD9A /* QueryFormatterTests.swift */; };
 		527E48D21C44D2AD002C1732 /* Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527E48D11C44D2AD002C1732 /* Sync.swift */; };
 		528860371C310E2300DFDA99 /* ResultType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528860361C310E2300DFDA99 /* ResultType.swift */; };
 		528860391C310FE200DFDA99 /* QueryParameterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528860381C310FE200DFDA99 /* QueryParameterType.swift */; };
 		5292158B1BDB8CD6009B031A /* MySQL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5292158A1BDB8CD6009B031A /* MySQL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		529215921BDB8CD6009B031A /* MySQL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 529215871BDB8CD6009B031A /* MySQL.framework */; };
-		529215971BDB8CD6009B031A /* MySQLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529215961BDB8CD6009B031A /* MySQLTests.swift */; };
+		52A69D9E1C5B3CA7001DA581 /* ConnectionPoolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A69D951C5B3CA7001DA581 /* ConnectionPoolTests.swift */; };
+		52A69D9F1C5B3CA7001DA581 /* ConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A69D961C5B3CA7001DA581 /* ConnectionTests.swift */; };
+		52A69DA01C5B3CA7001DA581 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A69D971C5B3CA7001DA581 /* Constants.swift */; };
+		52A69DA11C5B3CA7001DA581 /* DateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A69D981C5B3CA7001DA581 /* DateTests.swift */; };
+		52A69DA21C5B3CA7001DA581 /* EscapeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A69D991C5B3CA7001DA581 /* EscapeTests.swift */; };
+		52A69DA31C5B3CA7001DA581 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A69D9A1C5B3CA7001DA581 /* Model.swift */; };
+		52A69DA41C5B3CA7001DA581 /* MySQLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A69D9B1C5B3CA7001DA581 /* MySQLTests.swift */; };
+		52A69DA51C5B3CA7001DA581 /* QueryFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A69D9C1C5B3CA7001DA581 /* QueryFormatterTests.swift */; };
+		52A69DA61C5B3CA7001DA581 /* QueryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A69D9D1C5B3CA7001DA581 /* QueryTests.swift */; };
 		52C0D3BB1C27D45100857DFA /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C0D3B31C27D45100857DFA /* Connection.swift */; };
 		52C0D3BC1C27D45100857DFA /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C0D3B41C27D45100857DFA /* Date.swift */; };
 		52C0D3BD1C27D45100857DFA /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C0D3B51C27D45100857DFA /* Error.swift */; };
@@ -65,17 +65,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5202A1B91C2C1FF30043D620 /* ConnectionPoolTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionPoolTests.swift; sourceTree = "<group>"; };
 		523CBAB01C295E6D00B01A6C /* libmysqlclient.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmysqlclient.a; path = /usr/local/lib/libmysqlclient.a; sourceTree = "<absolute>"; };
 		523CBAB21C295EE500B01A6C /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = /usr/local/opt/openssl/lib/libcrypto.a; sourceTree = "<absolute>"; };
 		523CBAB31C295EE500B01A6C /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = /usr/local/opt/openssl/lib/libssl.a; sourceTree = "<absolute>"; };
-		5270233F1C25A814003EBD9A /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		527023411C25A92F003EBD9A /* DateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateTests.swift; sourceTree = "<group>"; };
-		527023431C25A9C0003EBD9A /* EscapeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EscapeTests.swift; sourceTree = "<group>"; };
-		527023451C25AB23003EBD9A /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
-		527023471C25AB38003EBD9A /* ConnectionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionTests.swift; sourceTree = "<group>"; };
-		527023491C25ADEA003EBD9A /* QueryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryTests.swift; sourceTree = "<group>"; };
-		5270234D1C268AF6003EBD9A /* QueryFormatterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = QueryFormatterTests.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		527E48D11C44D2AD002C1732 /* Sync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sync.swift; sourceTree = "<group>"; };
 		528860361C310E2300DFDA99 /* ResultType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultType.swift; sourceTree = "<group>"; };
 		528860381C310FE200DFDA99 /* QueryParameterType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryParameterType.swift; sourceTree = "<group>"; };
@@ -83,8 +75,16 @@
 		5292158A1BDB8CD6009B031A /* MySQL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MySQL.h; sourceTree = "<group>"; };
 		5292158C1BDB8CD6009B031A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		529215911BDB8CD6009B031A /* MySQLTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MySQLTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		529215961BDB8CD6009B031A /* MySQLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySQLTests.swift; sourceTree = "<group>"; };
 		529215981BDB8CD6009B031A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		52A69D951C5B3CA7001DA581 /* ConnectionPoolTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConnectionPoolTests.swift; path = ../../../Tests/ConnectionPoolTests.swift; sourceTree = "<group>"; };
+		52A69D961C5B3CA7001DA581 /* ConnectionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConnectionTests.swift; path = ../../../Tests/ConnectionTests.swift; sourceTree = "<group>"; };
+		52A69D971C5B3CA7001DA581 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Constants.swift; path = ../../../Tests/Constants.swift; sourceTree = "<group>"; };
+		52A69D981C5B3CA7001DA581 /* DateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DateTests.swift; path = ../../../Tests/DateTests.swift; sourceTree = "<group>"; };
+		52A69D991C5B3CA7001DA581 /* EscapeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EscapeTests.swift; path = ../../../Tests/EscapeTests.swift; sourceTree = "<group>"; };
+		52A69D9A1C5B3CA7001DA581 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Model.swift; path = ../../../Tests/Model.swift; sourceTree = "<group>"; };
+		52A69D9B1C5B3CA7001DA581 /* MySQLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MySQLTests.swift; path = ../../../Tests/MySQLTests.swift; sourceTree = "<group>"; };
+		52A69D9C1C5B3CA7001DA581 /* QueryFormatterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QueryFormatterTests.swift; path = ../../../Tests/QueryFormatterTests.swift; sourceTree = "<group>"; };
+		52A69D9D1C5B3CA7001DA581 /* QueryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QueryTests.swift; path = ../../../Tests/QueryTests.swift; sourceTree = "<group>"; };
 		52B2AF671C21A0900004BD07 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Package.swift; path = ../../Package.swift; sourceTree = "<group>"; };
 		52C0D3B31C27D45100857DFA /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		52C0D3B41C27D45100857DFA /* Date.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
@@ -157,15 +157,15 @@
 		529215951BDB8CD6009B031A /* MySQLTests */ = {
 			isa = PBXGroup;
 			children = (
-				529215961BDB8CD6009B031A /* MySQLTests.swift */,
-				5270233F1C25A814003EBD9A /* Constants.swift */,
-				527023451C25AB23003EBD9A /* Model.swift */,
-				527023471C25AB38003EBD9A /* ConnectionTests.swift */,
-				5202A1B91C2C1FF30043D620 /* ConnectionPoolTests.swift */,
-				527023491C25ADEA003EBD9A /* QueryTests.swift */,
-				5270234D1C268AF6003EBD9A /* QueryFormatterTests.swift */,
-				527023411C25A92F003EBD9A /* DateTests.swift */,
-				527023431C25A9C0003EBD9A /* EscapeTests.swift */,
+				52A69D951C5B3CA7001DA581 /* ConnectionPoolTests.swift */,
+				52A69D961C5B3CA7001DA581 /* ConnectionTests.swift */,
+				52A69D971C5B3CA7001DA581 /* Constants.swift */,
+				52A69D981C5B3CA7001DA581 /* DateTests.swift */,
+				52A69D991C5B3CA7001DA581 /* EscapeTests.swift */,
+				52A69D9A1C5B3CA7001DA581 /* Model.swift */,
+				52A69D9B1C5B3CA7001DA581 /* MySQLTests.swift */,
+				52A69D9C1C5B3CA7001DA581 /* QueryFormatterTests.swift */,
+				52A69D9D1C5B3CA7001DA581 /* QueryTests.swift */,
 				529215981BDB8CD6009B031A /* Info.plist */,
 			);
 			path = MySQLTests;
@@ -248,7 +248,7 @@
 		5292157E1BDB8CD5009B031A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0720;
+				LastSwiftUpdateCheck = 0730;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Yusuke Ito";
 				TargetAttributes = {
@@ -319,15 +319,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				527023461C25AB23003EBD9A /* Model.swift in Sources */,
-				5270234E1C268AF6003EBD9A /* QueryFormatterTests.swift in Sources */,
-				5202A1BA1C2C1FF30043D620 /* ConnectionPoolTests.swift in Sources */,
-				5270234A1C25ADEA003EBD9A /* QueryTests.swift in Sources */,
-				527023481C25AB38003EBD9A /* ConnectionTests.swift in Sources */,
-				527023441C25A9C0003EBD9A /* EscapeTests.swift in Sources */,
-				529215971BDB8CD6009B031A /* MySQLTests.swift in Sources */,
-				527023421C25A92F003EBD9A /* DateTests.swift in Sources */,
-				527023401C25A814003EBD9A /* Constants.swift in Sources */,
+				52A69DA41C5B3CA7001DA581 /* MySQLTests.swift in Sources */,
+				52A69DA51C5B3CA7001DA581 /* QueryFormatterTests.swift in Sources */,
+				52A69D9E1C5B3CA7001DA581 /* ConnectionPoolTests.swift in Sources */,
+				52A69DA21C5B3CA7001DA581 /* EscapeTests.swift in Sources */,
+				52A69D9F1C5B3CA7001DA581 /* ConnectionTests.swift in Sources */,
+				52A69DA31C5B3CA7001DA581 /* Model.swift in Sources */,
+				52A69DA01C5B3CA7001DA581 /* Constants.swift in Sources */,
+				52A69DA11C5B3CA7001DA581 /* DateTests.swift in Sources */,
+				52A69DA61C5B3CA7001DA581 /* QueryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,17 +474,20 @@
 		5292159F1BDB8CD6009B031A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = MySQLTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = jp.novi.MySQLTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		529215A01BDB8CD6009B031A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = MySQLTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
