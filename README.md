@@ -73,7 +73,7 @@ try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
 
 # Requirements
 
-* Swift 2.1 or Later (includes Linux support)
+* Swift 2.2 or Later (includes Linux support)
 * OS X 10.10 or Later
 
 # Dependencies
@@ -86,8 +86,8 @@ try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
 
 Simply use Carthage.
 
-* Place `libmysqlclient` and `openssl` on `/usr/local` with `brew install mysql openssl` 
-* Add `github "novi/mysql-swift" ~> 0.1.3` to your `Cartfile`.
+* Place `libmysqlclient` and `openssl` on `/usr/local`  by using `brew install mysql openssl`.
+* Add `github "novi/mysql-swift" "master"` to your `Cartfile`.
 * Run `carthage update`.
 
 ## Swift 2.2
