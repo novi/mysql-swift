@@ -24,7 +24,9 @@ build/
 *.dat
 *.dep
 docs/
+
 Cartfile.resolved
 Carthage/
 .build/
-OSX Projects/MySQL/MySQLTests/Constants.swift
+
+Constants.swift
