@@ -17,12 +17,10 @@ struct Row {
         let createdAt: SQLDate
         
         static func decodeRow(r: QueryRowResult) throws -> User {
-            return try build(User.init)(
-                r <| 0, // access with index
-                r <| "name", // access with key
-                r <|? 3,
-                r <| "created_at"
-            )
+            return try User(id: r <| 0,
+                            userName: r <| "name",
+                            age: r <|? 3,
+                            createdAt: r <| "created_at")
         }
         
         func queryParameter() throws -> QueryDictionary {

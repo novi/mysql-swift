@@ -25,19 +25,19 @@ struct Row {
         let doneOptional: Bool?
         
         static func decodeRow(r: QueryRowResult) throws -> UserDecodeWithIndex {
-            return try build(UserDecodeWithIndex.init)(
-                r <| 0,
+            return try UserDecodeWithIndex(
+                id: r <| 0,
                 
-                r <| 1,
-                r <| 2,
-                r <| 3,
+                name: r <| 1,
+                age: r <| 2,
+                createdAt: r <| 3,
                 
-                r <|? 4,
-                r <|? 5,
-                r <|? 6,
+                nameOptional: r <|? 4,
+                ageOptional: r <|? 5,
+                createdAtOptional: r <|? 6,
                 
-                r <| 7,
-                r <|? 8
+                done: r <| 7,
+                doneOptional: r <|? 8
             )
         }
         
@@ -73,19 +73,19 @@ struct Row {
         let doneOptional: Bool?
         
         static func decodeRow(r: QueryRowResult) throws -> UserDecodeWithKey {
-            return try build(UserDecodeWithKey.init)(
-                r <| "id",
+            return try UserDecodeWithKey(
+                id: r <| "id",
                 
-                r <| "name",
-                r <| "age",
-                r <| "created_at",
+                name: r <| "name",
+                age: r <| "age",
+                createdAt: r <| "created_at",
                 
-                r <|? "name_Optional",
-                r <|? "age_Optional",
-                r <|? "created_at_Optional",
+                nameOptional: r <|? "name_Optional",
+                ageOptional: r <|? "age_Optional",
+                createdAtOptional: r <|? "created_at_Optional",
                 
-                r <| "done",
-                r <|? "done_Optional"
+                done: r <| "done",
+                doneOptional: r <|? "done_Optional"
             )
         }
     }
