@@ -28,12 +28,12 @@ protocol QueryArrayType: QueryParameter {
     
 }
 
-public struct QueryArray<T: QueryParameter> : QueryParameter, QueryArrayType {
-    let arr: [T?]
-    public init(_ arr: [T?]) {
+public struct QueryArray : QueryParameter, QueryArrayType {
+    let arr: [QueryParameter?]
+    public init(_ arr: [QueryParameter?]) {
         self.arr = arr
     }
-    public init(_ arr: [T]) {
+    public init(_ arr: [QueryParameter]) {
         self.arr = arr.map { Optional($0) }
     }
     public func escapedValue() throws -> String {

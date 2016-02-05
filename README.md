@@ -48,13 +48,13 @@ struct User: QueryRowResultType, QueryParameterDictionaryType {
     
 // Selecting
 let nameParam: String = "some one"
-let ids: [Int] = [1, 2, 3, 4, 5, 6]
+let ids: [QueryParameter] = [1, 2, 3, 4, 5, 6]
 let optional:Int? = nil
-let params: (Int, Int?, String, QueryArray<Int>) = (
+let params: (Int, Int?, String, QueryArray) = (
 	50,
 	optional,
 	nameParam,
-	QueryArray<Int>(ids)
+	QueryArray(ids)
 )	
 let rows: [User] = try conn.query("SELECT id,name,created_at,age FROM users WHERE (age > ? OR age is ?) OR name = ? OR id IN (?)", build(params) ])
 
