@@ -26,11 +26,11 @@ struct User: QueryRowResultType, QueryParameterDictionaryType {
     // Decode query results (selecting rows) to the model
     // see selecting sample
     static func decodeRow(r: QueryRowResult) throws -> User {
-        return try build(User.init)(
-            r <| 0, // as index
-            r <| "name", // as field name
-            r <|? 3, // nullable field
-            r <| "created_at"
+        return try User(
+            id: r <| 0, // as index
+            userName: r <| "name", // as field name
+            age: r <|? 3, // nullable field
+            createdAt: r <| "created_at"
         )
     }
     
