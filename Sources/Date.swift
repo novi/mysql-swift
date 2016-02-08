@@ -33,7 +33,7 @@ public struct SQLDate {
     let date: NSTimeInterval
     let timeZone: Connection.TimeZone
     
-    init(date: NSDate, timeZone: Connection.TimeZone) {
+    public init(date: NSDate, timeZone: Connection.TimeZone) {
         self.date = date.timeIntervalSince1970
         self.timeZone = timeZone
     }
