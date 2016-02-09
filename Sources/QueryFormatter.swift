@@ -103,29 +103,71 @@ public struct QueryFormatter {
         var placeHolderCount: Int = 0
         
         var formatted = query + ""
-        while let r = formatted.rangeOfString("??") {
-            if placeHolderCount >= args.count {
-                throw QueryError.QueryParameterCountMismatch
+        
+        var valArgs: [QueryParameter] = []
+        var scanRange = formatted.startIndex..<formatted.endIndex
+        
+        // format ??
+        while true {
+            let r1 = formatted.rangeOfString("??", options: [], range: scanRange, locale: nil)
+            let r2 = formatted.rangeOfString("?", options: [], range: scanRange, locale: nil)
+            let r: Range<String.Index>
+            if let r1 = r1, let r2 = r2 {
+                r = r1.startIndex <= r2.startIndex ? r1 : r2
+            } else if let rr = r1 ?? r2 {
+                r = rr
+            } else {
+                break
             }
-            guard let val = args[placeHolderCount] as? String else {
-                throw QueryError.QueryParameterIdTypeError
+            
+            switch formatted[r] {
+            case "??":
+                if placeHolderCount >= args.count {
+                    throw QueryError.QueryParameterCountMismatch
+                }
+                guard let val = args[placeHolderCount] as? String else {
+                    throw QueryError.QueryParameterIdTypeError
+                }
+                formatted.replaceRange(r, with: SQLString.escapeId(val))
+                scanRange = r.endIndex..<formatted.endIndex
+            case "?":
+                if placeHolderCount >= args.count {
+                    throw QueryError.QueryParameterCountMismatch
+                }
+                valArgs.append(args[placeHolderCount])
+                scanRange = r.endIndex..<formatted.endIndex
+            default: break
             }
-            formatted.replaceRange(r, with: SQLString.escapeId(val))
+            
             placeHolderCount += 1
+            
+            if placeHolderCount >= args.count {
+                break
+            }
         }
         
-        while let r = formatted.rangeOfString("?") {
-            if placeHolderCount >= args.count {
-                throw QueryError.QueryParameterCountMismatch
+        //print(formatted, valArgs)
+        
+        placeHolderCount = 0
+        var formattedChars = Array(formatted.characters)
+        var index: Int = 0
+        while index < formattedChars.count {
+            if formattedChars[index] == "?" {
+                if placeHolderCount >= valArgs.count {
+                    throw QueryError.QueryParameterCountMismatch
+                }
+                let val = valArgs[placeHolderCount]
+                formattedChars.removeAtIndex(index)
+                let valStr = (try val.escapedValue())
+                formattedChars.insertContentsOf(valStr.characters, at: index)
+                index += valStr.characters.count-1
+                placeHolderCount += 1
+            } else {
+                index += 1
             }
-            let val = args[placeHolderCount]
-            formatted.replaceRange(r, with: try val.escapedValue())
-            placeHolderCount += 1
         }
-        if placeHolderCount != args.count {
-            throw QueryError.QueryParameterCountMismatch
-        }
-        return formatted
+        
+        return String(formattedChars)
     }
 }
 

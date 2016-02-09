@@ -23,4 +23,9 @@ class QueryFormatterTests: XCTestCase {
         let formatted = try! QueryFormatter.format("SELECT name,??,id FROM users WHERE ?? = ? OR name = ? OR age is ?;", args: build(params))
         XCTAssertEqual(formatted, "SELECT name,`i`.`d`,id FROM users WHERE `id` = 1 OR name = 'user\\'s' OR age is NULL;")
     }
+    
+    func testPlaceholder() {
+        let formatted = try! QueryFormatter.format("SELECT ??, ?, ??, ?, ?", args: ["name", "message??", "col", "hello??", "hello?"])
+        XCTAssertEqual(formatted, "SELECT `name`, 'message??', `col`, 'hello??', 'hello?'")
+    }
 }
