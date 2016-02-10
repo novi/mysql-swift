@@ -41,6 +41,7 @@ extension Connection {
     struct Field {
         let name: String
         let type: enum_field_types
+        let isBinary: Bool
         init?(f: MYSQL_FIELD) {
             if f.name == nil {
                 return nil
@@ -50,6 +51,7 @@ extension Connection {
             }
             self.name = fs
             self.type = f.type
+            self.isBinary = f.flags & UInt32(BINARY_FLAG) > 0 ? true : false
         }
         func castValue(str: String, row: Int, timeZone: TimeZone) throws -> Any {
             if type == MYSQL_TYPE_DATE ||
@@ -60,12 +62,14 @@ extension Connection {
                 //type == MYSQL_TYPE_TIME2 ||
                 //type == MYSQL_TYPE_DATETIME2 ||
                 //type == MYSQL_TYPE_TIMESTAMP2
-            
+                
             {
                 return try SQLDate(sqlDate: str, timeZone: timeZone)
             }
-            if type == MYSQL_TYPE_BLOB ||
-                type == MYSQL_TYPE_BIT {
+            if isBinary && (
+                type == MYSQL_TYPE_BLOB ||
+                    type == MYSQL_TYPE_BIT
+                ) {
                     throw QueryError.ResultParseError("blob type is not supported")
             }
             return str
@@ -74,7 +78,7 @@ extension Connection {
     
     public func query<T: QueryRowResultType>(query formattedQuery: String) throws -> ([T], QueryStatus) {
         let mysql = try connectIfNeeded()
-    
+        
         guard mysql_real_query(mysql, formattedQuery, UInt(formattedQuery.utf8.count)) == 0 else {
             throw QueryError.QueryExecutionError(MySQLUtil.getMySQLErrorString(mysql))
         }
