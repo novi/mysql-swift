@@ -53,17 +53,14 @@ class QueryTests: XCTestCase, QueryTestType {
         super.setUp()
         
         prepare()
+        try! createTestTable()
     }
     #else
     func setUp() {
         prepare()
-    }
-    #endif
-    
-    
-    func testCreateAndDrop() {
         try! createTestTable()
     }
+    #endif
     
     var someDate: SQLDate {
         return try! SQLDate(sqlDate: "2015-12-27 16:54:00", timeZone: pool.options.timeZone)
@@ -133,9 +130,13 @@ class QueryTests: XCTestCase, QueryTestType {
         
         XCTAssertTrue(rows[1].done)
         XCTAssertFalse(rows[1].doneOptional!)
+        
+        
+        // fetch inserted rows
+        selectingWithFieldKey()
     }
     
-    func testSelectingWithFieldKey() {
+    func selectingWithFieldKey() {
         
         let name = "name 's"
         let age = 25

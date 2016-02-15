@@ -50,8 +50,7 @@ extension QueryFormatterTests {
 extension QueryTests {
     var allTests : [(String, () throws -> Void)] {
         return [
-            ("testInsertRow", testInsertRow),
-            ("testSelectingWithFieldKey", testSelectingWithFieldKey)
+            ("testInsertRow", testInsertRow)
         ]
     }
 }
@@ -61,6 +60,7 @@ XCTMain([
     DateTests(),
     EscapeTests(),
     QueryFormatterTests(),
+    
     
     ConnectionPoolTests(),
     ConnectionTests(),
