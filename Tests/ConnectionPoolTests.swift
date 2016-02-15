@@ -9,8 +9,22 @@
 import XCTest
 @testable import MySQL
 
-class ConnectionPoolTests: MySQLTests {
+class ConnectionPoolTests: XCTestCase, MySQLTestType {
 
+    var constants: TestConstantsType!
+    var pool: ConnectionPool!
+    
+    #if os(OSX)
+    override func setUp() {
+        super.setUp()
+        
+        prepare()
+    }
+    #else
+    func setUp() {
+        prepare()
+    }
+    #endif
 
     func testGetConnection() {
         

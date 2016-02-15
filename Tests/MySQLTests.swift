@@ -28,23 +28,17 @@ protocol TestConstantsType: ConnectionOption {
     var tableName: String { get }
 }
 
+protocol MySQLTestType: class {
+    var constants: TestConstantsType! { get set }
+    var pool: ConnectionPool! { get set }
+}
 
-class MySQLTests: XCTestCase {
-    
-    var constants: TestConstantsType!
-    var pool: ConnectionPool!
-    
-    override func setUp() {
-        super.setUp()
-        
+extension MySQLTestType {
+    func prepare() {
         self.constants = TestConstants()
         self.pool = ConnectionPool(options: constants)
         
         XCTAssertEqual(constants.timeZone, Connection.TimeZone(GMTOffset: 60 * 60 * 9) )
     }
-    
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
 }
+

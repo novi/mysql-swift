@@ -8,9 +8,14 @@
 
 import XCTest
 @testable import MySQL
+import Foundation
 
-class QueryTestBase: MySQLTests {
-    
+protocol QueryTestType: MySQLTestType {
+    func createTestTable() throws
+    func dropTestTable() throws
+}
+
+extension QueryTestType {
     func createTestTable() throws {
         try dropTestTable()
         
@@ -37,11 +42,24 @@ class QueryTestBase: MySQLTests {
     }
 }
 
-class QueryTests: QueryTestBase {
+
+class QueryTests: XCTestCase, QueryTestType {
     
+    var constants: TestConstantsType!
+    var pool: ConnectionPool!
+    
+    #if os(OSX)
     override func setUp() {
         super.setUp()
+        
+        prepare()
     }
+    #else
+    func setUp() {
+        prepare()
+    }
+    #endif
+    
     
     func testCreateAndDrop() {
         try! createTestTable()
@@ -56,8 +74,6 @@ class QueryTests: QueryTestBase {
     }
     
     func testInsertRow() {
-        
-        //let conn = try! pool.getConnection()
         
         typealias User = Row.UserDecodeWithIndex
         

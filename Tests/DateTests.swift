@@ -8,6 +8,7 @@
 
 import XCTest
 import CoreFoundation
+import Foundation
 @testable import MySQL
 
 class DateTests : XCTestCase {
