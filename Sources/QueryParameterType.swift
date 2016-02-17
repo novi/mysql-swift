@@ -11,10 +11,10 @@ public struct QueryDictionary: QueryParameter {
     public init(_ dict: [String: QueryParameter?]) {
         self.dict = dict
     }
-    public func escapedValue() throws -> String {
+    public func escapedValueWith(option option: QueryParameterOption) throws -> String {
         var keyVals: [String] = []
         for (k, v) in dict {
-            keyVals.append("\(SQLString.escapeId(k)) = \(try QueryOptional(v).escapedValue())")
+            keyVals.append("\(SQLString.escapeId(k)) = \(try QueryOptional(v).escapedValueWith(option: option))")
         }
         return keyVals.joinWithSeparator(", ")
     }
@@ -36,26 +36,26 @@ public struct QueryArray : QueryParameter, QueryArrayType {
     public init(_ arr: [QueryParameter]) {
         self.arr = arr.map { Optional($0) }
     }
-    public func escapedValue() throws -> String {
+    public func escapedValueWith(option option: QueryParameterOption) throws -> String {
         return try arr.map({
             if let val = $0 as? QueryArrayType {
-                return "(" + (try val.escapedValue()) + ")"
+                return "(" + (try val.escapedValueWith(option: option)) + ")"
             }
-            return try $0.escapedValue()
+            return try $0.escapedValueWith(option: option)
         }).joinWithSeparator(", ")
     }
 }
 
 extension Optional : QueryParameter {
     
-    public func escapedValue() throws -> String {
+    public func escapedValueWith(option option: QueryParameterOption) throws -> String {
         guard let value = self else {
-            return QueryParameterNull().escapedValue()
+            return QueryParameterNull().escapedValueWith(option: option)
         }
         guard let val = value as? QueryParameter else {
             throw QueryError.CastError(actual: "\(value.self)", expected: "QueryParameter", key: "")
         }
-        return try val.escapedValue()
+        return try val.escapedValueWith(option: option)
     }
 }
 
@@ -65,47 +65,53 @@ struct QueryOptional<T: QueryParameter>: QueryParameter {
     init(_ val: T?) {
         self.val = val
     }
-    func escapedValue() throws -> String {
+    func escapedValueWith(option option: QueryParameterOption) throws -> String {
         guard let val = self.val else {
-            return QueryParameterNull().escapedValue()
+            return QueryParameterNull().escapedValueWith(option: option)
         }
-        return try val.escapedValue()
+        return try val.escapedValueWith(option: option)
     }
 }
 
 
 extension String: QueryParameter {
-    public func escapedValue() -> String {
+    public func escapedValueWith(option option: QueryParameterOption) throws -> String {
         return SQLString.escape(self)
     }
 }
 
 extension Int: QueryParameter {
-    public func escapedValue() -> String {
+    public func escapedValueWith(option option: QueryParameterOption) throws -> String {
         return String(self)
     }
 }
 
 extension Int64: QueryParameter {
-    public func escapedValue() -> String {
+    public func escapedValueWith(option option: QueryParameterOption) throws -> String {
         return String(self)
     }
 }
 
 extension Double: QueryParameter {
-    public func escapedValue() -> String {
+    public func escapedValueWith(option option: QueryParameterOption) throws -> String {
         return String(self)
     }
 }
 
 extension Float: QueryParameter {
-    public func escapedValue() -> String {
+    public func escapedValueWith(option option: QueryParameterOption) throws -> String {
         return String(self)
     }
 }
 
 extension Bool: QueryParameter {
-    public func escapedValue() -> String {
+    public func escapedValueWith(option option: QueryParameterOption) throws -> String {
         return self ? "true" : "false"
+    }
+}
+
+extension NSDate: QueryParameter {
+    public func escapedValueWith(option option: QueryParameterOption) throws -> String {
+        return SQLDate(self).escapedValueWith(option: option)
     }
 }

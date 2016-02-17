@@ -13,11 +13,11 @@ struct Examples {
     var conn: Connection!
     
     func selectRows() throws -> [Row.User] {
-        let ids: [Int] = [1, 2, 3, 4, 5, 6]
-        let params: (Int, String, QueryArray<Int>, Int?) = (
+        let ids: [QueryParameter] = [1, 2, 3, 4, 5, 6]
+        let params: (Int, String, QueryArray, Int?) = (
             50,
             "test",
-            QueryArray<Int>(ids),
+            QueryArray(ids),
             nil
         )
         let rows: [Row.User] = try conn.query("SELECT id,name,created_at,age FROM users WHERE (age > ? OR age is ?) OR name = ? OR id IN (?)", build(params) )
@@ -26,7 +26,7 @@ struct Examples {
     
     func insertRow() throws -> Int {
         let age: Int? = 26
-        let user = Row.User(id: 0, userName: "test", age: age, createdAt: SQLDate.now(timeZone: conn.options.timeZone))
+        let user = Row.User(id: 0, userName: "test", age: age, createdAt: SQLDate.now())
         let status = try conn.query("INSERT INTO users SET ?", [user]) as QueryStatus
         if status.affectedRows != 1 {
             // insert failed

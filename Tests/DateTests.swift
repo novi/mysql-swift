@@ -11,35 +11,41 @@ import CoreFoundation
 import Foundation
 @testable import MySQL
 
+extension XCTestCase {
+    var queryOption: QueryParameterOption {
+        return QueryParameterOption(timeZone: Connection.TimeZone(GMTOffset: 0))
+    }
+}
+
 class DateTests : XCTestCase {
     
     func testSQLDate() {
         
-        let gmt = Connection.TimeZone(GMTOffset: 0)
-        let losAngeles = Connection.TimeZone(name: "America/Los_Angeles")
+        let gmt = QueryParameterOption(timeZone: Connection.TimeZone(GMTOffset: 0))
+        let losAngeles = QueryParameterOption(timeZone: Connection.TimeZone(name: "America/Los_Angeles"))
         
         let expected = "2003-01-02 03:04:05" // no timezone
         
-        let date = SQLDate(date: NSDate(timeIntervalSince1970: 1041476645), timeZone: gmt) // "2003-01-02 03:04:05" at GMT
-        XCTAssertEqual(date.escapedValue(), "'\(expected)'")
+        let date = SQLDate(NSDate(timeIntervalSince1970: 1041476645)) // "2003-01-02 03:04:05" at GMT
+        XCTAssertEqual(date.escapedValueWith(option: gmt), "'\(expected)'")
         
-        let sqlDate = try! SQLDate(sqlDate: expected, timeZone: losAngeles)
-        let dateAtLos = SQLDate(date: NSDate(timeIntervalSince1970: 1041476645 + 3600*8), timeZone: losAngeles)
+        let sqlDate = try! SQLDate(sqlDate: expected, timeZone: losAngeles.timeZone)
+        let dateAtLos = SQLDate(NSDate(timeIntervalSince1970: 1041476645 + 3600*8))
         
-        XCTAssertEqual(sqlDate.date, dateAtLos.date, "create date from sql string")
-        XCTAssertEqual(sqlDate.escapedValue(), "'\(expected)'")
+        XCTAssertEqual(sqlDate.timeInterval, dateAtLos.timeInterval, "create date from sql string")
+        XCTAssertEqual(sqlDate.escapedValueWith(option: losAngeles), "'\(expected)'")
         
         XCTAssertEqual(sqlDate, dateAtLos)
         
-        XCTAssertNotEqual(try! SQLDate(sqlDate: expected, timeZone: losAngeles),
-            try! SQLDate(sqlDate: expected, timeZone: gmt))
+        XCTAssertNotEqual(try! SQLDate(sqlDate: expected, timeZone: losAngeles.timeZone),
+            try! SQLDate(sqlDate: expected, timeZone: gmt.timeZone))
         
-        XCTAssertEqual(try! SQLDate(sqlDate: expected, timeZone: losAngeles),
-            try! SQLDate(sqlDate: expected, timeZone: losAngeles))
+        XCTAssertEqual(try! SQLDate(sqlDate: expected, timeZone: losAngeles.timeZone),
+            try! SQLDate(sqlDate: expected, timeZone: losAngeles.timeZone))
         
         
-        let sqlYear = try! SQLDate(sqlDate: "2021", timeZone: gmt)
-        XCTAssertEqual(sqlYear.escapedValue(), "'2021-01-01 00:00:00'")
+        let sqlYear = try! SQLDate(sqlDate: "2021", timeZone: gmt.timeZone)
+        XCTAssertEqual(sqlYear.escapedValueWith(option: gmt), "'2021-01-01 00:00:00'")
     }
     
     func testSQLCalendar() {
