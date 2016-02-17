@@ -41,6 +41,10 @@ public struct SQLDate {
         self.timeInterval = timeIntervalSince1970
     }
     
+    internal init() {
+        self.init(NSDate())
+    }
+    
     internal init(sqlDate: String, timeZone: Connection.TimeZone) throws {
         
         SQLDateCalender.mutex.lock()
@@ -132,7 +136,7 @@ extension SQLDate : CustomStringConvertible {
 
 extension SQLDate {
     public static func now() -> SQLDate {
-        return SQLDate(NSDate())
+        return SQLDate()
     }
     public func date() -> NSDate {
         return NSDate(timeIntervalSince1970: timeInterval)
