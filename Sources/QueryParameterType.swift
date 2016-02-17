@@ -112,6 +112,6 @@ extension Bool: QueryParameter {
 
 extension NSDate: QueryParameter {
     public func escapedValueWith(option option: QueryParameterOption) throws -> String {
-        return try SQLDate(self).escapedValueWith(option: option)
+        return SQLDate(self).escapedValueWith(option: option)
     }
 }

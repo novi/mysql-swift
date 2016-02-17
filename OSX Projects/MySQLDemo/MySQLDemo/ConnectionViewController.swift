@@ -75,7 +75,7 @@ class ConnectionViewController: NSViewController, NSTableViewDataSource {
             let params: (String, Int?, SQLDate) = (
                 "test user",
                 optionalIntVal,
-                SQLDate.now(timeZone: pool.options.timeZone)
+                SQLDate.now()
             )            
             
             let status1 = try pool.execute { conn in
@@ -88,7 +88,7 @@ class ConnectionViewController: NSViewController, NSTableViewDataSource {
             
             let status2 = try pool.transaction { conn in
                 
-                let user = Row.User(id: 0, userName: "test ' user 日本語 _ % ", age: optionalIntVal, createdAt: SQLDate.now(timeZone: conn.options.timeZone))
+                let user = Row.User(id: 0, userName: "test ' user 日本語 _ % ", age: optionalIntVal, createdAt: SQLDate.now())
                 
                 let status = try conn.query("INSERT INTO users SET ?", [user])
                 
