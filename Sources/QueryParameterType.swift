@@ -109,9 +109,3 @@ extension Bool: QueryParameter {
         return self ? "true" : "false"
     }
 }
-
-extension NSDate: QueryParameter {
-    public func escapedValueWith(option option: QueryParameterOption) throws -> String {
-        return SQLDate(self).escapedValueWith(option: option)
-    }
-}
