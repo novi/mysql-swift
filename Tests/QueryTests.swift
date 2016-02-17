@@ -67,7 +67,7 @@ class QueryTests: XCTestCase, QueryTestType {
     }
     
     var anotherDate: SQLDate {
-        return SQLDate(date: NSDate(timeIntervalSinceReferenceDate: 60*60*24*67) , timeZone: pool.options.timeZone)
+        return SQLDate(NSDate(timeIntervalSinceReferenceDate: 60*60*24*67))
     }
     
     func testInsertRow() {

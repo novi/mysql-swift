@@ -9,12 +9,12 @@
 import CoreFoundation
 import Foundation
 
-final class SQLDateCalender {
-    static let mutex = Mutex()
+internal final class SQLDateCalender {
+    private static let mutex = Mutex()
     
-    static var cals: [Connection.TimeZone:NSCalendar] = [:]
+    private static var cals: [Connection.TimeZone:NSCalendar] = [:]
     
-    static func calendarFor(timeZone: Connection.TimeZone) -> NSCalendar {
+    internal static func calendarFor(timeZone: Connection.TimeZone) -> NSCalendar {
         if let cal = cals[timeZone] {
             return cal
         }
@@ -24,22 +24,24 @@ final class SQLDateCalender {
         return newCal
     }
     
-    static func saveCalendar(cal: NSCalendar, forTimeZone timeZone: Connection.TimeZone) {
+    private static func saveCalendar(cal: NSCalendar, forTimeZone timeZone: Connection.TimeZone) {
         cals[timeZone] = cal
     }
 }
 
 public struct SQLDate {
-    let date: NSTimeInterval
-    let timeZone: Connection.TimeZone
     
-    public init(date: NSDate, timeZone: Connection.TimeZone) {
-        self.date = date.timeIntervalSince1970
-        self.timeZone = timeZone
+    internal let timeInterval: NSTimeInterval
+    
+    public init(_ date: NSDate) {
+        self.timeInterval = date.timeIntervalSince1970
     }
     
-    init(sqlDate: String, timeZone: Connection.TimeZone) throws {
-        self.timeZone = timeZone
+    public init(_ timeIntervalSince1970: NSTimeInterval) {
+        self.timeInterval = timeIntervalSince1970
+    }
+    
+    internal init(sqlDate: String, timeZone: Connection.TimeZone) throws {
         
         SQLDateCalender.mutex.lock()
         
@@ -59,7 +61,7 @@ public struct SQLDate {
                 comp.second = 0
                 let cal = SQLDateCalender.calendarFor(timeZone)
                 if let date = cal.dateFromComponents(comp) {
-                    self.date = date.timeIntervalSince1970
+                    self.timeInterval = date.timeIntervalSince1970
                     return
                 }
             }
@@ -80,7 +82,7 @@ public struct SQLDate {
                     comp.second = second
                     let cal = SQLDateCalender.calendarFor(timeZone)
                     if let date = cal.dateFromComponents(comp) {
-                        self.date = date.timeIntervalSince1970
+                        self.timeInterval = date.timeIntervalSince1970
                         return
                     }
             }
@@ -110,11 +112,12 @@ public struct SQLDate {
 }
 
 extension SQLDate: QueryParameter {
-    public func escapedValue() -> String {
+    
+    public func escapedValueWith(option option: QueryParameterOption) -> String {
         let comp = SQLDateCalender.mutex.sync { () -> NSDateComponents? in
-            let cal = SQLDateCalender.calendarFor(timeZone)
-            return cal.components([ .Year, .Month,  .Day,  .Hour, .Minute, .Second], fromDate: NSDate(timeIntervalSince1970: date))
-        }! // TODO: in Linux
+            let cal = SQLDateCalender.calendarFor(option.timeZone)
+            return cal.components([ .Year, .Month,  .Day,  .Hour, .Minute, .Second], fromDate: date())
+            }! // TODO: in Linux
         
         // YYYY-MM-DD HH:MM:SS
         return "'\(padNum(comp.year, digits: 4))-\(padNum(comp.month))-\(padNum(comp.day)) \(padNum(comp.hour)):\(padNum(comp.minute)):\(padNum(comp.second))'"
@@ -123,13 +126,16 @@ extension SQLDate: QueryParameter {
 
 extension SQLDate : CustomStringConvertible {
     public var description: String {
-        return NSDate(timeIntervalSince1970: date).description + "/" + "\(CFTimeZoneGetName(timeZone.timeZone))"
+        return date().description
     }
 }
 
 extension SQLDate {
-    public static func now(timeZone timeZone: Connection.TimeZone) -> SQLDate {
-        return SQLDate(date: NSDate(), timeZone: timeZone)
+    public static func now() -> SQLDate {
+        return SQLDate(NSDate())
+    }
+    public func date() -> NSDate {
+        return NSDate(timeIntervalSince1970: timeInterval)
     }
 }
 
@@ -138,6 +144,6 @@ extension SQLDate: Equatable {
 }
 
 public func ==(lhs: SQLDate, rhs: SQLDate) -> Bool {
-    return lhs.date == rhs.date
+    return lhs.timeInterval == rhs.timeInterval
 }
 

@@ -8,11 +8,8 @@
 
 import Foundation
 
-// inspired
-// https://github.com/felixge/node-mysql/blob/master/lib/protocol/SqlString.js
-
 public protocol QueryParameter {
-    func escapedValue() throws -> String
+    func escapedValueWith(option option: QueryParameterOption) throws -> String
 }
 
 public protocol QueryParameterDictionaryType: QueryParameter {
@@ -20,9 +17,13 @@ public protocol QueryParameterDictionaryType: QueryParameter {
 }
 
 public extension QueryParameterDictionaryType {
-    func escapedValue() throws -> String {
-        return try queryParameter().escapedValue()
+    func escapedValueWith(option option: QueryParameterOption) throws -> String {
+        return try queryParameter().escapedValueWith(option: option)
     }
+}
+
+public struct QueryParameterOption {
+    let timeZone: Connection.TimeZone
 }
 
 
@@ -33,14 +34,15 @@ public struct QueryParameterNull: QueryParameter, NilLiteralConvertible {
     public init(nilLiteral: ()) {
         
     }
-    public func escapedValue() -> String {
+    public func escapedValueWith(option option: QueryParameterOption) -> String {
         return "NULL"
     }
 }
 
 
 struct SQLString {
-    static func escapeId(str: String) -> String {
+    
+    internal static func escapeId(str: String) -> String {
         var step1: [Character] = []
         for c in str.characters {
             switch c {
@@ -62,7 +64,7 @@ struct SQLString {
         return "`" + String(out) + "`"
     }
     
-    static func escape(str: String) -> String {
+    internal static func escape(str: String) -> String {
         var out: [Character] = []
         for c in str.characters {
             switch c {
@@ -94,7 +96,7 @@ struct SQLString {
 
 public struct QueryFormatter {
     
-    public static func format<S: SequenceType where S.Generator.Element == QueryParameter>(query: String, args argsg: S) throws -> String {
+    public static func format<S: SequenceType where S.Generator.Element == QueryParameter>(query: String, args argsg: S, option: QueryParameterOption) throws -> String {
         var args: [QueryParameter] = []
         for a in argsg {
             args.append(a)
@@ -158,7 +160,7 @@ public struct QueryFormatter {
                 }
                 let val = valArgs[placeHolderCount]
                 formattedChars.removeAtIndex(index)
-                let valStr = (try val.escapedValue())
+                let valStr = (try val.escapedValueWith(option: option))
                 formattedChars.insertContentsOf(valStr.characters, at: index)
                 index += valStr.characters.count-1
                 placeHolderCount += 1
@@ -174,7 +176,10 @@ public struct QueryFormatter {
 extension Connection {
     
     public func query<T: QueryRowResultType>(query: String, _ args: [QueryParameter] = []) throws -> ([T], QueryStatus) {
-        return try self.query(query: try QueryFormatter.format(query, args: args))
+        let option = QueryParameterOption(
+            timeZone: options.timeZone
+        )
+        return try self.query(query: try QueryFormatter.format(query, args: args, option: option))
     }
     
     public func query<T: QueryRowResultType>(query: String, _ args: [QueryParameter] = []) throws -> [T] {

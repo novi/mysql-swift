@@ -11,6 +11,7 @@ import CMySQL
 public struct QueryStatus: CustomStringConvertible {
     public let affectedRows: Int
     public let insertedId: Int
+    
     init(mysql: UnsafeMutablePointer<MYSQL>) {
         self.insertedId = Int(mysql_insert_id(mysql))
         let arows = mysql_affected_rows(mysql)
@@ -20,6 +21,7 @@ public struct QueryStatus: CustomStringConvertible {
             self.affectedRows = Int(arows)
         }
     }
+    
     public var description: String {
         return "inserted id = \(insertedId), affected rows = \(affectedRows)"
     }

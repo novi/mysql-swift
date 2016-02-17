@@ -27,9 +27,9 @@ class EscapeTests: XCTestCase {
         let strValOptionalNone: String? = nil
         
         
-        XCTAssertEqual(try! QueryOptional<String>(strVal).escapedValue(), "'Sup\\'er'")
-        XCTAssertEqual(try! QueryOptional<String>(strValOptional).escapedValue(), "'Sup\\'er Super'")
-        XCTAssertEqual(try! QueryOptional<String>(strValOptionalNone).escapedValue(), "NULL")
+        XCTAssertEqual(try! QueryOptional<String>(strVal).escapedValueWith(option: queryOption), "'Sup\\'er'")
+        XCTAssertEqual(try! QueryOptional<String>(strValOptional).escapedValueWith(option: queryOption), "'Sup\\'er Super'")
+        XCTAssertEqual(try! QueryOptional<String>(strValOptionalNone).escapedValueWith(option: queryOption), "NULL")
     }
     
     func testArrayType() {
@@ -40,24 +40,24 @@ class EscapeTests: XCTestCase {
         
         let strs: [QueryParameter] = [strVal, strVal]
         
-        XCTAssertEqual(try! QueryArray(strs).escapedValue(), "'Sup\\'er', 'Sup\\'er'")
+        XCTAssertEqual(try! QueryArray(strs).escapedValueWith(option: queryOption), "'Sup\\'er', 'Sup\\'er'")
         
         let strsOptional1: [QueryParameter?] = [strVal, strValOptional]
-        XCTAssertEqual(try! QueryArray(strsOptional1).escapedValue(), "'Sup\\'er', 'Sup\\'er Super'")
+        XCTAssertEqual(try! QueryArray(strsOptional1).escapedValueWith(option: queryOption), "'Sup\\'er', 'Sup\\'er Super'")
         
         let strsOptional2: [QueryParameter?] = [strVal, strValOptionalNone]
-        XCTAssertEqual(try! QueryArray(strsOptional2).escapedValue(), "'Sup\\'er', NULL")
+        XCTAssertEqual(try! QueryArray(strsOptional2).escapedValueWith(option: queryOption), "'Sup\\'er', NULL")
         
         
         let arr = QueryArray(strs)
         let arrayOfArr = QueryArray( [arr] )
-        XCTAssertEqual(try! arrayOfArr.escapedValue(), "('Sup\\'er', 'Sup\\'er')")
+        XCTAssertEqual(try! arrayOfArr.escapedValueWith(option: queryOption), "('Sup\\'er', 'Sup\\'er')")
         
         let strInt:[QueryParameter] = [strVal, 271]
-        XCTAssertEqual(try! QueryArray(strInt).escapedValue(), "'Sup\\'er', 271")
+        XCTAssertEqual(try! QueryArray(strInt).escapedValueWith(option: queryOption), "'Sup\\'er', 271")
         
         let strOptionalAndInt:[QueryParameter] = [strValOptional, 3.14]
-        XCTAssertEqual(try! QueryArray(strOptionalAndInt).escapedValue(), "'Sup\\'er Super', 3.14")
+        XCTAssertEqual(try! QueryArray(strOptionalAndInt).escapedValueWith(option: queryOption), "'Sup\\'er Super', 3.14")
     }
     
     func testDictionary() {
