@@ -1,7 +1,11 @@
 mysql-swift
 ===========
 
+[![Swift 2.2](https://img.shields.io/badge/Swift-2.2-orange.svg)](https://swift.org)
+![Platform Linux, OSX](https://img.shields.io/badge/Platforms-Linux%2C%20OSX-lightgray.svg)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+
+
 
 
 MySQL client library for Swift.
@@ -60,7 +64,7 @@ let rows: [User] = try conn.query("SELECT id,name,created_at,age FROM users WHER
 
 // Inserting
 let age: Int? = 26
-let user = User(id: 0, userName: "novi", age: age, createdAt: SQLDate.now(timeZone: conn.options.timeZone))
+let user = User(id: 0, userName: "novi", age: age, createdAt: SQLDate.now())
 let status = try conn.query("INSERT INTO users SET ?", [user]) as QueryStatus
 let newId = status.insertedId
         
