@@ -31,7 +31,7 @@ extension QueryTestType {
             "`done` tinyint(1) NOT NULL DEFAULT 0," +
             "`done_Optional` tinyint(1) DEFAULT NULL," +
             "PRIMARY KEY (`id`)" +
-        ") ENGINE=InnoDB DEFAULT CHARSET=utf8;"
+        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
         
         try conn.query(query)
     }
@@ -79,13 +79,13 @@ class QueryTests: XCTestCase, QueryTestType {
         
         let userNil = User(id: 0, name: name, age: age, createdAt: someDate, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil)
         let status: QueryStatus = try! pool.execute { conn in
-            try conn.query("INSERT INTO \(constants.tableName) SET ? ", [userNil])
+            try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, userNil])
         }
         XCTAssertEqual(status.insertedId, 1)
         
         let userFill = User(id: 0, name: name, age: age, createdAt: someDate, nameOptional: "fuga", ageOptional: 50, createdAtOptional: anotherDate, done: true, doneOptional: false)
         let status2: QueryStatus = try! pool.execute { conn in
-            try conn.query("INSERT INTO \(constants.tableName) SET ? ", [userFill])
+            try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, userFill])
         }
         XCTAssertEqual(status2.insertedId, 2)
         
@@ -93,7 +93,7 @@ class QueryTests: XCTestCase, QueryTestType {
         
         do {
             rows = try pool.execute { conn in
-            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional FROM \(constants.tableName)")
+            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional FROM ??", [constants.tableName])
         }
         } catch (let e) {
             print(e)
@@ -143,7 +143,7 @@ class QueryTests: XCTestCase, QueryTestType {
         
         typealias User = Row.UserDecodeWithKey
         let rows:[User] = try! pool.execute { conn in
-            try conn.query("SELECT * FROM \(constants.tableName) LIMIT ?", [2])
+            try conn.query("SELECT * FROM ?? LIMIT ?", [constants.tableName, 2])
         }
         
         XCTAssertEqual(rows.count, 2)
@@ -179,5 +179,24 @@ class QueryTests: XCTestCase, QueryTestType {
         XCTAssertFalse(rows[1].doneOptional!)
     }
     
+    
+    func testEmojiInserting() {
+        
+        typealias User = Row.UserDecodeWithIndex
+        
+        let date = SQLDate.now()
+        let user = User(id: 0, name: "日本語123🍣あいう", age: 123, createdAt: date, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil)
+        let status: QueryStatus = try! pool.execute { conn in
+            try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, user])
+        }
+        
+        let rows: [User] = try! pool.execute{ conn in
+            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional FROM ?? WHERE id = ?", [constants.tableName, status.insertedId])
+        }
+        XCTAssertEqual(rows.count, 1)
+        let fetched = rows[0]
+        XCTAssertEqual(fetched.name, "日本語123🍣あいう")
+        XCTAssertEqual(fetched.age, 123)
+    }
     
 }

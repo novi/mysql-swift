@@ -19,6 +19,7 @@ struct TestConstants: TestConstantsType {
     let password: String = ""
     let database: String = "test"
     let tableName: String = "unit_test_db_3894"
+    let encoding: Connection.Encoding = .UTF8MB4
     let timeZone: Connection.TimeZone = Connection.TimeZone(GMTOffset: 60 * 60 * 9) // JST
 }
 
