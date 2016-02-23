@@ -28,12 +28,12 @@ class ConnectionTests: XCTestCase, MySQLTestType {
     
     func testConnect() {
         let conn = try! pool.getConnection()
-        XCTAssertTrue(conn.isConnected)
+        XCTAssertTrue(conn.ping)
     }
     
     func testConnect2() {
         let conn = try! pool.getConnection()
         try! conn.query("SELECT 1;")
-        XCTAssertTrue(conn.isConnected)
+        XCTAssertTrue(conn.ping)
     }
 }

@@ -154,13 +154,10 @@ public final class Connection {
     }
     
     func connectIfNeeded() throws -> UnsafeMutablePointer<MYSQL> {
-        if isConnected == true {
+        if mysql_ == nil {
+            try connect()
             return mysql_
         }
-        if isConnected == true && ping == true {
-            return mysql_
-        }
-        try connect()
         return mysql_
     }
     
@@ -171,14 +168,8 @@ public final class Connection {
         return mysql_
     }
     
-    var isConnected: Bool {
-        guard let mysql = mysql else {
-            return false
-        }
-        return mysql_stat(mysql) != nil ? true : false
-    }
-    
     var ping: Bool {
+        _ = try? connectIfNeeded()
         guard let mysql = mysql else {
             return false
         }
