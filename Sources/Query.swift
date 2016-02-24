@@ -27,6 +27,11 @@ public struct QueryStatus: CustomStringConvertible {
     }
 }
 
+extension String {
+    func subString(max max: Int) -> String {
+        return self[startIndex..<startIndex.advancedBy(max, limit: endIndex)]
+    }
+}
 
 extension Connection {
     
@@ -72,7 +77,7 @@ extension Connection {
                 type == MYSQL_TYPE_BLOB ||
                     type == MYSQL_TYPE_BIT
                 ) {
-                    throw QueryError.ResultParseError("blob type is not supported")
+                throw QueryError.ResultParseError(message: "blob type is not supported at row:\(row)", result: str)
             }
             return str
         }
@@ -81,8 +86,12 @@ extension Connection {
     public func query<T: QueryRowResultType>(query formattedQuery: String) throws -> ([T], QueryStatus) {
         let mysql = try connectIfNeeded()
         
+        func queryPrefix() -> String {
+            return formattedQuery.subString(max: 1000)
+        }
+        
         guard mysql_real_query(mysql, formattedQuery, UInt(formattedQuery.utf8.count)) == 0 else {
-            throw QueryError.QueryExecutionError(MySQLUtil.getMySQLErrorString(mysql))
+            throw QueryError.QueryExecutionError(message: MySQLUtil.getMySQLErrorString(mysql), query: queryPrefix())
         }
         let status = QueryStatus(mysql: mysql)
         
@@ -92,7 +101,7 @@ extension Connection {
                 // actual no result
                 return ([], status)
             }
-            throw QueryError.ResultFetchError(MySQLUtil.getMySQLErrorString(mysql))
+            throw QueryError.ResultFetchError(message: MySQLUtil.getMySQLErrorString(mysql), query: queryPrefix())
         }
         defer {
             mysql_free_result(res)
@@ -100,18 +109,18 @@ extension Connection {
         
         let fieldCount = Int(mysql_num_fields(res))
         guard fieldCount > 0 else {
-            throw QueryError.ResultNoField
+            throw QueryError.ResultNoField(query: queryPrefix())
         }
         
         // fetch field info
         let fieldDef = mysql_fetch_fields(res)
         guard fieldDef != nil else {
-            throw QueryError.ResultFieldFetchError
+            throw QueryError.ResultFieldFetchError(query: queryPrefix())
         }
         var fields:[Field] = []
         for i in 0..<fieldCount {
             guard let f = Field(f: fieldDef[i]) else {
-                throw QueryError.ResultFieldFetchError
+                throw QueryError.ResultFieldFetchError(query: queryPrefix())
             }
             fields.append(f)
         }
@@ -135,14 +144,14 @@ extension Connection {
                     if let str = String.fromCString(sf) {
                         cols.append(try f.castValue(str, row: rowCount, timeZone: options.timeZone))
                     } else {
-                        throw QueryError.ResultParseError("in \(f.name), at row: \(rowCount)")
+                        throw QueryError.ResultParseError(message: "in \(f.name), at row: \(rowCount)", result: "")
                     }
                 }
                 
             }
             rowCount += 1
             if fields.count != cols.count {
-                throw QueryError.ResultParseError("")
+                throw QueryError.ResultParseError(message: "invalid fetched column count", result: "")
             }
             rows.append(QueryRowResult(fields: fields, cols: cols))
         }
