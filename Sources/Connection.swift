@@ -33,6 +33,7 @@ public protocol ConnectionOption {
     var encoding: Connection.Encoding { get }
     var timeout: Int { get }
     var reconnect: Bool { get }
+    var omitDetailsOnError: Bool { get }
 }
 
 public extension ConnectionOption {
@@ -47,6 +48,9 @@ public extension ConnectionOption {
         return 10
     }
     var reconnect: Bool {
+        return false
+    }
+    var omitDetailsOnError: Bool {
         return false
     }
 }

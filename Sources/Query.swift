@@ -87,6 +87,9 @@ extension Connection {
         let mysql = try connectIfNeeded()
         
         func queryPrefix() -> String {
+            if options.omitDetailsOnError {
+                return ""
+            }
             return formattedQuery.subString(max: 1000)
         }
         
