@@ -83,6 +83,12 @@ extension Connection {
     
 }
 
+extension Connection.TimeZone: CustomStringConvertible {
+    public var description: String {
+        return "\(timeZone)"
+    }
+}
+
 public func ==(lhs: Connection.TimeZone, rhs: Connection.TimeZone) -> Bool {
 #if os(Linux)
     return CFEqual(lhs.timeZone, rhs.timeZone) ||
