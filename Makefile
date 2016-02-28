@@ -19,7 +19,7 @@ build:
 	$(SWIFT) build
 	
 build-test: build
-	$(SWIFTC) -I.build/debug Tests/*.swift -v -o .build/debug/$(TARGET_TEST) -IPackages/$(CMySQL) .build/debug/MySQL.a
+	$(SWIFTC) -I.build/debug Tests/*.swift -v -o .build/debug/$(TARGET_TEST) -IPackages/$(CMySQL) .build/debug/MySQL.build/*.o
 	
 test: build-test
 	.build/debug/$(TARGET_TEST)

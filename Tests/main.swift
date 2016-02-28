@@ -50,7 +50,8 @@ extension QueryFormatterTests {
 extension QueryTests {
     var allTests : [(String, () throws -> Void)] {
         return [
-            ("testInsertRow", testInsertRow)
+            ("testInsertRow", testInsertRow),
+            ("testEmojiInserting", testEmojiInserting)
         ]
     }
 }
