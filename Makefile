@@ -1,5 +1,4 @@
-CMySQL=CMySQL-1.0.0
-TARGET_TEST=MySQLTest
+BUILDOPTS=-Xlinker -L/usr/lib -Xcc -IPackages/CMySQL-1.0.0
 
 SWIFTC=swiftc
 SWIFT=swift
@@ -10,16 +9,13 @@ endif
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
     SWIFTC=xcrun -sdk macosx swiftc
+	BUILDOPTS=-Xlinker -L/usr/local/lib
 endif
 
 all: build test
-	#
 	
 build:
-	$(SWIFT) build
+	$(SWIFT) build -v $(BUILDOPTS)
 	
-build-test: build
-	$(SWIFTC) -I.build/debug Tests/*.swift -v -o .build/debug/$(TARGET_TEST) -IPackages/$(CMySQL) .build/debug/MySQL.build/*.o
-	
-test: build-test
-	.build/debug/$(TARGET_TEST)
+test:
+	$(SWIFT) test

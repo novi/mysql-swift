@@ -1,3 +1,5 @@
+#if os(Linux)
+
 import XCTest
 
 extension DateTests {
@@ -56,14 +58,4 @@ extension QueryTests {
     }
 }
 
-
-XCTMain([
-    DateTests(),
-    EscapeTests(),
-    QueryFormatterTests(),
-    
-    
-    ConnectionPoolTests(),
-    ConnectionTests(),
-    QueryTests()
-])
+#endif
