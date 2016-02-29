@@ -59,7 +59,7 @@ public struct QueryRowResult {
     
     func checkFieldBounds(index: Int) throws {
         guard cols.count > index else {
-            throw QueryError.FieldIndexOutOfBounds(fieldCount: cols.count, attemped: index)
+            throw QueryError.FieldIndexOutOfBounds(fieldCount: cols.count, attemped: index, fieldName: fields[index].name)
         }
     }
     

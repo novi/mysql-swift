@@ -8,18 +8,18 @@
 
 public enum QueryError: ErrorType {
     
-    case QueryExecutionError(String)
-    case ResultFetchError(String)
-    case ResultNoField
-    case ResultFieldFetchError
-    case ResultParseError(String)
+    case QueryExecutionError(message: String, query: String)
+    case ResultFetchError(message: String, query: String)
+    case ResultNoField(query: String)
+    case ResultFieldFetchError(query: String)
+    case ResultParseError(message: String, result: String)
     
-    case FieldIndexOutOfBounds(fieldCount: Int, attemped: Int)
+    case FieldIndexOutOfBounds(fieldCount: Int, attemped: Int, fieldName: String)
     case CastError(actual: String, expected: String, key: String)
     case MissingKeyError(key: String)
     
-    case QueryParameterCountMismatch
-    case QueryParameterIdTypeError
+    case QueryParameterCountMismatch(query: String)
+    case QueryParameterIdTypeError(query: String)
     
     case InvalidSQLDate(String)
 }

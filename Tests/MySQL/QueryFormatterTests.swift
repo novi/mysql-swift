@@ -28,4 +28,12 @@ class QueryFormatterTests: XCTestCase {
         let formatted = try! QueryFormatter.format("SELECT ??, ?, ??, ?, ?", args: ["name", "message??", "col", "hello??", "hello?"], option: queryOption)
         XCTAssertEqual(formatted, "SELECT `name`, 'message??', `col`, 'hello??', 'hello?'")
     }
+    
+    func testStringUtil() {
+        let someString = "abcdefghijklmn12345"
+        XCTAssertEqual(someString.subString(max: 10), "abcdefghij")
+        XCTAssertEqual(someString.subString(max: 1000), someString)
+        
+        XCTAssertEqual("".subString(max: 10), "")
+    }
 }
