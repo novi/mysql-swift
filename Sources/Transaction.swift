@@ -10,13 +10,13 @@
 extension Connection {
     
     public func beginTransaction() throws {
-        try query(query: "START TRANSACTION;") as ([EmptyRowResult], QueryStatus)
+        try query("START TRANSACTION;")
         isInTransaction += 1
     }
 
     public func commit() throws {
         isInTransaction = 0
-        try query(query: "COMMIT;") as ([EmptyRowResult], QueryStatus)
+        try query("COMMIT;")
     }
     
     public func rollback() throws {
@@ -24,7 +24,7 @@ extension Connection {
             isInTransaction = 0
             
         }
-        try query(query: "ROLLBACK;") as ([EmptyRowResult], QueryStatus)
+        try query("ROLLBACK;")
     }
 }
 
