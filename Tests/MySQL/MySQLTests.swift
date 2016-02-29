@@ -10,9 +10,21 @@ import XCTest
 @testable import MySQL
 
 /*
-// You need `Constants.swift` includes `TestConstants`
-
+ 
 struct TestConstants: TestConstantsType {
+    let host: String = ""
+    let port: Int = 3306
+    let user: String = ""
+    let password: String = ""
+    let database: String = "test"
+    let tableName: String = "unit_test_db_3894" // Unit test creates a table
+    let encoding: Connection.Encoding = .UTF8MB4
+    let timeZone: Connection.TimeZone = Connection.TimeZone(GMTOffset: 60 * 60 * 9) // JST
+}
+
+*/
+
+struct DummyConstants: TestConstantsType {
     let host: String = ""
     let port: Int = 3306
     let user: String = ""
@@ -22,8 +34,6 @@ struct TestConstants: TestConstantsType {
     let encoding: Connection.Encoding = .UTF8MB4
     let timeZone: Connection.TimeZone = Connection.TimeZone(GMTOffset: 60 * 60 * 9) // JST
 }
-
-*/
 
 protocol TestConstantsType: ConnectionOption {
     var tableName: String { get }
@@ -36,10 +46,10 @@ protocol MySQLTestType: class {
 
 extension MySQLTestType {
     func prepare() {
-        self.constants = TestConstants()
+        self.constants = DummyConstants() // !!! Replace with your MySQL connection !!!
         self.pool = ConnectionPool(options: constants)
         
-        XCTAssertEqual(constants.timeZone, Connection.TimeZone(GMTOffset: 60 * 60 * 9) )
+        XCTAssertEqual(constants.timeZone, Connection.TimeZone(GMTOffset: 60 * 60 * 9), "test MySQL's timezone should be JST")
     }
 }
 
