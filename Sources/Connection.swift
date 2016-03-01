@@ -58,7 +58,7 @@ public extension ConnectionOption {
 extension Connection {
     
     public final class TimeZone: Equatable, Hashable {
-        let timeZone: CFTimeZoneRef
+        let timeZone: CFTimeZone
         public init(name: String) {
 #if os(Linux)
                 let s = name.withCString { p in
