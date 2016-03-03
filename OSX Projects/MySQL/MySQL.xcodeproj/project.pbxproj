@@ -20,7 +20,6 @@
 		529215921BDB8CD6009B031A /* MySQL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 529215871BDB8CD6009B031A /* MySQL.framework */; };
 		52965F931C82F6C500E35C64 /* ConnectionPoolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52965F891C82F6C500E35C64 /* ConnectionPoolTests.swift */; };
 		52965F941C82F6C500E35C64 /* ConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52965F8A1C82F6C500E35C64 /* ConnectionTests.swift */; };
-		52965F951C82F6C500E35C64 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52965F8B1C82F6C500E35C64 /* Constants.swift */; };
 		52965F961C82F6C500E35C64 /* DateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52965F8C1C82F6C500E35C64 /* DateTests.swift */; };
 		52965F971C82F6C500E35C64 /* EscapeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52965F8D1C82F6C500E35C64 /* EscapeTests.swift */; };
 		52965F991C82F6C500E35C64 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52965F8F1C82F6C500E35C64 /* Model.swift */; };
@@ -337,7 +336,6 @@
 				52965F9B1C82F6C500E35C64 /* QueryFormatterTests.swift in Sources */,
 				52965F9A1C82F6C500E35C64 /* MySQLTests.swift in Sources */,
 				52965F941C82F6C500E35C64 /* ConnectionTests.swift in Sources */,
-				52965F951C82F6C500E35C64 /* Constants.swift in Sources */,
 				52965F961C82F6C500E35C64 /* DateTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

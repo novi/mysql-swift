@@ -25,9 +25,9 @@ struct TestConstants: TestConstantsType {
 */
 
 struct DummyConstants: TestConstantsType {
-    let host: String = ""
+    let host: String = "127.0.0.1"
     let port: Int = 3306
-    let user: String = ""
+    let user: String = "root"
     let password: String = ""
     let database: String = "test"
     let tableName: String = "unit_test_db_3894"

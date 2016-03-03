@@ -1,4 +1,5 @@
-BUILDOPTS=-Xlinker -L/usr/lib -Xcc -IPackages/CMySQL-1.0.0
+CMySQL=CMySQL-1.0.0
+BUILDOPTS=-Xlinker -L/usr/lib -Xcc -IPackages/$(CMySQL)
 
 SWIFTC=swiftc
 SWIFT=swift
@@ -9,10 +10,10 @@ endif
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
     SWIFTC=xcrun -sdk macosx swiftc
-	BUILDOPTS=-Xlinker -L/usr/local/lib
+	BUILDOPTS=-Xcc -IPackages/$(CMySQL) -Xlinker -L/usr/local/lib -Xcc -I/usr/local/include/mysql
 endif
 
-all: build test
+all: build
 	
 build:
 	$(SWIFT) build -v $(BUILDOPTS)
