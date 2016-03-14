@@ -1,9 +1,7 @@
-#if os(Linux)
-
 import XCTest
 
 extension DateTests {
-    var allTests : [(String, () throws -> Void)] {
+    static var allTests : [(String, DateTests -> () throws -> Void)] {
         return [
             ("testSQLDate", testSQLDate),
             ("testSQLCalendar", testSQLCalendar)
@@ -12,7 +10,7 @@ extension DateTests {
 }
 
 extension EscapeTests {
-    var allTests : [(String, () throws -> Void)] {
+    static var allTests : [(String, EscapeTests -> () throws -> Void)] {
         return [
             ("testStringEscape", testStringEscape),
             ("testBasicTypes", testBasicTypes),
@@ -23,7 +21,7 @@ extension EscapeTests {
 }
 
 extension ConnectionPoolTests {
-    var allTests : [(String, () throws -> Void)] {
+    static var allTests : [(String, ConnectionPoolTests -> () throws -> Void)] {
         return [
             ("testGetConnection", testGetConnection),
             ("testExecutionBlock", testExecutionBlock)
@@ -32,7 +30,7 @@ extension ConnectionPoolTests {
 }
 
 extension ConnectionTests {
-    var allTests : [(String, () throws -> Void)] {
+    static var allTests : [(String, ConnectionTests -> () throws -> Void)] {
         return [
             ("testConnect", testConnect),
             ("testConnect2", testConnect2)
@@ -41,7 +39,7 @@ extension ConnectionTests {
 }
 
 extension QueryFormatterTests {
-    var allTests : [(String, () throws -> Void)] {
+    static var allTests : [(String, QueryFormatterTests -> () throws -> Void)] {
         return [
             ("testBasicFormatting", testBasicFormatting),
             ("testPlaceholder", testPlaceholder)
@@ -50,12 +48,10 @@ extension QueryFormatterTests {
 }
 
 extension QueryTests {
-    var allTests : [(String, () throws -> Void)] {
+    static var allTests : [(String, QueryTests -> () throws -> Void)] {
         return [
             ("testInsertRow", testInsertRow),
             ("testEmojiInserting", testEmojiInserting)
         ]
     }
 }
-
-#endif

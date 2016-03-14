@@ -1,17 +1,13 @@
-#if os(Linux)
-
 import XCTest
-@testable import MySQLtest
+@testable import MySQLTestSuite
 
 XCTMain([
-    DateTests(),
-    EscapeTests(),
-    QueryFormatterTests(),
+    testCase( DateTests.allTests ),
+    testCase( EscapeTests.allTests ),
+    testCase( QueryFormatterTests.allTests ),
     
     
-    ConnectionPoolTests(),
-    ConnectionTests(),
-    QueryTests()
+    testCase( ConnectionPoolTests.allTests ),
+    testCase( ConnectionTests.allTests ),
+    testCase( QueryTests.allTests )
 ])
-
-#endif
