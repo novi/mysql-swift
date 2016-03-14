@@ -17,7 +17,11 @@ extension XCTestCase {
     }
 }
 
-class DateTests : XCTestCase {
+class DateTests : XCTestCase, XCTestCaseProvider {
+    
+    var allTests: [(String, () throws -> Void)] {
+        return self.dynamicType.allTests.map{ ($0.0, $0.1(self)) }
+    }
     
     func testSQLDate() {
         

@@ -43,7 +43,11 @@ extension QueryTestType {
 }
 
 
-class QueryTests: XCTestCase, QueryTestType {
+class QueryTests: XCTestCase, QueryTestType, XCTestCaseProvider {
+    
+    var allTests: [(String, () throws -> Void)] {
+        return self.dynamicType.allTests.map{ ($0.0, $0.1(self)) }
+    }
     
     var constants: TestConstantsType!
     var pool: ConnectionPool!

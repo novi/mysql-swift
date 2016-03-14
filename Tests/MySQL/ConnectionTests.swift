@@ -9,7 +9,11 @@
 import XCTest
 @testable import MySQL
 
-class ConnectionTests: XCTestCase, MySQLTestType {
+class ConnectionTests: XCTestCase, MySQLTestType, XCTestCaseProvider {
+    
+    var allTests: [(String, () throws -> Void)] {
+        return self.dynamicType.allTests.map{ ($0.0, $0.1(self)) }
+    }
     
     var constants: TestConstantsType!
     var pool: ConnectionPool!

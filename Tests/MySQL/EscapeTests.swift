@@ -9,7 +9,11 @@
 import XCTest
 @testable import MySQL
 
-class EscapeTests: XCTestCase {
+class EscapeTests: XCTestCase, XCTestCaseProvider {
+    
+    var allTests: [(String, () throws -> Void)] {
+        return self.dynamicType.allTests.map{ ($0.0, $0.1(self)) }
+    }
     
     // https://github.com/felixge/node-mysql/blob/master/test/unit/protocol/test-SqlString.js
     func testStringEscape() {

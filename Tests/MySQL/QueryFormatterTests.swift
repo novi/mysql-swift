@@ -9,7 +9,11 @@
 import XCTest
 @testable import MySQL
 
-class QueryFormatterTests: XCTestCase {
+class QueryFormatterTests: XCTestCase, XCTestCaseProvider {
+    
+    var allTests: [(String, () throws -> Void)] {
+        return self.dynamicType.allTests.map{ ($0.0, $0.1(self)) }
+    }
     
     func testBasicFormatting() {
         
