@@ -125,6 +125,15 @@ let package = Package(
 )
 ```
 
+_Note:_ To build with Swift Package Manager(`swift build`), you may need to specify library path for libmysql to link it.
+
+```sh
+# Linux
+swift build -Xlinker -L/usr/lib
+# OS X 
+swift build -Xlinker -L/usr/local/lib -Xcc -I/usr/local/include/mysql
+```
+
 # Usage
 
 ## Connection & Querying
