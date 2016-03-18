@@ -7,7 +7,8 @@ XCTMain([
             QueryFormatterTests(),
             ConnectionPoolTests(),
             ConnectionTests(),
-            QueryTests()
+            QueryTests(),
+            BlobQueryTests()
     ])
 #else
     @testable import MySQLTestSuite
@@ -17,6 +18,7 @@ XCTMain([
             testCase( QueryFormatterTests.allTests ),
             testCase( ConnectionPoolTests.allTests ),
             testCase( ConnectionTests.allTests ),
-            testCase( QueryTests.allTests )
+            testCase( QueryTests.allTests ),
+            testCase( BlobQueryTests.allTests )
     ])
 #endif
