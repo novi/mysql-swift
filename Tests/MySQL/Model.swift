@@ -89,4 +89,25 @@ struct Row {
             )
         }
     }
+    
+    struct BlobTextRow: QueryRowResultType, QueryParameterDictionaryType {
+        let id: Int
+        
+        let text1: String
+        
+        static func decodeRow(r: QueryRowResult) throws -> BlobTextRow {
+            return try BlobTextRow(
+                id: r <| "id",
+                
+                text1: r <| "text1"
+            )
+        }
+        
+        func queryParameter() throws -> QueryDictionary {
+            return QueryDictionary([
+                                       //"id": // auto increment
+                "text1": text1
+                ])
+        }
+    }
 }

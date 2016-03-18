@@ -22,6 +22,11 @@ class EscapeTests: XCTestCase, XCTestCaseProvider {
         
         // TODO
         
+        XCTAssertEqual(SQLString.escape("\u{00A5}"), "'¥'")
+        XCTAssertEqual(SQLString.escape("\\"), "'\\\\'")
+        
+        // escape combined character
+        XCTAssertEqual(SQLString.escape("'ﾞ"), "'\\'ﾞ'")
     }
     
     func testBasicTypes() {

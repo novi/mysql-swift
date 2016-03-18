@@ -66,7 +66,7 @@ struct SQLString {
     
     internal static func escape(str: String) -> String {
         var out: [Character] = []
-        for c in str.characters {
+        for c in str.unicodeScalars {
             switch c {
             case "\0":
                 out.appendContentsOf("\\0".characters)
@@ -87,7 +87,7 @@ struct SQLString {
             case "\u{1A}":
                 out.appendContentsOf("\\Z".characters)
             default:
-                out.append(c)
+                out.append(Character(c))
             }
         }
         return "'" + String(out) + "'"

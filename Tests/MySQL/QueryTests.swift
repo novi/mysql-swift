@@ -36,6 +36,19 @@ extension QueryTestType {
         try conn.query(query)
     }
     
+    func createTextBlobTable() throws {
+        try dropTestTable()
+        
+        let conn = try pool.getConnection()
+        let query = "CREATE TABLE `\(constants.tableName)` (" +
+            "`id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
+            "`text1` mediumtext NOT NULL," +
+            "PRIMARY KEY (`id`)" +
+        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
+        
+        try conn.query(query)
+    }
+    
     func dropTestTable() throws {
         let conn = try pool.getConnection()
         try conn.query("DROP TABLE IF EXISTS \(constants.tableName)")
@@ -201,6 +214,42 @@ class QueryTests: XCTestCase, QueryTestType, XCTestCaseProvider {
         let fetched = rows[0]
         XCTAssertEqual(fetched.name, "日本語123🍣あいう")
         XCTAssertEqual(fetched.age, 123)
+    }
+    
+}
+
+class BlobQueryTests: XCTestCase, QueryTestType, XCTestCaseProvider {
+    
+    var allTests: [(String, () throws -> Void)] {
+        return self.dynamicType.allTests.map{ ($0.0, $0.1(self)) }
+    }
+    
+    var constants: TestConstantsType!
+    var pool: ConnectionPool!
+    
+    #if os(OSX)
+    override func setUp() {
+        super.setUp()
+        
+        prepare()
+        try! createTextBlobTable()
+    }
+    #else
+    func setUp() {
+    prepare()
+    try! createTextBlobTable()
+    }
+    #endif
+    
+    func testInsertForCombinedUnicodeCharacter() {
+        let str = "'ﾞ and áäèëî , ¥"
+        
+        let obj = Row.BlobTextRow(id: 0, text1: str)
+        let status: QueryStatus = try! pool.execute { conn in
+            try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, obj])
+        }
+        XCTAssertEqual(status.insertedId, 1)
+        
     }
     
 }
