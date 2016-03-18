@@ -74,13 +74,6 @@ final public class ConnectionPool: CustomStringConvertible {
     }
     
     func releaseConnection(conn: Connection) {
-        if conn.isInTransaction > 0 {
-            do {
-                try conn.rollback()
-            } catch(let e) {
-                print("rollback failed in release connection: \(e)")
-            }
-        }
         mutex.sync {
             conn.isInUse = false
         }

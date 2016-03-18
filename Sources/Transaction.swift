@@ -9,21 +9,15 @@
 
 extension Connection {
     
-    public func beginTransaction() throws {
+    func beginTransaction() throws {
         try query("START TRANSACTION;")
-        isInTransaction += 1
     }
 
-    public func commit() throws {
-        isInTransaction = 0
+    func commit() throws {
         try query("COMMIT;")
     }
     
-    public func rollback() throws {
-        if isInTransaction > 0 {
-            isInTransaction = 0
-            
-        }
+    func rollback() throws {
         try query("ROLLBACK;")
     }
 }

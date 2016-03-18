@@ -115,7 +115,6 @@ extension Connection {
 
 public final class Connection {
     
-    var isInTransaction: Int = 0
     var isInUse: Bool = false
     var mysql_: UnsafeMutablePointer<MYSQL>
     
