@@ -6,7 +6,7 @@
 //  Copyright © 2015 Yusuke Ito. All rights reserved.
 //
 
-public enum QueryError: ErrorType {
+public enum QueryError: ErrorProtocol {
     
     case QueryExecutionError(message: String, query: String)
     case ResultFetchError(message: String, query: String)

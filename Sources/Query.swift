@@ -29,7 +29,7 @@ public struct QueryStatus: CustomStringConvertible {
 
 extension String {
     func subString(max max: Int) -> String {
-        return self[startIndex..<startIndex.advancedBy(max, limit: endIndex)]
+        return self[startIndex..<startIndex.advanced(by: max, limit: endIndex)]
     }
 }
 
@@ -53,7 +53,7 @@ extension Connection {
             if f.name == nil {
                 return nil
             }
-            guard let fs = String.fromCString(f.name) else {
+            guard let fs = String(validatingUTF8: f.name) else {
                 return nil
             }
             self.name = fs
@@ -144,7 +144,7 @@ extension Connection {
                 if sf == nil {
                     cols.append(NullValue.null)
                 } else {
-                    if let str = String.fromCString(sf) {
+                    if let str = String(validatingUTF8: sf) {
                         cols.append(try f.castValue(str, row: rowCount, timeZone: options.timeZone))
                     } else {
                         throw QueryError.ResultParseError(message: "in \(f.name), at row: \(rowCount)", result: "")

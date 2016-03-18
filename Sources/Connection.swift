@@ -15,7 +15,7 @@ struct MySQLUtil {
         if ch == nil {
             return "generic error"
         }
-        guard let str = String.fromCString(ch) else {
+        guard let str = String(validatingUTF8: ch) else {
             return "generic error"
         }
         return str as String
@@ -101,12 +101,12 @@ public func ==(lhs: Connection.TimeZone, rhs: Connection.TimeZone) -> Bool {
 #elseif os(OSX)
     return CFEqual(lhs.timeZone, rhs.timeZone) ||
         CFTimeZoneGetSecondsFromGMT(lhs.timeZone, 0) == CFTimeZoneGetSecondsFromGMT(rhs.timeZone, 0) ||
-        CFStringCompare(CFTimeZoneGetName(lhs.timeZone), CFTimeZoneGetName(rhs.timeZone), []) == .CompareEqualTo
+        CFStringCompare(CFTimeZoneGetName(lhs.timeZone), CFTimeZoneGetName(rhs.timeZone), []) == .compareEqualTo
 #endif
 }
 
 extension Connection {
-    public enum Error: ErrorType {
+    public enum Error: ErrorProtocol {
         case GenericError(String)
         case ConnectionError(String)
         case ConnectionPoolGetConnectionError
@@ -136,17 +136,17 @@ public final class Connection {
         
         let mysql = mysql_init(nil)
         
-        let timeoutPtr = UnsafeMutablePointer<Int>.alloc(1)
-        timeoutPtr.memory = options.timeout
+        var timeoutPtr = UnsafeMutablePointer<Int>(allocatingCapacity: 1)
+        timeoutPtr.pointee = options.timeout
         defer {
-            timeoutPtr.dealloc(1)
+            timeoutPtr.deallocateCapacity(1)
         }
         mysql_options(mysql, MYSQL_OPT_CONNECT_TIMEOUT, timeoutPtr)
         
-        let reconnectPtr = UnsafeMutablePointer<my_bool>.alloc(1)
-        reconnectPtr.memory = options.reconnect == false ? 0 : 1
+        var reconnectPtr = UnsafeMutablePointer<my_bool>(allocatingCapacity: 1)
+        reconnectPtr.pointee = options.reconnect == false ? 0 : 1
         defer {
-            reconnectPtr.dealloc(1)
+            reconnectPtr.deallocateCapacity(1)
         }
         
         if mysql_real_connect(mysql,

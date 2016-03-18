@@ -47,7 +47,7 @@ struct SQLString {
         for c in str.characters {
             switch c {
                 case "`":
-                step1.appendContentsOf("``".characters)
+                step1.append(contentsOf: "``".characters)
             default:
                 step1.append(c)
             }
@@ -56,7 +56,7 @@ struct SQLString {
         for c in step1 {
             switch c {
                 case ".":
-                out.appendContentsOf("`.`".characters)
+                out.append(contentsOf: "`.`".characters)
                 default:
                 out.append(c)
             }
@@ -69,23 +69,23 @@ struct SQLString {
         for c in str.unicodeScalars {
             switch c {
             case "\0":
-                out.appendContentsOf("\\0".characters)
+                out.append(contentsOf: "\\0".characters)
             case "\n":
-                out.appendContentsOf("\\n".characters)
+                out.append(contentsOf: "\\n".characters)
             case "\r":
-                out.appendContentsOf("\\r".characters)
+                out.append(contentsOf: "\\r".characters)
             case "\u{8}":
-                out.appendContentsOf("\\b".characters)
+                out.append(contentsOf: "\\b".characters)
             case "\t":
-                out.appendContentsOf("\\t".characters)
+                out.append(contentsOf: "\\t".characters)
             case "\\":
-                out.appendContentsOf("\\\\".characters)
+                out.append(contentsOf: "\\\\".characters)
             case "'":
-                out.appendContentsOf("\\'".characters)
+                out.append(contentsOf: "\\'".characters)
             case "\"":
-                out.appendContentsOf("\\\"".characters)
+                out.append(contentsOf: "\\\"".characters)
             case "\u{1A}":
-                out.appendContentsOf("\\Z".characters)
+                out.append(contentsOf: "\\Z".characters)
             default:
                 out.append(Character(c))
             }
@@ -96,7 +96,7 @@ struct SQLString {
 
 public struct QueryFormatter {
     
-    public static func format<S: SequenceType where S.Generator.Element == QueryParameter>(query: String, args argsg: S, option: QueryParameterOption) throws -> String {
+    public static func format<S: Sequence where S.Iterator.Element == QueryParameter>(query: String, args argsg: S, option: QueryParameterOption) throws -> String {
         var args: [QueryParameter] = []
         for a in argsg {
             args.append(a)
@@ -111,8 +111,8 @@ public struct QueryFormatter {
         
         // format ??
         while true {
-            let r1 = formatted.rangeOfString("??", options: [], range: scanRange, locale: nil)
-            let r2 = formatted.rangeOfString("?", options: [], range: scanRange, locale: nil)
+            let r1 = formatted.range(of: "??", options: [], range: scanRange, locale: nil)
+            let r2 = formatted.range(of: "?", options: [], range: scanRange, locale: nil)
             let r: Range<String.Index>
             if let r1 = r1, let r2 = r2 {
                 r = r1.startIndex <= r2.startIndex ? r1 : r2
@@ -130,7 +130,7 @@ public struct QueryFormatter {
                 guard let val = args[placeHolderCount] as? String else {
                     throw QueryError.QueryParameterIdTypeError(query: query)
                 }
-                formatted.replaceRange(r, with: SQLString.escapeId(val))
+                formatted.replaceSubrange(r, with: SQLString.escapeId(val))
                 scanRange = r.endIndex..<formatted.endIndex
             case "?":
                 if placeHolderCount >= args.count {
@@ -159,9 +159,9 @@ public struct QueryFormatter {
                     throw QueryError.QueryParameterCountMismatch(query: query)
                 }
                 let val = valArgs[placeHolderCount]
-                formattedChars.removeAtIndex(index)
+                formattedChars.remove(at: index)
                 let valStr = (try val.escapedValueWith(option: option))
-                formattedChars.insertContentsOf(valStr.characters, at: index)
+                formattedChars.insert(contentsOf: valStr.characters, at: index)
                 index += valStr.characters.count-1
                 placeHolderCount += 1
             } else {

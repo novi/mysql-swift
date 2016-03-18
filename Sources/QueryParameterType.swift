@@ -16,7 +16,7 @@ public struct QueryDictionary: QueryParameter {
         for (k, v) in dict {
             keyVals.append("\(SQLString.escapeId(k)) = \(try QueryOptional(v).escapedValueWith(option: option))")
         }
-        return keyVals.joinWithSeparator(", ")
+        return keyVals.joined(separator:  ", ")
     }
 }
 
@@ -42,7 +42,7 @@ public struct QueryArray : QueryParameter, QueryArrayType {
                 return "(" + (try val.escapedValueWith(option: option)) + ")"
             }
             return try $0.escapedValueWith(option: option)
-        }).joinWithSeparator(", ")
+        }).joined(separator: ", ")
     }
 }
 

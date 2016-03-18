@@ -56,7 +56,7 @@ class DateTests : XCTestCase, XCTestCaseProvider {
         let gmt = Connection.TimeZone(GMTOffset: 100)
         let cal1 = SQLDateCalender.calendarFor(gmt)
         let cal2 = SQLDateCalender.calendarFor(gmt)
-        XCTAssertTrue(unsafeAddressOf(cal1) == unsafeAddressOf(cal2))
+        XCTAssertTrue(unsafeAddress(of: cal1) == unsafeAddress(of: cal2))
         XCTAssertEqual(cal1, cal2)
         XCTAssertEqual(cal1.hashValue, cal2.hashValue)
     }

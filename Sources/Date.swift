@@ -19,7 +19,7 @@ internal final class SQLDateCalender {
             return cal
         }
         let newCal = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
-        newCal.timeZone = unsafeBitCast(timeZone.timeZone, NSTimeZone.self) // TODO: in Linux
+        newCal.timeZone = unsafeBitCast(timeZone.timeZone, to: NSTimeZone.self) // TODO: in Linux
         self.saveCalendar(newCal, forTimeZone: timeZone)
         return newCal
     }
@@ -64,7 +64,7 @@ public struct SQLDate {
                 comp.minute = 0
                 comp.second = 0
                 let cal = SQLDateCalender.calendarFor(timeZone)
-                if let date = cal.dateFromComponents(comp) {
+                if let date = cal.date(from: comp) {
                     self.timeInterval = date.timeIntervalSince1970
                     return
                 }
@@ -85,7 +85,7 @@ public struct SQLDate {
                     comp.minute = minute
                     comp.second = second
                     let cal = SQLDateCalender.calendarFor(timeZone)
-                    if let date = cal.dateFromComponents(comp) {
+                    if let date = cal.date(from :comp) {
                         self.timeInterval = date.timeIntervalSince1970
                         return
                     }
@@ -120,7 +120,7 @@ extension SQLDate: QueryParameter {
     public func escapedValueWith(option option: QueryParameterOption) -> String {
         let comp = SQLDateCalender.mutex.sync { () -> NSDateComponents? in
             let cal = SQLDateCalender.calendarFor(option.timeZone)
-            return cal.components([ .Year, .Month,  .Day,  .Hour, .Minute, .Second], fromDate: date())
+            return cal.components([ .year, .month,  .day,  .hour, .minute, .second], from: date())
             }! // TODO: in Linux
         
         // YYYY-MM-DD HH:MM:SS
