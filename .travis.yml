@@ -14,7 +14,7 @@ addons:
 services:
   - mysql
 env:
-  - SWIFT_VERSION=DEVELOPMENT-SNAPSHOT-2016-03-01-a
+  - SWIFT_VERSION=DEVELOPMENT-SNAPSHOT-2016-03-16-a
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update       ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install mysql; fi
