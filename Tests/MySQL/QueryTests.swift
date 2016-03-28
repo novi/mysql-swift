@@ -61,19 +61,12 @@ class QueryTests: XCTestCase, QueryTestType {
     var constants: TestConstantsType!
     var pool: ConnectionPool!
     
-    #if os(OSX)
     override func setUp() {
         super.setUp()
         
         prepare()
         try! createTestTable()
     }
-    #else
-    func setUp() {
-        prepare()
-        try! createTestTable()
-    }
-    #endif
     
     var someDate: SQLDate {
         return try! SQLDate(sqlDate: "2015-12-27 16:54:00", timeZone: pool.options.timeZone)
@@ -219,19 +212,12 @@ class BlobQueryTests: XCTestCase, QueryTestType {
     var constants: TestConstantsType!
     var pool: ConnectionPool!
     
-    #if os(OSX)
     override func setUp() {
         super.setUp()
         
         prepare()
         try! createTextBlobTable()
     }
-    #else
-    func setUp() {
-    prepare()
-    try! createTextBlobTable()
-    }
-    #endif
     
     func testInsertForCombinedUnicodeCharacter() throws {
         let str = "'ﾞ and áäèëî , ¥"

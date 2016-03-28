@@ -8,6 +8,17 @@
 
 import Foundation
 
+
+#if os(OSX)
+#else
+    extension String {
+        public func range(of string: String, options mask: NSStringCompareOptions, range searchRange: Range<Index>?, locale: NSLocale?) -> Range<Index>? {
+            return rangeOfString(string, options: mask, range: searchRange, locale: locale)
+        }
+    }
+    
+#endif
+
 public protocol QueryParameter {
     func escapedValueWith(option option: QueryParameterOption) throws -> String
 }
@@ -111,6 +122,7 @@ public struct QueryFormatter {
         
         // format ??
         while true {
+            // TODO: use function in Swift.String
             let r1 = formatted.range(of: "??", options: [], range: scanRange, locale: nil)
             let r2 = formatted.range(of: "?", options: [], range: scanRange, locale: nil)
             let r: Range<String.Index>

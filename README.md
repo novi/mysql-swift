@@ -77,26 +77,14 @@ try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
 
 # Requirements
 
-* Swift 2.2 or Later (includes Linux support)
-* OS X 10.10 or Later
-
+* Swift 3 (development snapshot)
 # Dependencies
 
 * libmysqlclient 6.1.6 (named CMySQL in Swift)
 
 # Installation
 
-## Cocoa (OS X)
-
-Simply use Carthage.
-
-* Place `libmysqlclient` and `openssl` on `/usr/local`  by using `brew install mysql openssl`.
-* Add `github "novi/mysql-swift" "master"` to your `Cartfile`.
-* Run `carthage update`.
-
-## Swift 2.2 or later
-
-### OS X
+## OS X
 
 * Install `mysql`(includes libmysqlclient).
 
@@ -105,7 +93,7 @@ Simply use Carthage.
 $ brew install mysql
 ```
 
-### Ubuntu Linux
+## Ubuntu Linux
 
 * Install `libmysqlclient`
 
@@ -120,7 +108,7 @@ import PackageDescription
 
 let package = Package(
     dependencies: [
-        .Package(url: "https://github.com/novi/mysql-swift.git", majorVersion: 0)
+        .Package(url: "https://github.com/novi/mysql-swift.git", majorVersion: 0, minor: 2)
     ]
 )
 ```
