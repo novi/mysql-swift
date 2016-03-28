@@ -78,6 +78,7 @@ try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
 # Requirements
 
 * Swift 3 (development snapshot)
+
 # Dependencies
 
 * libmysqlclient 6.1.6 (named CMySQL in Swift)
