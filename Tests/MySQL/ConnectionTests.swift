@@ -9,11 +9,7 @@
 import XCTest
 @testable import MySQL
 
-class ConnectionTests: XCTestCase, MySQLTestType, XCTestCaseProvider {
-    
-    var allTests: [(String, () throws -> Void)] {
-        return self.dynamicType.allTests.map{ ($0.0, $0.1(self)) }
-    }
+class ConnectionTests: XCTestCase, MySQLTestType {
     
     var constants: TestConstantsType!
     var pool: ConnectionPool!
@@ -30,14 +26,14 @@ class ConnectionTests: XCTestCase, MySQLTestType, XCTestCaseProvider {
     }
     #endif
     
-    func testConnect() {
-        let conn = try! pool.getConnection()
+    func testConnect() throws {
+        let conn = try pool.getConnection()
         XCTAssertTrue(conn.ping)
     }
     
-    func testConnect2() {
-        let conn = try! pool.getConnection()
-        try! conn.query("SELECT 1;")
+    func testConnect2() throws {
+        let conn = try pool.getConnection()
+        try conn.query("SELECT 1;")
         XCTAssertTrue(conn.ping)
     }
 }

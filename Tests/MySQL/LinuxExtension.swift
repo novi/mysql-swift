@@ -1,12 +1,5 @@
 import XCTest
 
-#if os(OSX)
-    protocol XCTestCaseProvider {
-        var allTests: [(String, () throws -> Void)] { get }
-    }
-    
-#endif
-
 extension DateTests {
     static var allTests : [(String, DateTests -> () throws -> Void)] {
         return [
