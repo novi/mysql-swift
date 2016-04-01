@@ -7,12 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		27F905FB1CAC932700A97C4E /* libmysqlclient.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = 27F905FA1CAC932700A97C4E /* libmysqlclient.a */; };
+		27FAE8221CAC8D4100B867F4 /* ResultExtention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27FAE8211CAC8D4100B867F4 /* ResultExtention.swift */; };
 		523CBAB11C295E6D00B01A6C /* libmysqlclient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 523CBAB01C295E6D00B01A6C /* libmysqlclient.a */; };
 		523CBAB41C295EE500B01A6C /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 523CBAB21C295EE500B01A6C /* libcrypto.a */; };
 		523CBAB51C295EE500B01A6C /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 523CBAB31C295EE500B01A6C /* libssl.a */; };
 		523CBAB61C295F4300B01A6C /* libcrypto.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = 523CBAB21C295EE500B01A6C /* libcrypto.a */; };
 		523CBAB71C295F4300B01A6C /* libssl.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = 523CBAB31C295EE500B01A6C /* libssl.a */; };
-		523CBAB81C295F4300B01A6C /* libmysqlclient.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = 523CBAB01C295E6D00B01A6C /* libmysqlclient.a */; };
 		527E48D21C44D2AD002C1732 /* Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527E48D11C44D2AD002C1732 /* Sync.swift */; };
 		528860371C310E2300DFDA99 /* ResultType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528860361C310E2300DFDA99 /* ResultType.swift */; };
 		528860391C310FE200DFDA99 /* QueryParameterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528860381C310FE200DFDA99 /* QueryParameterType.swift */; };
@@ -56,15 +57,17 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
+				27F905FB1CAC932700A97C4E /* libmysqlclient.a in CopyFiles */,
 				523CBAB61C295F4300B01A6C /* libcrypto.a in CopyFiles */,
 				523CBAB71C295F4300B01A6C /* libssl.a in CopyFiles */,
-				523CBAB81C295F4300B01A6C /* libmysqlclient.a in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		27F905FA1CAC932700A97C4E /* libmysqlclient.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmysqlclient.a; path = "../../../../../../usr/local/mysql-5.6.26-osx10.9-x86_64/lib/libmysqlclient.a"; sourceTree = "<group>"; };
+		27FAE8211CAC8D4100B867F4 /* ResultExtention.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultExtention.swift; sourceTree = "<group>"; };
 		523CBAB01C295E6D00B01A6C /* libmysqlclient.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmysqlclient.a; path = /usr/local/lib/libmysqlclient.a; sourceTree = "<absolute>"; };
 		523CBAB21C295EE500B01A6C /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = /usr/local/opt/openssl/lib/libcrypto.a; sourceTree = "<absolute>"; };
 		523CBAB31C295EE500B01A6C /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = /usr/local/opt/openssl/lib/libssl.a; sourceTree = "<absolute>"; };
@@ -126,6 +129,7 @@
 		5292157D1BDB8CD5009B031A = {
 			isa = PBXGroup;
 			children = (
+				27F905FA1CAC932700A97C4E /* libmysqlclient.a */,
 				523CBAB21C295EE500B01A6C /* libcrypto.a */,
 				523CBAB31C295EE500B01A6C /* libssl.a */,
 				523CBAB01C295E6D00B01A6C /* libmysqlclient.a */,
@@ -199,6 +203,7 @@
 				528860361C310E2300DFDA99 /* ResultType.swift */,
 				527E48D11C44D2AD002C1732 /* Sync.swift */,
 				52EF0E1D1C2B19C8004C8BD2 /* Transaction.swift */,
+				27FAE8211CAC8D4100B867F4 /* ResultExtention.swift */,
 			);
 			name = Sources;
 			path = ../../Sources;
@@ -325,6 +330,7 @@
 				52EF0E1E1C2B19C8004C8BD2 /* Transaction.swift in Sources */,
 				52C0D3BB1C27D45100857DFA /* Connection.swift in Sources */,
 				528860371C310E2300DFDA99 /* ResultType.swift in Sources */,
+				27FAE8221CAC8D4100B867F4 /* ResultExtention.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
