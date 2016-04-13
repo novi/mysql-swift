@@ -53,22 +53,6 @@ public struct QueryDictionary: QueryParameter {
     }
 }
 
-/*
-public protocol QueryDictionaryType: QueryParameterType {
-    var dict: [String: Self?] { get }
-}
-
-public extension QueryDictionaryType {
-    func escapedValue(option option: Self.OT) throws -> String {
-        var keyVals: [String] = []
-        for (k, v) in dict {
-            keyVals.append("\(SQLString.escapeId(k)) = \(try QueryOptional(v).escapedValue(option: option))")
-        }
-        return keyVals.joined(separator:  ", ")
-    }
-}
-*/
-
 //extension Dictionary: where Value: QueryParameter, Key: StringLiteralConvertible { }
 // not yet supported
 // extension Array:QueryParameter where Element: QueryParameter { }
@@ -125,23 +109,6 @@ struct QueryOptional: QueryParameter {
     }
 }
 
-
-
-/*
-protocol QueryParameterOptionalType: QueryParameterType {
-    var val: Self? { get }
-}
-
-extension QueryParameterOptionalType {
-    func escapedValue(option option: Self.OT) throws -> String {
-        guard let val = self.val else {
-            //return QueryParameterNullType().escapedValue(option: option)
-            return Self.nullValue
-        }
-        return try val.escapedValue(option: option)
-    }
-}*/
-
 struct QueryParameterWrap: QueryParameterType {
     let val: String
     init(_ val: String) {
@@ -159,37 +126,37 @@ extension String: QueryParameterType {
 }
 
 extension String: QueryParameter {
-    public func queryParameter(option option: QueryParameterOption) throws -> QueryParameterType {
+    public func queryParameter(option option: QueryParameterOption) -> QueryParameterType {
         return QueryParameterWrap( SQLString.escape(self) )
     }
 }
 
 extension Int: QueryParameter {
-    public func queryParameter(option option: QueryParameterOption) throws -> QueryParameterType {
+    public func queryParameter(option option: QueryParameterOption) -> QueryParameterType {
         return QueryParameterWrap( String(self) )
     }
 }
 
 extension Int64: QueryParameter {
-    public func queryParameter(option option: QueryParameterOption) throws -> QueryParameterType {
+    public func queryParameter(option option: QueryParameterOption) -> QueryParameterType {
         return QueryParameterWrap( String(self) )
     }
 }
 
 extension Double: QueryParameter {
-    public func queryParameter(option option: QueryParameterOption) throws -> QueryParameterType {
+    public func queryParameter(option option: QueryParameterOption) -> QueryParameterType {
         return QueryParameterWrap( String(self) )
     }
 }
 
 extension Float: QueryParameter {
-    public func queryParameter(option option: QueryParameterOption) throws -> QueryParameterType {
+    public func queryParameter(option option: QueryParameterOption) -> QueryParameterType {
         return QueryParameterWrap( String(self) )
     }
 }
 
 extension Bool: QueryParameter {
-    public func queryParameter(option option: QueryParameterOption) throws -> QueryParameterType {
+    public func queryParameter(option option: QueryParameterOption) -> QueryParameterType {
         return QueryParameterWrap( self ? "true" : "false" )
     }
 }

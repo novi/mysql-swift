@@ -66,6 +66,17 @@ class EscapeTests: XCTestCase {
         XCTAssertEqual(try QueryArray(strOptionalAndInt).queryParameter(option: queryOption).escapedValue(), "'Sup\\'er Super', 3.14")
     }
     
+    func testNestedArray() throws {
+        
+        let strVal: String = "Sup'er"
+        let strValOptionalNone: String? = nil
+        let child: [QueryParameter] = [strVal, strValOptionalNone]
+        let strs: [QueryParameter] = [strVal, strValOptionalNone, QueryArray(child)]
+        
+        XCTAssertEqual(try QueryArray(strs).queryParameter(option: queryOption).escapedValue(), "\'Sup\\\'er\', NULL, (\'Sup\\\'er\', NULL)")
+        
+    }
+    
     func testDictionary() {
         
         

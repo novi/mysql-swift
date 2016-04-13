@@ -79,7 +79,7 @@ public struct SQLString {
 
 public struct QueryFormatter {
     
-    public static func format(query: String, args args: [QueryParameterType]) throws -> String {
+    public static func format(query: String, args: [QueryParameterType]) throws -> String {
         
         var placeHolderCount: Int = 0
         

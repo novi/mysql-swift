@@ -144,7 +144,7 @@ public struct SQLDate {
 }
 
 extension SQLDate: QueryParameter {
-    public func queryParameter(option option: QueryParameterOption) throws -> QueryParameterType {
+    public func queryParameter(option option: QueryParameterOption) -> QueryParameterType {
         let comp = SQLDateCalender.mutex.sync { () -> NSDateComponents? in
             let cal = SQLDateCalender.calendarFor(option.timeZone)
             return cal.components([ .year, .month,  .day,  .hour, .minute, .second], from: date())
