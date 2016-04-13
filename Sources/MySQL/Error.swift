@@ -18,8 +18,5 @@ public enum QueryError: ErrorProtocol {
     case CastError(actual: String, expected: String, key: String)
     case MissingKeyError(key: String)
     
-    case QueryParameterCountMismatch(query: String)
-    case QueryParameterIdTypeError(query: String)
-    
     case InvalidSQLDate(String)
 }

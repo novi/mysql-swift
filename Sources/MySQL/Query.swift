@@ -7,6 +7,7 @@
 //
 
 import CMySQL
+import SQLFormatter
 
 public struct QueryStatus: CustomStringConvertible {
     public let affectedRows: Int
@@ -160,5 +161,40 @@ extension Connection {
         }
         
         return try (rows.map({ try T.decodeRow($0) }), status)
+    }
+}
+
+public struct QueryParameterOption: QueryParameterOptionType {
+    let timeZone: Connection.TimeZone
+}
+
+
+extension Connection {
+    
+    static func buildArgs(args: [QueryParameter], option: QueryParameterOption) throws -> [QueryParameterType] {
+        return try args.map { arg in
+            if let val = arg as? String {
+                return val
+            }
+            return try arg.queryParameter(option: option)
+        }
+    }
+    
+    public func query<T: QueryRowResultType>(query: String, _ args: [QueryParameter] = []) throws -> ([T], QueryStatus) {
+        let option = QueryParameterOption(
+            timeZone: options.timeZone
+        )
+        let queryString = try QueryFormatter.format(query, args: self.dynamicType.buildArgs(args, option: option))
+        return try self.query(query: queryString)
+    }
+    
+    public func query<T: QueryRowResultType>(query: String, _ args: [QueryParameter] = []) throws -> [T] {
+        let (rows, _) = try self.query(query, args) as ([T], QueryStatus)
+        return rows
+    }
+    
+    public func query(query: String, _ args: [QueryParameter] = []) throws -> QueryStatus {
+        let (_, status) = try self.query(query, args) as ([EmptyRowResult], QueryStatus)
+        return status
     }
 }

@@ -19,41 +19,13 @@ import Foundation
     
 #endif
 
-public protocol QueryParameter {
-    func escapedValueWith(option option: QueryParameterOption) throws -> String
+public protocol QueryParameterType {
+    func escapedValue() -> String
 }
 
-public protocol QueryParameterDictionaryType: QueryParameter {
-    func queryParameter() throws -> QueryDictionary
-}
-
-public extension QueryParameterDictionaryType {
-    func escapedValueWith(option option: QueryParameterOption) throws -> String {
-        return try queryParameter().escapedValueWith(option: option)
-    }
-}
-
-public struct QueryParameterOption {
-    let timeZone: Connection.TimeZone
-}
-
-
-public struct QueryParameterNull: QueryParameter, NilLiteralConvertible {
-    public init() {
-        
-    }
-    public init(nilLiteral: ()) {
-        
-    }
-    public func escapedValueWith(option option: QueryParameterOption) -> String {
-        return "NULL"
-    }
-}
-
-
-struct SQLString {
+public struct SQLString {
     
-    internal static func escapeId(str: String) -> String {
+    public static func escapeId(str: String) -> String {
         var step1: [Character] = []
         for c in str.characters {
             switch c {
@@ -75,7 +47,7 @@ struct SQLString {
         return "`" + String(out) + "`"
     }
     
-    internal static func escape(str: String) -> String {
+    public static func escape(str: String) -> String {
         var out: [Character] = []
         for c in str.unicodeScalars {
             switch c {
@@ -107,17 +79,13 @@ struct SQLString {
 
 public struct QueryFormatter {
     
-    public static func format<S: Sequence where S.Iterator.Element == QueryParameter>(query: String, args argsg: S, option: QueryParameterOption) throws -> String {
-        var args: [QueryParameter] = []
-        for a in argsg {
-            args.append(a)
-        }
+    public static func format(query: String, args args: [QueryParameterType]) throws -> String {
         
         var placeHolderCount: Int = 0
         
         var formatted = query + ""
         
-        var valArgs: [QueryParameter] = []
+        var valArgs: [QueryParameterType] = []
         var scanRange = formatted.startIndex..<formatted.endIndex
         
         // format ??
@@ -137,16 +105,16 @@ public struct QueryFormatter {
             switch formatted[r] {
             case "??":
                 if placeHolderCount >= args.count {
-                    throw QueryError.QueryParameterCountMismatch(query: query)
+                    throw QueryFormatError.QueryParameterCountMismatch(query: query)
                 }
                 guard let val = args[placeHolderCount] as? String else {
-                    throw QueryError.QueryParameterIdTypeError(query: query)
+                    throw QueryFormatError.QueryParameterIdTypeError(query: query)
                 }
                 formatted.replaceSubrange(r, with: SQLString.escapeId(val))
                 scanRange = r.endIndex..<formatted.endIndex
             case "?":
                 if placeHolderCount >= args.count {
-                    throw QueryError.QueryParameterCountMismatch(query: query)
+                    throw QueryFormatError.QueryParameterCountMismatch(query: query)
                 }
                 valArgs.append(args[placeHolderCount])
                 scanRange = r.endIndex..<formatted.endIndex
@@ -168,11 +136,11 @@ public struct QueryFormatter {
         while index < formattedChars.count {
             if formattedChars[index] == "?" {
                 if placeHolderCount >= valArgs.count {
-                    throw QueryError.QueryParameterCountMismatch(query: query)
+                    throw QueryFormatError.QueryParameterCountMismatch(query: query)
                 }
                 let val = valArgs[placeHolderCount]
                 formattedChars.remove(at: index)
-                let valStr = (try val.escapedValueWith(option: option))
+                let valStr = val.escapedValue()
                 formattedChars.insert(contentsOf: valStr.characters, at: index)
                 index += valStr.characters.count-1
                 placeHolderCount += 1
@@ -185,22 +153,3 @@ public struct QueryFormatter {
     }
 }
 
-extension Connection {
-    
-    public func query<T: QueryRowResultType>(query: String, _ args: [QueryParameter] = []) throws -> ([T], QueryStatus) {
-        let option = QueryParameterOption(
-            timeZone: options.timeZone
-        )
-        return try self.query(query: try QueryFormatter.format(query, args: args, option: option))
-    }
-    
-    public func query<T: QueryRowResultType>(query: String, _ args: [QueryParameter] = []) throws -> [T] {
-        let (rows, _) = try self.query(query, args) as ([T], QueryStatus)
-        return rows
-    }
-    
-    public func query(query: String, _ args: [QueryParameter] = []) throws -> QueryStatus {
-        let (_, status) = try self.query(query, args) as ([EmptyRowResult], QueryStatus)
-        return status
-    }
-}

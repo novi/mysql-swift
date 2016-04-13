@@ -27,13 +27,13 @@ class DateTests : XCTestCase {
         let expected = "2003-01-02 03:04:05" // no timezone
         
         let date = SQLDate(NSDate(timeIntervalSince1970: 1041476645)) // "2003-01-02 03:04:05" at GMT
-        XCTAssertEqual(date.escapedValueWith(option: gmt), "'\(expected)'")
+        XCTAssertEqual(try date.queryParameter(option: gmt).escapedValue(), "'\(expected)'")
         
         let sqlDate = try SQLDate(sqlDate: expected, timeZone: losAngeles.timeZone)
         let dateAtLos = SQLDate(NSDate(timeIntervalSince1970: 1041476645 + 3600*8))
         
         XCTAssertEqual(sqlDate.timeInterval, dateAtLos.timeInterval, "create date from sql string")
-        XCTAssertEqual(sqlDate.escapedValueWith(option: losAngeles), "'\(expected)'")
+        XCTAssertEqual(try sqlDate.queryParameter(option: losAngeles).escapedValue(), "'\(expected)'")
         
         XCTAssertEqual(sqlDate, dateAtLos)
         
@@ -45,7 +45,7 @@ class DateTests : XCTestCase {
         
         
         let sqlYear = try SQLDate(sqlDate: "2021", timeZone: gmt.timeZone)
-        XCTAssertEqual(sqlYear.escapedValueWith(option: gmt), "'2021-01-01 00:00:00'")
+        XCTAssertEqual(try sqlYear.queryParameter(option: gmt).escapedValue(), "'2021-01-01 00:00:00'")
     }
     
     func testSQLCalendar() {

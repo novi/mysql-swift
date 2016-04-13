@@ -8,6 +8,7 @@
 
 import CoreFoundation
 import Foundation
+import SQLFormatter
 
 #if os(OSX)
 #else
@@ -143,15 +144,14 @@ public struct SQLDate {
 }
 
 extension SQLDate: QueryParameter {
-    
-    public func escapedValueWith(option option: QueryParameterOption) -> String {
+    public func queryParameter(option option: QueryParameterOption) throws -> QueryParameterType {
         let comp = SQLDateCalender.mutex.sync { () -> NSDateComponents? in
             let cal = SQLDateCalender.calendarFor(option.timeZone)
             return cal.components([ .year, .month,  .day,  .hour, .minute, .second], from: date())
             }! // TODO: in Linux
         
         // YYYY-MM-DD HH:MM:SS
-        return "'\(padNum(comp.year, digits: 4))-\(padNum(comp.month))-\(padNum(comp.day)) \(padNum(comp.hour)):\(padNum(comp.minute)):\(padNum(comp.second))'"
+        return QueryParameterWrap( "'\(padNum(comp.year, digits: 4))-\(padNum(comp.month))-\(padNum(comp.day)) \(padNum(comp.hour)):\(padNum(comp.minute)):\(padNum(comp.second))'" )
     }
 }
 
@@ -179,8 +179,8 @@ public func ==(lhs: SQLDate, rhs: SQLDate) -> Bool {
 }
 
 extension NSDate: QueryParameter {
-    public func escapedValueWith(option option: QueryParameterOption) throws -> String {
-        return SQLDate(self).escapedValueWith(option: option)
+    public func queryParameter(option option: QueryParameterOption) throws -> QueryParameterType {
+        return try SQLDate(self).queryParameter(option: option)
     }
 }
 

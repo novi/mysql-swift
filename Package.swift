@@ -11,5 +11,9 @@ let package = Package(
     name: "MySQL",
     dependencies: [
         .Package(url: CMySQLURL, majorVersion: 1)
-    ]
+    ],
+    targets: [
+                 Target(name: "SQLFormatter"),
+                 Target(name: "MySQL", dependencies: ["SQLFormatter"])
+                 ]
 )
