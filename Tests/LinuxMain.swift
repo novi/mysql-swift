@@ -1,6 +1,6 @@
 import XCTest
 @testable import MySQLTestSuite
-@testCase import SQLFormatterTestSuite
+@testable import SQLFormatterTestSuite
 
 XCTMain([
             testCase( DateTests.allTests ),
