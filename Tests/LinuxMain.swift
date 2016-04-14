@@ -1,5 +1,6 @@
 import XCTest
 @testable import MySQLTestSuite
+@testCase import SQLFormatterTestSuite
 
 XCTMain([
             testCase( DateTests.allTests ),
@@ -8,5 +9,8 @@ XCTMain([
             testCase( ConnectionPoolTests.allTests ),
             testCase( ConnectionTests.allTests ),
             testCase( QueryTests.allTests ),
-            testCase( BlobQueryTests.allTests )
+            testCase( BlobQueryTests.allTests ),
+            
+            
+            testCase( SQLFormatterTests.allTests )
     ])
