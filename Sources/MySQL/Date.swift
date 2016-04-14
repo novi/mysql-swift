@@ -16,7 +16,7 @@ import SQLFormatter
         func date(from comps: NSDateComponents) -> NSDate? {
             return self.dateFromComponents(comps)
         }
-        func components(unitFlags: NSCalendarUnit, from date: NSDate) -> NSDateComponents? {
+        func components(_ unitFlags: NSCalendarUnit, from date: NSDate) -> NSDateComponents? {
             return self.components(unitFlags, fromDate: date)
         }
     }
