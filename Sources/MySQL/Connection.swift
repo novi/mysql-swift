@@ -9,8 +9,11 @@
 import CMySQL
 import CoreFoundation
 
-struct MySQLUtil {
-    static func getMySQLErrorString(mysql: UnsafeMutablePointer<MYSQL>) -> String {
+internal struct MySQLUtil {
+    internal static func getMySQLError(_ mysqlPtr: UnsafeMutablePointer<MYSQL>?) -> String {
+        guard let mysql = mysqlPtr else {
+            return "generic error"
+        }
         let ch = mysql_error(mysql)
         if ch == nil {
             return "generic error"
@@ -115,10 +118,10 @@ extension Connection {
 
 public final class Connection {
     
-    var isInUse: Bool = false
-    var mysql_: UnsafeMutablePointer<MYSQL>
+    internal var isInUse: Bool = false
+    private var mysql_: UnsafeMutablePointer<MYSQL>?
     
-    let pool: ConnectionPool
+    internal let pool: ConnectionPool
     public let options: ConnectionOption
     
     init(options: ConnectionOption, pool: ConnectionPool) {
@@ -127,11 +130,11 @@ public final class Connection {
         self.mysql_ = nil
     }
     
-    public func release() {
+    internal func release() {
         pool.releaseConnection(self)
     }
     
-    func connect() throws {
+    internal func connect() throws -> UnsafeMutablePointer<MYSQL> {
         dispose()
         
         let mysql = mysql_init(nil)
@@ -156,28 +159,28 @@ public final class Connection {
             options.database,
             UInt32(options.port), nil, 0) == nil {
             // error
-                throw Error.ConnectionError(MySQLUtil.getMySQLErrorString(mysql))
+                throw Error.ConnectionError(MySQLUtil.getMySQLError(mysql))
         }
         mysql_set_character_set(mysql, options.encoding.rawValue)
         self.mysql_ = mysql
+        return mysql
     }
     
-    func connectIfNeeded() throws -> UnsafeMutablePointer<MYSQL> {
-        if mysql_ == nil {
-            try connect()
-            return mysql_
+    internal func connectIfNeeded() throws -> UnsafeMutablePointer<MYSQL> {
+        guard let mysql = self.mysql_ else {
+            return try connect()
         }
-        return mysql_
+        return mysql
     }
     
-    var mysql: UnsafeMutablePointer<MYSQL>? {
+    private var mysql: UnsafeMutablePointer<MYSQL>? {
         guard mysql_ != nil else {
             return nil
         }
         return mysql_
     }
     
-    var ping: Bool {
+    internal var ping: Bool {
         _ = try? connectIfNeeded()
         guard let mysql = mysql else {
             return false
@@ -185,7 +188,7 @@ public final class Connection {
         return mysql_ping(mysql) == 0
     }
     
-    func dispose() {
+    private func dispose() {
         guard let mysql = mysql else {
             return
         }

@@ -27,7 +27,7 @@ class ConnectionTests: XCTestCase, MySQLTestType {
     
     func testConnect2() throws {
         let conn = try pool.getConnection()
-        try conn.query("SELECT 1;")
+        try conn.query("SELECT 1;" as String)
         XCTAssertTrue(conn.ping)
     }
 }

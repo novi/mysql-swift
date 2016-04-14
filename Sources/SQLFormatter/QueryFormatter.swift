@@ -20,12 +20,12 @@ import Foundation
 #endif
 
 public protocol QueryParameterType {
-    func escapedValue() -> String
+    func escaped() -> String
 }
 
 public struct SQLString {
     
-    public static func escapeId(str: String) -> String {
+    public static func escapeId(string str: String) -> String {
         var step1: [Character] = []
         for c in str.characters {
             switch c {
@@ -47,7 +47,7 @@ public struct SQLString {
         return "`" + String(out) + "`"
     }
     
-    public static func escape(str: String) -> String {
+    public static func escape(string str: String) -> String {
         var out: [Character] = []
         for c in str.unicodeScalars {
             switch c {
@@ -81,7 +81,7 @@ public struct QueryFormatter {
     
     public static func format(query: String, args: [QueryParameterType]) throws -> String {
         
-        var placeHolderCount: Int = 0
+        var placeHolderCount = 0
         
         var formatted = query + ""
         
@@ -110,7 +110,7 @@ public struct QueryFormatter {
                 guard let val = args[placeHolderCount] as? String else {
                     throw QueryFormatError.QueryParameterIdTypeError(query: query)
                 }
-                formatted.replaceSubrange(r, with: SQLString.escapeId(val))
+                formatted.replaceSubrange(r, with: SQLString.escapeId(string: val))
                 scanRange = r.endIndex..<formatted.endIndex
             case "?":
                 if placeHolderCount >= args.count {
@@ -132,7 +132,7 @@ public struct QueryFormatter {
         
         placeHolderCount = 0
         var formattedChars = Array(formatted.characters)
-        var index: Int = 0
+        var index = 0
         while index < formattedChars.count {
             if formattedChars[index] == "?" {
                 if placeHolderCount >= valArgs.count {
@@ -140,7 +140,7 @@ public struct QueryFormatter {
                 }
                 let val = valArgs[placeHolderCount]
                 formattedChars.remove(at: index)
-                let valStr = val.escapedValue()
+                let valStr = val.escaped()
                 formattedChars.insert(contentsOf: valStr.characters, at: index)
                 index += valStr.characters.count-1
                 placeHolderCount += 1

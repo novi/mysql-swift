@@ -29,24 +29,24 @@ public struct QueryStatus: CustomStringConvertible {
 }
 
 extension String {
-    func subString(max max: Int) -> String {
+    func subString(max: Int) -> String {
         return self[startIndex..<startIndex.advanced(by: max, limit: endIndex)]
     }
 }
 
 extension Connection {
     
-    struct NullValue {
+    internal struct NullValue {
         static let null = NullValue()
     }
     
-    struct EmptyRowResult: QueryRowResultType {
+    internal struct EmptyRowResult: QueryRowResultType {
         static func decodeRow(r: QueryRowResult) throws -> EmptyRowResult {
             return EmptyRowResult()
         }
     }
     
-    struct Field {
+    internal struct Field {
         let name: String
         let type: enum_field_types
         let isBinary: Bool
@@ -61,7 +61,7 @@ extension Connection {
             self.type = f.type
             self.isBinary = f.flags & UInt32(BINARY_FLAG) > 0 ? true : false
         }
-        func castValue(str: String, row: Int, timeZone: TimeZone) throws -> Any {
+        func cast(value str: String, row: Int, timeZone: TimeZone) throws -> Any {
             if type == MYSQL_TYPE_DATE ||
                 type == MYSQL_TYPE_DATETIME ||
                 type == MYSQL_TYPE_TIME ||
@@ -84,7 +84,7 @@ extension Connection {
         }
     }
     
-    public func query<T: QueryRowResultType>(query formattedQuery: String) throws -> ([T], QueryStatus) {
+    private func query<T: QueryRowResultType>(query formattedQuery: String) throws -> ([T], QueryStatus) {
         let mysql = try connectIfNeeded()
         
         func queryPrefix() -> String {
@@ -95,7 +95,7 @@ extension Connection {
         }
         
         guard mysql_real_query(mysql, formattedQuery, UInt(formattedQuery.utf8.count)) == 0 else {
-            throw QueryError.QueryExecutionError(message: MySQLUtil.getMySQLErrorString(mysql), query: queryPrefix())
+            throw QueryError.QueryExecutionError(message: MySQLUtil.getMySQLError(mysql), query: queryPrefix())
         }
         let status = QueryStatus(mysql: mysql)
         
@@ -105,7 +105,7 @@ extension Connection {
                 // actual no result
                 return ([], status)
             }
-            throw QueryError.ResultFetchError(message: MySQLUtil.getMySQLErrorString(mysql), query: queryPrefix())
+            throw QueryError.ResultFetchError(message: MySQLUtil.getMySQLError(mysql), query: queryPrefix())
         }
         defer {
             mysql_free_result(res)
@@ -145,8 +145,8 @@ extension Connection {
                 if sf == nil {
                     cols.append(NullValue.null)
                 } else {
-                    if let str = String(validatingUTF8: sf) {
-                        cols.append(try f.castValue(str, row: rowCount, timeZone: options.timeZone))
+                    if let sfPtr = sf, let str = String(validatingUTF8: sfPtr) {
+                        cols.append(try f.cast(value: str, row: rowCount, timeZone: options.timeZone))
                     } else {
                         throw QueryError.ResultParseError(message: "in \(f.name), at row: \(rowCount)", result: "")
                     }
@@ -160,7 +160,7 @@ extension Connection {
             rows.append(QueryRowResult(fields: fields, cols: cols))
         }
         
-        return try (rows.map({ try T.decodeRow($0) }), status)
+        return try (rows.map({ try T.decodeRow(r: $0) }), status)
     }
 }
 
@@ -171,7 +171,7 @@ public struct QueryParameterOption: QueryParameterOptionType {
 
 extension Connection {
     
-    static func buildArgs(args: [QueryParameter], option: QueryParameterOption) throws -> [QueryParameterType] {
+    internal static func buildArgs(_ args: [QueryParameter], option: QueryParameterOption) throws -> [QueryParameterType] {
         return try args.map { arg in
             if let val = arg as? String {
                 return val
@@ -180,20 +180,20 @@ extension Connection {
         }
     }
     
-    public func query<T: QueryRowResultType>(query: String, _ args: [QueryParameter] = []) throws -> ([T], QueryStatus) {
+    public func query<T: QueryRowResultType>(_ query: String, _ args: [QueryParameter] = []) throws -> ([T], QueryStatus) {
         let option = QueryParameterOption(
             timeZone: options.timeZone
         )
-        let queryString = try QueryFormatter.format(query, args: self.dynamicType.buildArgs(args, option: option))
+        let queryString = try QueryFormatter.format(query: query, args: self.dynamicType.buildArgs(args, option: option))
         return try self.query(query: queryString)
     }
     
-    public func query<T: QueryRowResultType>(query: String, _ args: [QueryParameter] = []) throws -> [T] {
+    public func query<T: QueryRowResultType>(_ query: String, _ args: [QueryParameter] = []) throws -> [T] {
         let (rows, _) = try self.query(query, args) as ([T], QueryStatus)
         return rows
     }
     
-    public func query(query: String, _ args: [QueryParameter] = []) throws -> QueryStatus {
+    public func query(_ query: String, _ args: [QueryParameter] = []) throws -> QueryStatus {
         let (_, status) = try self.query(query, args) as ([EmptyRowResult], QueryStatus)
         return status
     }

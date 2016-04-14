@@ -42,17 +42,17 @@ internal final class SQLDateCalender {
     
     private static var cals: [Connection.TimeZone:NSCalendar] = [:]
     
-    internal static func calendarFor(timeZone: Connection.TimeZone) -> NSCalendar {
+    internal static func calendar(forTimezone timeZone: Connection.TimeZone) -> NSCalendar {
         if let cal = cals[timeZone] {
             return cal
         }
         let newCal = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
         newCal.timeZone = unsafeBitCast(timeZone.timeZone, to: NSTimeZone.self) // TODO: in Linux
-        self.saveCalendar(newCal, forTimeZone: timeZone)
+        self.save(calendar: newCal, forTimeZone: timeZone)
         return newCal
     }
     
-    private static func saveCalendar(cal: NSCalendar, forTimeZone timeZone: Connection.TimeZone) {
+    private static func save(calendar cal: NSCalendar, forTimeZone timeZone: Connection.TimeZone) {
         cals[timeZone] = cal
     }
 }
@@ -91,7 +91,7 @@ public struct SQLDate {
                 comp.hour = 0
                 comp.minute = 0
                 comp.second = 0
-                let cal = SQLDateCalender.calendarFor(timeZone)
+                let cal = SQLDateCalender.calendar(forTimezone: timeZone)
                 if let date = cal.date(from: comp) {
                     self.timeInterval = date.timeIntervalSince1970
                     return
@@ -112,7 +112,7 @@ public struct SQLDate {
                     comp.hour = hour
                     comp.minute = minute
                     comp.second = second
-                    let cal = SQLDateCalender.calendarFor(timeZone)
+                    let cal = SQLDateCalender.calendar(forTimezone: timeZone)
                     if let date = cal.date(from :comp) {
                         self.timeInterval = date.timeIntervalSince1970
                         return
@@ -124,14 +124,14 @@ public struct SQLDate {
         throw QueryError.InvalidSQLDate(sqlDate)
     }
     
-    func padNum(num: Int32, digits: Int = 2) -> String {
-        return padNum(Int(num), digits: digits)
+    private func pad(num: Int32, digits: Int = 2) -> String {
+        return pad(num: Int(num), digits: digits)
     }
-    func padNum(num: Int8, digits: Int = 2) -> String {
-        return padNum(Int(num), digits: digits)
+    private func pad(num: Int8, digits: Int = 2) -> String {
+        return pad(num: Int(num), digits: digits)
     }
     
-    func padNum(num: Int, digits: Int = 2) -> String {
+    private func pad(num: Int, digits: Int = 2) -> String {
         var str = String(num)
         if num < 0 {
             return str
@@ -144,14 +144,14 @@ public struct SQLDate {
 }
 
 extension SQLDate: QueryParameter {
-    public func queryParameter(option option: QueryParameterOption) -> QueryParameterType {
+    public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
         let comp = SQLDateCalender.mutex.sync { () -> NSDateComponents? in
-            let cal = SQLDateCalender.calendarFor(option.timeZone)
+            let cal = SQLDateCalender.calendar(forTimezone: option.timeZone)
             return cal.components([ .year, .month,  .day,  .hour, .minute, .second], from: date())
             }! // TODO: in Linux
         
         // YYYY-MM-DD HH:MM:SS
-        return QueryParameterWrap( "'\(padNum(comp.year, digits: 4))-\(padNum(comp.month))-\(padNum(comp.day)) \(padNum(comp.hour)):\(padNum(comp.minute)):\(padNum(comp.second))'" )
+        return QueryParameterWrap( "'\(pad(num: comp.year, digits: 4))-\(pad(num: comp.month))-\(pad(num: comp.day)) \(pad(num: comp.hour)):\(pad(num: comp.minute)):\(pad(num: comp.second))'" )
     }
 }
 
@@ -179,8 +179,8 @@ public func ==(lhs: SQLDate, rhs: SQLDate) -> Bool {
 }
 
 extension NSDate: QueryParameter {
-    public func queryParameter(option option: QueryParameterOption) throws -> QueryParameterType {
-        return try SQLDate(self).queryParameter(option: option)
+    public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
+        return SQLDate(self).queryParameter(option: option)
     }
 }
 

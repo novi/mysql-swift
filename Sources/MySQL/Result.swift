@@ -15,23 +15,23 @@ public protocol QueryRowResultType {
 }
 
 public func <| <T: StringConstructible>(r: QueryRowResult, key: String) throws -> T {
-    return try r.getValue(key)
+    return try r.getValue(forKey: key)
 }
 
 public func <| <T: StringConstructible>(r: QueryRowResult, index: Int) throws -> T {
-    return try r.getValue(index)
+    return try r.getValue(at: index)
 }
 
 public func <|? <T: StringConstructible>(r: QueryRowResult, key: String) throws -> T? {
-    return try r.getValueNullable(key)
+    return try r.getValueNullable(forKey: key)
 }
 
 public func <|? <T: StringConstructible>(r: QueryRowResult, index: Int) throws -> T? {
-    return try r.getValueNullable(index)
+    return try r.getValueNullable(at: index)
 }
 
 public protocol StringConstructible {
-    static func from(string string: String) -> Self?
+    static func from(string: String) -> Self?
 }
 
 public struct QueryRowResult {
@@ -50,44 +50,44 @@ public struct QueryRowResult {
         self.columnMap = map
     }
     
-    func isNull(key: String) -> Bool {
+    func isNull(forKey key: String) -> Bool {
         if columnMap[key] is Connection.NullValue {
             return true
         }
         return false
     }
     
-    func checkFieldBounds(index: Int) throws {
+    func checkFieldBounds(at index: Int) throws {
         guard cols.count > index else {
             throw QueryError.FieldIndexOutOfBounds(fieldCount: cols.count, attemped: index, fieldName: fields[index].name)
         }
     }
     
-    func castOrFail<T: StringConstructible>(obj: String, key: String) throws -> T {
+    func castOrFail<T: StringConstructible>(_ obj: String, key: String) throws -> T {
         guard let val = T.from(string: obj) as T? else {
             throw QueryError.CastError(actual: obj, expected: "\(T.self)", key: key)
         }
         return val
     }
     
-    public func getValueNullable<T: StringConstructible>(index: Int) throws -> T? {
-        try checkFieldBounds(index)
+    public func getValueNullable<T: StringConstructible>(at index: Int) throws -> T? {
+        try checkFieldBounds(at: index)
         
         if cols[index] is Connection.NullValue {
             return nil
         }
-        return try self.getValue(index) as T
+        return try self.getValue(at: index) as T
     }
     
-    public func getValueNullable<T: StringConstructible>(key: String) throws -> T? {
-        if isNull(key) {
+    public func getValueNullable<T: StringConstructible>(forKey key: String) throws -> T? {
+        if isNull(forKey: key) {
             return nil
         }
-        return try self.getValue(key) as T
+        return try self.getValue(forKey: key) as T
     }
     
-    public func getValue<T: StringConstructible>(index: Int) throws -> T {
-        try checkFieldBounds(index)
+    public func getValue<T: StringConstructible>(at index: Int) throws -> T {
+        try checkFieldBounds(at: index)
         if let obj = cols[index] as? T {
             return obj
         }
@@ -98,7 +98,7 @@ public struct QueryRowResult {
         return try castOrFail(val, key: key)
     }
     
-    public func getValue<T: StringConstructible>(key: String) throws -> T {
+    public func getValue<T: StringConstructible>(forKey key: String) throws -> T {
         if let obj = columnMap[key] as? T {
             return obj
         }

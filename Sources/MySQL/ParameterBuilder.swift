@@ -6,20 +6,20 @@
 //  Copyright © 2015 Yusuke Ito. All rights reserved.
 //
 
-public func build<A: QueryParameter>(p: (A) ) -> [QueryParameter] {
+public func build<A: QueryParameter>(_ p: (A) ) -> [QueryParameter] {
     return [
         p
     ]
 }
 
-public func build<A: QueryParameter, B: QueryParameter>(p: (A, B) ) -> [QueryParameter] {
+public func build<A: QueryParameter, B: QueryParameter>(_ p: (A, B) ) -> [QueryParameter] {
     return [
         p.0,
         p.1
     ]
 }
 
-public func build<A: QueryParameter, B: QueryParameter, C: QueryParameter>(p: (A, B, C) ) -> [QueryParameter] {
+public func build<A: QueryParameter, B: QueryParameter, C: QueryParameter>(_ p: (A, B, C) ) -> [QueryParameter] {
     return [
         p.0,
         p.1,
@@ -27,7 +27,7 @@ public func build<A: QueryParameter, B: QueryParameter, C: QueryParameter>(p: (A
     ]
 }
 
-public func build<A: QueryParameter, B: QueryParameter, C: QueryParameter, D: QueryParameter>(p: (A, B, C, D) ) -> [QueryParameter] {
+public func build<A: QueryParameter, B: QueryParameter, C: QueryParameter, D: QueryParameter>(_ p: (A, B, C, D) ) -> [QueryParameter] {
     return [
         p.0,
         p.1,
@@ -36,7 +36,7 @@ public func build<A: QueryParameter, B: QueryParameter, C: QueryParameter, D: Qu
     ]
 }
 
-public func build<A: QueryParameter, B: QueryParameter, C: QueryParameter, D: QueryParameter, E: QueryParameter>(p: (A, B, C, D, E) ) -> [QueryParameter] {
+public func build<A: QueryParameter, B: QueryParameter, C: QueryParameter, D: QueryParameter, E: QueryParameter>(_ p: (A, B, C, D, E) ) -> [QueryParameter] {
     return [
         p.0,
         p.1,
@@ -46,7 +46,7 @@ public func build<A: QueryParameter, B: QueryParameter, C: QueryParameter, D: Qu
     ]
 }
 
-public func build<A: QueryParameter, B: QueryParameter, C: QueryParameter, D: QueryParameter, E: QueryParameter, F: QueryParameter>(p: (A, B, C, D, E, F) ) -> [QueryParameter] {
+public func build<A: QueryParameter, B: QueryParameter, C: QueryParameter, D: QueryParameter, E: QueryParameter, F: QueryParameter>(_ p: (A, B, C, D, E, F) ) -> [QueryParameter] {
     return [
         p.0,
         p.1,
@@ -57,7 +57,7 @@ public func build<A: QueryParameter, B: QueryParameter, C: QueryParameter, D: Qu
     ]
 }
 
-public func build<A: QueryParameter, B: QueryParameter, C: QueryParameter, D: QueryParameter, E: QueryParameter, F: QueryParameter, G: QueryParameter>(p: (A, B, C, D, E, F, G) ) -> [QueryParameter] {
+public func build<A: QueryParameter, B: QueryParameter, C: QueryParameter, D: QueryParameter, E: QueryParameter, F: QueryParameter, G: QueryParameter>(_ p: (A, B, C, D, E, F, G) ) -> [QueryParameter] {
     return [
         p.0,
         p.1,

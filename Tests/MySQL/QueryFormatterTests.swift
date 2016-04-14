@@ -23,13 +23,13 @@ class QueryFormatterTests: XCTestCase {
         )
         let args = build(params)
         
-        let formatted = try QueryFormatter.format("SELECT name,??,id FROM users WHERE ?? = ? OR name = ? OR age is ?;", args: Connection.buildArgs(args, option: queryOption) )
+        let formatted = try QueryFormatter.format(query: "SELECT name,??,id FROM users WHERE ?? = ? OR name = ? OR age is ?;", args: Connection.buildArgs(args, option: queryOption) )
         XCTAssertEqual(formatted, "SELECT name,`i`.`d`,id FROM users WHERE `id` = 1 OR name = 'user\\'s' OR age is NULL;")
     }
     
     func testPlaceholder() throws {
         let params: [QueryParameter] = ["name", "message??", "col", "hello??", "hello?"]
-        let formatted = try QueryFormatter.format("SELECT ??, ?, ??, ?, ?", args: Connection.buildArgs(params, option: queryOption))
+        let formatted = try QueryFormatter.format(query: "SELECT ??, ?, ??, ?, ?", args: Connection.buildArgs(params, option: queryOption))
         XCTAssertEqual(formatted, "SELECT `name`, 'message??', `col`, 'hello??', 'hello?'")
     }
     

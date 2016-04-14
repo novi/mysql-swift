@@ -24,10 +24,10 @@ final public class ConnectionPool: CustomStringConvertible {
     }
     public var maxConnections: Int = 10
     
-    var pool: [Connection] = []
-    var mutex = Mutex()
+    internal var pool: [Connection] = []
+    private var mutex = Mutex()
     
-    static var libraryInitialized: Bool = false
+    private static var libraryInitialized: Bool = false
     
     public let options: ConnectionOption
     public init(options: ConnectionOption) {
@@ -44,14 +44,14 @@ final public class ConnectionPool: CustomStringConvertible {
         }
     }
     
-    func preparedNewConnection() -> Connection {
+    private func preparedNewConnection() -> Connection {
         let newConn = Connection(options: options, pool: self)
         _ = try? newConn.connect()
         pool.append(newConn)
         return newConn
     }
     
-    public func getConnection() throws -> Connection {
+    internal func getConnection() throws -> Connection {
         let connection: Connection? =
         mutex.sync {
             for c in pool {
@@ -73,13 +73,13 @@ final public class ConnectionPool: CustomStringConvertible {
         return conn
     }
     
-    func releaseConnection(conn: Connection) {
+    internal func releaseConnection(_ conn: Connection) {
         mutex.sync {
             conn.isInUse = false
         }
     }
     
-    var inUseConnections: Int {
+    internal var inUseConnections: Int {
         return mutex.sync {
             var count: Int = 0
             for c in pool {
