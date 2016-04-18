@@ -24,7 +24,7 @@ extension Connection {
 
 extension ConnectionPool {
     
-    public func transaction<T>(@noescape block: (conn: Connection) throws -> T  ) throws -> T {
+    public func transaction<T>(@noescape _ block: (conn: Connection) throws -> T  ) throws -> T {
         let conn = try getConnection()
         defer {
             releaseConnection(conn)

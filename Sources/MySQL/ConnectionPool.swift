@@ -99,7 +99,7 @@ final public class ConnectionPool: CustomStringConvertible {
 
 extension ConnectionPool {
     
-    public func execute<T>(@noescape block: (conn: Connection) throws -> T  ) throws -> T {
+    public func execute<T>(@noescape _ block: (conn: Connection) throws -> T  ) throws -> T {
         let conn = try getConnection()
         defer {
             releaseConnection(conn)
