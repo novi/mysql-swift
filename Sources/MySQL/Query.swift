@@ -50,6 +50,7 @@ extension Connection {
         let name: String
         let type: enum_field_types
         let isBinary: Bool
+        let flags: UInt32
         init?(f: MYSQL_FIELD) {
             if f.name == nil {
                 return nil
@@ -59,28 +60,43 @@ extension Connection {
             }
             self.name = fs
             self.type = f.type
+            self.flags = f.flags
             self.isBinary = f.flags & UInt32(BINARY_FLAG) > 0 ? true : false
         }
-        func cast(value str: String, row: Int, timeZone: TimeZone) throws -> Any {
-            if type == MYSQL_TYPE_DATE ||
+        var isDate: Bool {
+            return type == MYSQL_TYPE_DATE ||
                 type == MYSQL_TYPE_DATETIME ||
                 type == MYSQL_TYPE_TIME ||
                 type == MYSQL_TYPE_TIMESTAMP
-                
-                //type == MYSQL_TYPE_TIME2 ||
-                //type == MYSQL_TYPE_DATETIME2 ||
-                //type == MYSQL_TYPE_TIMESTAMP2
-                
-            {
-                return try SQLDate(sqlDate: str, timeZone: timeZone)
+        }
+        
+    }
+    
+    enum FieldValue {
+        case Null
+        case Binary(bytes: [Int8], length: Int) // Note: bytes includes utf8 terminating character(0) at end
+        case Date(SQLDate)
+        
+        static func makeBinary(ptr: UnsafeMutablePointer<Int8>, length: UInt) -> FieldValue {
+            var bytes = Array<Int8>.init(repeating: 0, count: Int(length+1))
+            for i in 0..<Int(length) {
+                bytes[i] = ptr[i]
             }
-            if isBinary && (
-                type == MYSQL_TYPE_BLOB ||
-                    type == MYSQL_TYPE_BIT
-                ) {
-                throw QueryError.ResultParseError(message: "blob type is not supported at row:\(row)", result: str)
+            return FieldValue.Binary(bytes: bytes, length: Int(length))
+        }
+        
+        func string() throws -> String {
+            switch self {
+            case .Null:
+                fatalError() // TODO
+            case .Date:
+                fatalError() // TODO
+            case .Binary(let bytes, _):
+                guard let string = String(validatingUTF8: bytes) else {
+                    throw QueryError.ResultParseError(message: "", result: "")
+                }
+                return string
             }
-            return str
         }
     }
     
@@ -134,22 +150,28 @@ extension Connection {
         
         var rowCount: Int = 0
         while true {
-            let row = mysql_fetch_row(res)
-            if row == nil {
+            guard let row = mysql_fetch_row(res) else {
                 break
             }
-            var cols:[Any] = []
+            
+            let lengths = mysql_fetch_lengths(res)
+            
+            var cols:[FieldValue] = []
             for i in 0..<fieldCount {
-                let sf = row[i]
-                let f = fields[i]
-                if sf == nil {
-                    cols.append(NullValue.null)
-                } else {
-                    if let sfPtr = sf, let str = String(validatingUTF8: sfPtr) {
-                        cols.append(try f.cast(value: str, row: rowCount, timeZone: options.timeZone))
+                let field = fields[i]
+                if let valf = row[i] where row[i] != nil {
+                    let binary = FieldValue.makeBinary(ptr: valf, length: lengths[i])
+                    if field.isDate {
+                        cols.append(FieldValue.Date(try SQLDate(sqlDate: binary.string(), timeZone: options.timeZone)))
                     } else {
-                        throw QueryError.ResultParseError(message: "in \(f.name), at row: \(rowCount)", result: "")
+                        cols.append(binary)
                     }
+                    
+                    try print("binary \(binary.string()), at \(rowCount), col \(i)")
+                    
+                } else {
+                    print("null , at \(rowCount), col \(i)")
+                    cols.append(FieldValue.Null)
                 }
                 
             }
