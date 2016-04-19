@@ -165,12 +165,8 @@ extension Connection {
                         cols.append(FieldValue.Date(try SQLDate(sqlDate: binary.string(), timeZone: options.timeZone)))
                     } else {
                         cols.append(binary)
-                    }
-                    
-                    try print("binary \(binary.string()), at \(rowCount), col \(i)")
-                    
+                    }                    
                 } else {
-                    print("null , at \(rowCount), col \(i)")
                     cols.append(FieldValue.Null)
                 }
                 

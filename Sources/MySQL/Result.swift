@@ -82,7 +82,7 @@ public struct QueryRowResult {
     }
     
     func castOrFail<T: SQLStringDecodable>(_ obj: String, key: String) throws -> T {
-        print("casting val \(obj) to \(T.self)")
+        //print("casting val \(obj) to \(T.self)")
         guard let val = T.from(string: obj) as T? else {
             throw QueryError.CastError(actual: obj, expected: "\(T.self)", key: key)
         }
