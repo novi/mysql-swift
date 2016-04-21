@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		523BC3501CC8D2A50007F0A7 /* SQLType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523BC34F1CC8D2A50007F0A7 /* SQLType.swift */; };
+		523BC3541CC8D31A0007F0A7 /* SQLTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523BC3531CC8D31A0007F0A7 /* SQLTypeTests.swift */; };
 		523CBAB11C295E6D00B01A6C /* libmysqlclient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 523CBAB01C295E6D00B01A6C /* libmysqlclient.a */; };
 		523CBAB41C295EE500B01A6C /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 523CBAB21C295EE500B01A6C /* libcrypto.a */; };
 		523CBAB51C295EE500B01A6C /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 523CBAB31C295EE500B01A6C /* libssl.a */; };
@@ -79,6 +81,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		523BC34F1CC8D2A50007F0A7 /* SQLType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLType.swift; sourceTree = "<group>"; };
+		523BC3531CC8D31A0007F0A7 /* SQLTypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLTypeTests.swift; sourceTree = "<group>"; };
 		523CBAB01C295E6D00B01A6C /* libmysqlclient.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmysqlclient.a; path = /usr/local/lib/libmysqlclient.a; sourceTree = "<absolute>"; };
 		523CBAB21C295EE500B01A6C /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = /usr/local/opt/openssl/lib/libcrypto.a; sourceTree = "<absolute>"; };
 		523CBAB31C295EE500B01A6C /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = /usr/local/opt/openssl/lib/libssl.a; sourceTree = "<absolute>"; };
@@ -193,6 +197,7 @@
 				52965F901C82F6C500E35C64 /* MySQLTests.swift */,
 				52965F911C82F6C500E35C64 /* QueryFormatterTests.swift */,
 				52965F921C82F6C500E35C64 /* QueryTests.swift */,
+				523BC3531CC8D31A0007F0A7 /* SQLTypeTests.swift */,
 			);
 			name = MySQL;
 			path = ../../../Tests/MySQL;
@@ -221,6 +226,7 @@
 				529828A91CB3E2A4001FE958 /* ResultType.swift */,
 				529828AA1CB3E2A4001FE958 /* Sync.swift */,
 				529828AB1CB3E2A4001FE958 /* Transaction.swift */,
+				523BC34F1CC8D2A50007F0A7 /* SQLType.swift */,
 			);
 			name = MySQL;
 			path = ../../../Sources/MySQL;
@@ -360,6 +366,7 @@
 			files = (
 				529828B21CB3E2A4001FE958 /* ResultType.swift in Sources */,
 				529828B11CB3E2A4001FE958 /* Result.swift in Sources */,
+				523BC3501CC8D2A50007F0A7 /* SQLType.swift in Sources */,
 				529828B31CB3E2A4001FE958 /* Sync.swift in Sources */,
 				529828B01CB3E2A4001FE958 /* Query.swift in Sources */,
 				529828AF1CB3E2A4001FE958 /* Error.swift in Sources */,
@@ -384,6 +391,7 @@
 				52EB7BF91C96B409009B4F55 /* LinuxExtension.swift in Sources */,
 				52965F9A1C82F6C500E35C64 /* MySQLTests.swift in Sources */,
 				52965F941C82F6C500E35C64 /* ConnectionTests.swift in Sources */,
+				523BC3541CC8D31A0007F0A7 /* SQLTypeTests.swift in Sources */,
 				52965F961C82F6C500E35C64 /* DateTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

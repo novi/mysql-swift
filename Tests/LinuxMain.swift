@@ -11,6 +11,7 @@ XCTMain([
             testCase( QueryTests.allTests ),
             testCase( BlobQueryTests.allTests ),
             
+            testCase( SQLTypeTests.allTests ),
             
             testCase( SQLFormatterTests.allTests )
     ])
