@@ -17,6 +17,7 @@ extension EscapeTests {
                    ("testStringEscape", testStringEscape),
                    ("testBasicTypes", testBasicTypes),
                    ("testArrayType", testArrayType),
+                   ("testNestedArray", testNestedArray),
                    ("testDictionary", testDictionary),
         ]
     }

@@ -14,7 +14,8 @@ extension QueryFormatterTests {
     static var allTests : [(String, QueryFormatterTests -> () throws -> Void)] {
         return [
                    ("testBasicFormatting", testBasicFormatting),
-                   ("testPlaceholder", testPlaceholder)
+                   ("testPlaceholder", testPlaceholder),
+                    ("testStringUtil", testStringUtil)
         ]
     }
 }
