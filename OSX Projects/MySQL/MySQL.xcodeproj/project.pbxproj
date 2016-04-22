@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		523BC35E1CC9C1660007F0A7 /* Blob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523BC35D1CC9C1660007F0A7 /* Blob.swift */; };
 		523CBAB11C295E6D00B01A6C /* libmysqlclient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 523CBAB01C295E6D00B01A6C /* libmysqlclient.a */; };
 		523CBAB41C295EE500B01A6C /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 523CBAB21C295EE500B01A6C /* libcrypto.a */; };
 		523CBAB51C295EE500B01A6C /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 523CBAB31C295EE500B01A6C /* libssl.a */; };
@@ -79,6 +80,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		523BC35D1CC9C1660007F0A7 /* Blob.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Blob.swift; sourceTree = "<group>"; };
 		523CBAB01C295E6D00B01A6C /* libmysqlclient.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmysqlclient.a; path = /usr/local/lib/libmysqlclient.a; sourceTree = "<absolute>"; };
 		523CBAB21C295EE500B01A6C /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = /usr/local/opt/openssl/lib/libcrypto.a; sourceTree = "<absolute>"; };
 		523CBAB31C295EE500B01A6C /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = /usr/local/opt/openssl/lib/libssl.a; sourceTree = "<absolute>"; };
@@ -221,6 +223,7 @@
 				529828A91CB3E2A4001FE958 /* ResultType.swift */,
 				529828AA1CB3E2A4001FE958 /* Sync.swift */,
 				529828AB1CB3E2A4001FE958 /* Transaction.swift */,
+				523BC35D1CC9C1660007F0A7 /* Blob.swift */,
 			);
 			name = MySQL;
 			path = ../../../Sources/MySQL;
@@ -358,6 +361,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				523BC35E1CC9C1660007F0A7 /* Blob.swift in Sources */,
 				529828B21CB3E2A4001FE958 /* ResultType.swift in Sources */,
 				529828B11CB3E2A4001FE958 /* Result.swift in Sources */,
 				529828B31CB3E2A4001FE958 /* Sync.swift in Sources */,

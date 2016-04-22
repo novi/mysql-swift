@@ -94,19 +94,22 @@ struct Row {
         let id: Int
         
         let text1: String
+        let binary1: SQLBinary
         
         static func decodeRow(r: QueryRowResult) throws -> BlobTextRow {
             return try BlobTextRow(
                 id: r <| "id",
                 
-                text1: r <| "text1"
+                text1: r <| "text1",
+                binary1: r <| "binary1"
             )
         }
         
         func queryParameter() throws -> QueryDictionary {
             return QueryDictionary([
                                        //"id": // auto increment
-                "text1": text1
+                "text1": text1,
+                "binary1": binary1
                 ])
         }
     }
