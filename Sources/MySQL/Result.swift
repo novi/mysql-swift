@@ -34,8 +34,6 @@ public protocol SQLStringDecodable {
     static func from(string: String) -> Self?
 }
 
-public typealias SQLBinary = [Int8]
-
 public struct QueryRowResult {
     
     let fields: [Connection.Field]
@@ -114,11 +112,9 @@ public struct QueryRowResult {
                 throw QueryError.CastError(actual: "\(date)", expected: "\(T.self)", key: key)
             }
             return val
-        case .Binary(let binary, let len):
-            if let _ = binary as? T {
-                if let bin = Array(binary[0..<len]) as? T {
-                    return bin
-                }
+        case .Binary(let binary):
+            if let bin = binary as? T {
+                return bin
             }
             return try castOrFail(val.string(), key: key)
         }

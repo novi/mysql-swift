@@ -36,15 +36,30 @@ extension QueryTestType {
         try conn.query(query)
     }
     
-    func createTextBlobTable() throws {
+    func createBlobTable() throws {
         try dropTestTable()
         
         let conn = try pool.getConnection()
         let query = "CREATE TABLE `\(constants.tableName)` (" +
             "`id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
             "`text1` mediumtext NOT NULL," +
+            "`binary1` mediumblob NOT NULL," +
             "PRIMARY KEY (`id`)" +
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
+        
+        try conn.query(query)
+    }
+    
+    func createBinaryBlobTable() throws {
+        try dropTestTable()
+        
+        let conn = try pool.getConnection()
+        let query = "CREATE TABLE `\(constants.tableName)` (" +
+            "`id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
+            "`text1` mediumtext NOT NULL," +
+            "`binary1` mediumblob NOT NULL," +
+            "PRIMARY KEY (`id`)" +
+        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;"
         
         try conn.query(query)
     }
@@ -216,18 +231,29 @@ class BlobQueryTests: XCTestCase, QueryTestType {
         super.setUp()
         
         prepare()
-        try! createTextBlobTable()
+        try! createBlobTable()
     }
     
     func testInsertForCombinedUnicodeCharacter() throws {
         let str = "'ﾞ and áäèëî , ¥"
         
-        let obj = Row.BlobTextRow(id: 0, text1: str)
+        let obj = Row.BlobTextRow(id: 0, text1: str, binary1: SQLBinary())
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, obj])
         }
         XCTAssertEqual(status.insertedId, 1)
+    }
+    
+    func testBlobAndTextOnBinCollation() throws {
         
+        try createBinaryBlobTable()
+        
+        let binary: [UInt8] = [0, 0x1, 0x9, 0x10, 0x1f, 0x99, 0xff, 0x00, 0x0a]
+        let obj = Row.BlobTextRow(id: 0, text1: "", binary1: SQLBinary(binary) )
+        let status: QueryStatus = try pool.execute { conn in
+            try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, obj])
+        }
+        XCTAssertEqual(status.insertedId, 1)
     }
     
 }

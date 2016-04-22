@@ -74,7 +74,7 @@ extension Connection {
     
     enum FieldValue {
         case Null
-        case Binary(bytes: [Int8], length: Int) // Note: bytes includes utf8 terminating character(0) at end
+        case Binary(SQLBinary) // Note: bytes includes utf8 terminating character(0) at end
         case Date(SQLDate)
         
         static func makeBinary(ptr: UnsafeMutablePointer<Int8>, length: UInt) -> FieldValue {
@@ -82,7 +82,7 @@ extension Connection {
             for i in 0..<Int(length) {
                 bytes[i] = ptr[i]
             }
-            return FieldValue.Binary(bytes: bytes, length: Int(length))
+            return FieldValue.Binary( SQLBinary(buffer: bytes, length: Int(length)) )
         }
         
         func string() throws -> String {
@@ -91,8 +91,8 @@ extension Connection {
                 fatalError() // TODO
             case .Date:
                 fatalError() // TODO
-            case .Binary(let bytes, _):
-                guard let string = String(validatingUTF8: bytes) else {
+            case .Binary(let binary):
+                guard let string = String(validatingUTF8: binary.buffer) else {
                     throw QueryError.ResultParseError(message: "", result: "")
                 }
                 return string
