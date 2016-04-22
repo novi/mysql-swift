@@ -8,7 +8,6 @@
 
 import XCTest
 @testable import MySQL
-@testable import SQLFormatter
 
 extension SQLTypeTests {
     static var allTests : [(String, SQLTypeTests -> () throws -> Void)] {

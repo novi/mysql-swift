@@ -10,6 +10,17 @@ import XCTest
 @testable import MySQL
 import Foundation
 
+extension QueryTests {
+    static var allTests : [(String, QueryTests -> () throws -> Void)] {
+        return [
+                   ("testInsertRow", testInsertRow),
+                   ("testEmojiInserting", testEmojiInserting)
+        ]
+    }
+}
+
+
+
 protocol QueryTestType: MySQLTestType {
     func createTestTable() throws
     func dropTestTable() throws
@@ -207,27 +218,3 @@ class QueryTests: XCTestCase, QueryTestType {
     
 }
 
-class BlobQueryTests: XCTestCase, QueryTestType {
-    
-    var constants: TestConstantsType!
-    var pool: ConnectionPool!
-    
-    override func setUp() {
-        super.setUp()
-        
-        prepare()
-        try! createTextBlobTable()
-    }
-    
-    func testInsertForCombinedUnicodeCharacter() throws {
-        let str = "'ﾞ and áäèëî , ¥"
-        
-        let obj = Row.BlobTextRow(id: 0, text1: str)
-        let status: QueryStatus = try pool.execute { conn in
-            try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, obj])
-        }
-        XCTAssertEqual(status.insertedId, 1)
-        
-    }
-    
-}

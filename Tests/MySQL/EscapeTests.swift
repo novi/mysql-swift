@@ -10,8 +10,20 @@ import XCTest
 @testable import MySQL
 @testable import SQLFormatter
 
+
+extension EscapeTests {
+    static var allTests : [(String, EscapeTests -> () throws -> Void)] {
+        return [
+                   ("testStringEscape", testStringEscape),
+                   ("testBasicTypes", testBasicTypes),
+                   ("testArrayType", testArrayType),
+                   ("testDictionary", testDictionary),
+        ]
+    }
+}
+
 class EscapeTests: XCTestCase {
-    
+
     // https://github.com/felixge/node-mysql/blob/master/test/unit/protocol/test-SqlString.js
     func testStringEscape() {
         XCTAssertEqual(SQLString.escape(string: "Sup'er"), "'Sup\\'er'")

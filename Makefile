@@ -17,9 +17,9 @@ all: build
 build:
 	$(SWIFT) build -v $(BUILDOPTS)
 	
-test:
+test: build
 	$(SWIFT) test
 	
 clean:
-	$(SWIFT) build -k build
-	$(SWIFT) build -k dist
+	$(SWIFT) build --clean build
+	$(SWIFT) build --clean dist

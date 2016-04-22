@@ -10,6 +10,16 @@ import XCTest
 @testable import MySQL
 @testable import SQLFormatter
 
+extension QueryFormatterTests {
+    static var allTests : [(String, QueryFormatterTests -> () throws -> Void)] {
+        return [
+                   ("testBasicFormatting", testBasicFormatting),
+                   ("testPlaceholder", testPlaceholder)
+        ]
+    }
+}
+
+
 class QueryFormatterTests: XCTestCase {
     
     func testBasicFormatting() throws {
