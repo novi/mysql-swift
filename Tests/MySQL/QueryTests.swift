@@ -244,11 +244,13 @@ class BlobQueryTests: XCTestCase, QueryTestType {
         XCTAssertEqual(status.insertedId, 1)
     }
     
+    let binary: [UInt8] = [0, 0x1, 0x9, 0x10, 0x1f, 0x99, 0xff, 0x00, 0x0a]
+    
     func testBlobAndTextOnBinCollation() throws {
         
         try createBinaryBlobTable()
         
-        let binary: [UInt8] = [0, 0x1, 0x9, 0x10, 0x1f, 0x99, 0xff, 0x00, 0x0a]
+        
         let obj = Row.BlobTextRow(id: 0, text1: "", binary1: SQLBinary(binary) )
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, obj])
@@ -256,4 +258,11 @@ class BlobQueryTests: XCTestCase, QueryTestType {
         XCTAssertEqual(status.insertedId, 1)
     }
     
+    func testEscapeBlob() throws {
+        
+        
+        let str = try SQLBinary(binary).queryParameter(option: queryOption).escaped()
+        XCTAssertEqual(str, "x'000109101f99ff000a'")
+        
+    }
 }
