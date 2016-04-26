@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import MySQL
+import MySQL
 
 extension SQLTypeTests {
     static var allTests : [(String, SQLTypeTests -> () throws -> Void)] {

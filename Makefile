@@ -21,5 +21,4 @@ test: build
 	$(SWIFT) test
 	
 clean:
-	$(SWIFT) build --clean build
 	$(SWIFT) build --clean dist

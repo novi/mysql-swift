@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import MySQL
+import MySQL
 
 /*
  

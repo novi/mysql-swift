@@ -8,7 +8,7 @@
 
 import XCTest
 @testable import MySQL
-@testable import SQLFormatter
+import SQLFormatter
 
 
 extension EscapeTests {

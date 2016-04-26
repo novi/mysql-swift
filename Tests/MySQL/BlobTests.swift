@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import MySQL
+import MySQL
 
 extension BlobQueryTests {
     static var allTests : [(String, BlobQueryTests -> () throws -> Void)] {

@@ -33,7 +33,7 @@ final class Mutex {
 
 extension Mutex {
     
-    func sync<T>(@noescape block: () -> T) -> T {
+    func sync<T>( block: @noescape() -> T) -> T {
         lock()
         let result = block()
         unlock()
