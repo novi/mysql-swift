@@ -8,17 +8,6 @@
 
 import Foundation
 
-
-#if os(OSX)
-#else
-    extension String {
-        public func range(of string: String, options mask: NSStringCompareOptions, range searchRange: Range<Index>?, locale: NSLocale?) -> Range<Index>? {
-            return rangeOfString(string, options: mask, range: searchRange, locale: locale)
-        }
-    }
-    
-#endif
-
 public protocol QueryParameterType {
     func escaped() -> String
 }

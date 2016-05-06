@@ -10,33 +10,6 @@ import CoreFoundation
 import Foundation
 import SQLFormatter
 
-#if os(OSX)
-#else
-    extension NSCalendar {
-        func date(from comps: NSDateComponents) -> NSDate? {
-            return self.dateFromComponents(comps)
-        }
-        func components(_ unitFlags: NSCalendarUnit, from date: NSDate) -> NSDateComponents? {
-            return self.components(unitFlags, fromDate: date)
-        }
-    }
-    
-    extension NSCalendarUnit {
-        public static var year: NSCalendarUnit = NSCalendarUnit.Year
-        
-        public static var month: NSCalendarUnit = NSCalendarUnit.Month
-        
-        public static var day: NSCalendarUnit = NSCalendarUnit.Day
-        
-        public static var hour: NSCalendarUnit = NSCalendarUnit.Hour
-        
-        public static var minute: NSCalendarUnit = NSCalendarUnit.Minute
-    
-        public static var second: NSCalendarUnit = NSCalendarUnit.Second
-    }
-    
-#endif
-
 internal final class SQLDateCalender {
     private static let mutex = Mutex()
     
