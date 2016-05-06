@@ -30,7 +30,10 @@ public struct QueryStatus: CustomStringConvertible {
 
 extension String {
     func subString(max: Int) -> String {
-        return self[startIndex..<startIndex.advanced(by: max, limit: endIndex)]
+        guard let r = index(startIndex, offsetBy: max, limitedBy: endIndex) else {
+            return self
+        }
+        return self[startIndex..<r]
     }
 }
 

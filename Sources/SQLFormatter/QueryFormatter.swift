@@ -95,7 +95,7 @@ public struct QueryFormatter {
             let r2 = formatted.range(of: "?", options: [], range: scanRange, locale: nil)
             let r: Range<String.Index>
             if let r1 = r1, let r2 = r2 {
-                r = r1.startIndex <= r2.startIndex ? r1 : r2
+                r = r1.lowerBound <= r2.lowerBound ? r1 : r2
             } else if let rr = r1 ?? r2 {
                 r = rr
             } else {
@@ -111,13 +111,13 @@ public struct QueryFormatter {
                     throw QueryFormatError.QueryParameterIdTypeError(query: query)
                 }
                 formatted.replaceSubrange(r, with: SQLString.escapeId(string: val))
-                scanRange = r.endIndex..<formatted.endIndex
+                scanRange = r.upperBound..<formatted.endIndex
             case "?":
                 if placeHolderCount >= args.count {
                     throw QueryFormatError.QueryParameterCountMismatch(query: query)
                 }
                 valArgs.append(args[placeHolderCount])
-                scanRange = r.endIndex..<formatted.endIndex
+                scanRange = r.upperBound..<formatted.endIndex
             default: break
             }
             
