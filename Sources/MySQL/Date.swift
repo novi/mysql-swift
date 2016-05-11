@@ -32,14 +32,17 @@ internal final class SQLDateCalender {
 
 public struct SQLDate {
     
-    internal let timeInterval: NSTimeInterval
+    internal let timeInterval: NSTimeInterval?
+    internal let sqlDate: String?
     
     public init(_ date: NSDate) {
         self.timeInterval = date.timeIntervalSince1970
+        self.sqlDate = nil
     }
     
     public init(_ timeIntervalSince1970: NSTimeInterval) {
         self.timeInterval = timeIntervalSince1970
+        self.sqlDate = nil
     }
     
     internal init() {
@@ -53,7 +56,7 @@ public struct SQLDate {
         defer {
             SQLDateCalender.mutex.unlock()
         }
-        
+        self.sqlDate = sqlDate
         switch sqlDate.characters.count {
         case 4:
             if let year = Int(sqlDate) {
@@ -93,8 +96,7 @@ public struct SQLDate {
             }
         default: break
         }
-        
-        throw QueryError.InvalidSQLDate(sqlDate)
+        self.timeInterval = nil
     }
     
     private func pad(num: Int32, digits: Int = 2) -> String {
@@ -118,11 +120,16 @@ public struct SQLDate {
 
 extension SQLDate: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        let comp = SQLDateCalender.mutex.sync { () -> NSDateComponents? in
+        let compOptional = SQLDateCalender.mutex.sync { () -> NSDateComponents? in
             let cal = SQLDateCalender.calendar(forTimezone: option.timeZone)
-            return cal.components([ .year, .month,  .day,  .hour, .minute, .second], from: date())
-            }! // TODO: in Linux
-        
+            guard let date = date() else {
+                return nil
+            }
+            return cal.components([ .year, .month,  .day,  .hour, .minute, .second], from: date)
+            } // TODO: in Linux
+        guard let comp = compOptional else {
+            return "0000-00-00 00:00:00"
+        }
         // YYYY-MM-DD HH:MM:SS
         return QueryParameterWrap( "'\(pad(num: comp.year, digits: 4))-\(pad(num: comp.month))-\(pad(num: comp.day)) \(pad(num: comp.hour)):\(pad(num: comp.minute)):\(pad(num: comp.second))'" )
     }
@@ -130,7 +137,13 @@ extension SQLDate: QueryParameter {
 
 extension SQLDate : CustomStringConvertible {
     public var description: String {
-        return date().description
+        guard let date = date() else {
+            guard let sqlDate = self.sqlDate else {
+                return ""
+            }
+            return sqlDate
+        }
+        return date.description
     }
 }
 
@@ -138,7 +151,10 @@ extension SQLDate {
     public static func now() -> SQLDate {
         return SQLDate()
     }
-    public func date() -> NSDate {
+    public func date() -> NSDate? {
+        guard let timeInterval = self.timeInterval else {
+            return nil
+        }
         return NSDate(timeIntervalSince1970: timeInterval)
     }
 }
