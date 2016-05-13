@@ -7,7 +7,7 @@
 //
 
 public enum QueryFormatError: ErrorProtocol {
-    case CastError(actual: String, expected: String, key: String)
-    case QueryParameterCountMismatch(query: String)
-    case QueryParameterIdTypeError(query: String)
+    case castError(actual: String, expected: String, key: String)
+    case queryParameterCountMismatch(query: String)
+    case queryParameterIdTypeError(query: String)
 }

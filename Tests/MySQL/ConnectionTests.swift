@@ -10,7 +10,7 @@ import XCTest
 @testable import MySQL
 
 extension ConnectionTests {
-    static var allTests : [(String, ConnectionTests -> () throws -> Void)] {
+    static var allTests : [(String, (ConnectionTests) -> () throws -> Void)] {
         return [
                    ("testConnect", testConnect),
                    ("testConnect2", testConnect2)

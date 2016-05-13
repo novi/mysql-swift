@@ -94,16 +94,16 @@ public struct QueryFormatter {
             switch formatted[r] {
             case "??":
                 if placeHolderCount >= args.count {
-                    throw QueryFormatError.QueryParameterCountMismatch(query: query)
+                    throw QueryFormatError.queryParameterCountMismatch(query: query)
                 }
                 guard let val = args[placeHolderCount] as? String else {
-                    throw QueryFormatError.QueryParameterIdTypeError(query: query)
+                    throw QueryFormatError.queryParameterIdTypeError(query: query)
                 }
                 formatted.replaceSubrange(r, with: SQLString.escapeId(string: val))
                 scanRange = r.upperBound..<formatted.endIndex
             case "?":
                 if placeHolderCount >= args.count {
-                    throw QueryFormatError.QueryParameterCountMismatch(query: query)
+                    throw QueryFormatError.queryParameterCountMismatch(query: query)
                 }
                 valArgs.append(args[placeHolderCount])
                 scanRange = r.upperBound..<formatted.endIndex
@@ -125,7 +125,7 @@ public struct QueryFormatter {
         while index < formattedChars.count {
             if formattedChars[index] == "?" {
                 if placeHolderCount >= valArgs.count {
-                    throw QueryFormatError.QueryParameterCountMismatch(query: query)
+                    throw QueryFormatError.queryParameterCountMismatch(query: query)
                 }
                 let val = valArgs[placeHolderCount]
                 formattedChars.remove(at: index)

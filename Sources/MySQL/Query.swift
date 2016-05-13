@@ -28,7 +28,7 @@ public struct QueryStatus: CustomStringConvertible {
     }
 }
 
-extension String {
+internal extension String {
     func subString(max: Int) -> String {
         guard let r = index(startIndex, offsetBy: max, limitedBy: endIndex) else {
             return self
@@ -96,7 +96,7 @@ extension Connection {
                 fatalError() // TODO
             case .Binary(let binary):
                 guard let string = String(validatingUTF8: binary.buffer) else {
-                    throw QueryError.ResultParseError(message: "", result: "")
+                    throw QueryError.resultParseError(message: "", result: "")
                 }
                 return string
             }
@@ -114,7 +114,7 @@ extension Connection {
         }
         
         guard mysql_real_query(mysql, formattedQuery, UInt(formattedQuery.utf8.count)) == 0 else {
-            throw QueryError.QueryExecutionError(message: MySQLUtil.getMySQLError(mysql), query: queryPrefix())
+            throw QueryError.queryExecutionError(message: MySQLUtil.getMySQLError(mysql), query: queryPrefix())
         }
         let status = QueryStatus(mysql: mysql)
         
@@ -124,7 +124,7 @@ extension Connection {
                 // actual no result
                 return ([], status)
             }
-            throw QueryError.ResultFetchError(message: MySQLUtil.getMySQLError(mysql), query: queryPrefix())
+            throw QueryError.resultFetchError(message: MySQLUtil.getMySQLError(mysql), query: queryPrefix())
         }
         defer {
             mysql_free_result(res)
@@ -132,17 +132,17 @@ extension Connection {
         
         let fieldCount = Int(mysql_num_fields(res))
         guard fieldCount > 0 else {
-            throw QueryError.ResultNoField(query: queryPrefix())
+            throw QueryError.resultNoField(query: queryPrefix())
         }
         
         // fetch field info
         guard let fieldDef = mysql_fetch_fields(res) else {
-            throw QueryError.ResultFieldFetchError(query: queryPrefix())
+            throw QueryError.resultFieldFetchError(query: queryPrefix())
         }
         var fields:[Field] = []
         for i in 0..<fieldCount {
             guard let f = Field(f: fieldDef[i]) else {
-                throw QueryError.ResultFieldFetchError(query: queryPrefix())
+                throw QueryError.resultFieldFetchError(query: queryPrefix())
             }
             fields.append(f)
         }
@@ -157,7 +157,7 @@ extension Connection {
             }
             
             guard let lengths = mysql_fetch_lengths(res) else {
-                throw QueryError.ResultRowFetchError(query: queryPrefix())
+                throw QueryError.resultRowFetchError(query: queryPrefix())
             }
             
             var cols:[FieldValue] = []
@@ -177,7 +177,7 @@ extension Connection {
             }
             rowCount += 1
             if fields.count != cols.count {
-                throw QueryError.ResultParseError(message: "invalid fetched column count", result: "")
+                throw QueryError.resultParseError(message: "invalid fetched column count", result: "")
             }
             rows.append(QueryRowResult(fields: fields, cols: cols))
         }

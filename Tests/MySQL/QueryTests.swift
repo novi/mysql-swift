@@ -11,7 +11,7 @@ import XCTest
 import Foundation
 
 extension QueryTests {
-    static var allTests : [(String, QueryTests -> () throws -> Void)] {
+    static var allTests : [(String, (QueryTests) -> () throws -> Void)] {
         return [
                    ("testInsertRow", testInsertRow),
                    ("testEmojiInserting", testEmojiInserting)

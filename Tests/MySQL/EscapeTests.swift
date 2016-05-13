@@ -12,7 +12,7 @@ import SQLFormatter
 
 
 extension EscapeTests {
-    static var allTests : [(String, EscapeTests -> () throws -> Void)] {
+    static var allTests : [(String, (EscapeTests) -> () throws -> Void)] {
         return [
                    ("testStringEscape", testStringEscape),
                    ("testBasicTypes", testBasicTypes),

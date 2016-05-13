@@ -94,7 +94,7 @@ public struct SQLDate {
         default: break
         }
         
-        throw QueryError.InvalidSQLDate(sqlDate)
+        throw QueryError.invalidSQLDate(sqlDate)
     }
     
     private func pad(num: Int32, digits: Int = 2) -> String {
