@@ -11,6 +11,7 @@ public enum QueryError: ErrorProtocol {
     case QueryExecutionError(message: String, query: String)
     case ResultFetchError(message: String, query: String)
     case ResultNoField(query: String)
+    case ResultRowFetchError(query: String)
     case ResultFieldFetchError(query: String)
     case ResultParseError(message: String, result: String)
     

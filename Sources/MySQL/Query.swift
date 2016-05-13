@@ -136,8 +136,7 @@ extension Connection {
         }
         
         // fetch field info
-        let fieldDef = mysql_fetch_fields(res)
-        guard fieldDef != nil else {
+        guard let fieldDef = mysql_fetch_fields(res) else {
             throw QueryError.ResultFieldFetchError(query: queryPrefix())
         }
         var fields:[Field] = []
@@ -154,10 +153,12 @@ extension Connection {
         var rowCount: Int = 0
         while true {
             guard let row = mysql_fetch_row(res) else {
-                break
+                break // end of rows
             }
             
-            let lengths = mysql_fetch_lengths(res)
+            guard let lengths = mysql_fetch_lengths(res) else {
+                throw QueryError.ResultRowFetchError(query: queryPrefix())
+            }
             
             var cols:[FieldValue] = []
             for i in 0..<fieldCount {

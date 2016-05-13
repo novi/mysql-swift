@@ -14,8 +14,7 @@ internal struct MySQLUtil {
         guard let mysql = mysqlPtr else {
             return "generic error"
         }
-        let ch = mysql_error(mysql)
-        if ch == nil {
+        guard let ch = mysql_error(mysql) else {
             return "generic error"
         }
         guard let str = String(validatingUTF8: ch) else {
@@ -137,7 +136,9 @@ public final class Connection {
     internal func connect() throws -> UnsafeMutablePointer<MYSQL> {
         dispose()
         
-        let mysql = mysql_init(nil)
+        guard let mysql = mysql_init(nil) else {
+            fatalError("mysql_init() failed.")
+        }
         
         var timeoutPtr = UnsafeMutablePointer<Int>(allocatingCapacity: 1)
         timeoutPtr.pointee = options.timeout
