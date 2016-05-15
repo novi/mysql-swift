@@ -1,16 +1,9 @@
 import PackageDescription
 
-
-#if os(OSX)
-	let CMySQLURL = "https://github.com/novi/CMySQL-OSX.git"
-#else
-	let CMySQLURL = "https://github.com/PureSwift/CMySQL.git"
-#endif
-
 let package = Package(
     name: "MySQL",
     dependencies: [
-        .Package(url: CMySQLURL, majorVersion: 1)
+        .Package(url: "https://github.com/tomohisa/CMySQL-OSX.git", majorVersion: 1, minor: 1)
     ],
     targets: [
                  Target(name: "SQLFormatter"),

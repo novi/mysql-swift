@@ -1,0 +1,45 @@
+swift build -v -Xlinker -L/usr/local/lib -Xcc -I/usr/local/include/mysql
+[34m/Library/Developer/Toolchains/swift-DEVELOPMENT-SNAPSHOT-2016-05-09-a.xctoolchain/usr/bin/swiftc[0m --driver-mode=swift -I /Library/Developer/Toolchains/swift-DEVELOPMENT-SNAPSHOT-2016-05-09-a.xctoolchain/usr/lib/swift/pm -L /Library/Developer/Toolchains/swift-DEVELOPMENT-SNAPSHOT-2016-05-09-a.xctoolchain/usr/lib/swift/pm -lPackageDescription -target x86_64-apple-macosx10.10 /Users/tomohisa/oss/tomohisa_mysql-swift/Package.swift -fileno 4
+[34m/usr/bin/git[0m -C /Users/tomohisa/oss/tomohisa_mysql-swift tag -l
+[34m/usr/bin/git[0m -C /Users/tomohisa/oss/tomohisa_mysql-swift/Packages/CMySQL-1.1.2 config --get remote.origin.url
+[34m/Library/Developer/Toolchains/swift-DEVELOPMENT-SNAPSHOT-2016-05-09-a.xctoolchain/usr/bin/swiftc[0m --driver-mode=swift -I /Library/Developer/Toolchains/swift-DEVELOPMENT-SNAPSHOT-2016-05-09-a.xctoolchain/usr/lib/swift/pm -L /Library/Developer/Toolchains/swift-DEVELOPMENT-SNAPSHOT-2016-05-09-a.xctoolchain/usr/lib/swift/pm -lPackageDescription -target x86_64-apple-macosx10.10 /Users/tomohisa/oss/tomohisa_mysql-swift/Packages/CMySQL-1.1.2/Package.swift -fileno 4
+[34m/usr/bin/git[0m -C /Users/tomohisa/oss/tomohisa_mysql-swift tag -l
+[34m/usr/bin/git[0m -C /Users/tomohisa/oss/tomohisa_mysql-swift rev-parse --verify 0.2.4
+[34m/usr/bin/git[0m -C /Users/tomohisa/oss/tomohisa_mysql-swift rev-parse --verify HEAD
+[34m/usr/bin/git[0m -C /Users/tomohisa/oss/tomohisa_mysql-swift rev-parse --verify HEAD
+[34m/usr/bin/git[0m -C /Users/tomohisa/oss/tomohisa_mysql-swift status --porcelain
+[34m/usr/bin/uname[0m 
+note: you may be able to install mysql using your system-packager:
+
+    brew install mysql
+
+note: you may be able to install mysql using your system-packager:
+
+    brew install mysql
+
+note: you may be able to install mysql using your system-packager:
+
+    brew install mysql
+
+note: you may be able to install mysql using your system-packager:
+
+    brew install mysql
+
+note: you may be able to install mysql using your system-packager:
+
+    brew install mysql
+
+note: you may be able to install mysql using your system-packager:
+
+    brew install mysql
+
+note: you may be able to install mysql using your system-packager:
+
+    brew install mysql
+
+note: you may be able to install mysql using your system-packager:
+
+    brew install mysql
+
+[34m/Library/Developer/Toolchains/swift-DEVELOPMENT-SNAPSHOT-2016-05-09-a.xctoolchain/usr/bin/swift-build-tool[0m -f /Users/tomohisa/oss/tomohisa_mysql-swift/.build/debug.yaml -v
+/Library/Developer/Toolchains/swift-DEVELOPMENT-SNAPSHOT-2016-05-09-a.xctoolchain/usr/bin/swiftc -module-name MySQL -incremental -emit-dependencies -emit-module -emit-module-path /Users/tomohisa/oss/tomohisa_mysql-swift/.build/debug/MySQL.swiftmodule -output-file-map /Users/tomohisa/oss/tomohisa_mysql-swift/.build/debug/MySQL.build/output-file-map.json -parse-as-library -num-threads 8 -c /Users/tomohisa/oss/tomohisa_mysql-swift/Sources/MySQL/Blob.swift /Users/tomohisa/oss/tomohisa_mysql-swift/Sources/MySQL/Connection.swift /Users/tomohisa/oss/tomohisa_mysql-swift/Sources/MySQL/ConnectionPool.swift /Users/tomohisa/oss/tomohisa_mysql-swift/Sources/MySQL/Date.swift /Users/tomohisa/oss/tomohisa_mysql-swift/Sources/MySQL/Error.swift /Users/tomohisa/oss/tomohisa_mysql-swift/Sources/MySQL/ParameterBuilder.swift /Users/tomohisa/oss/tomohisa_mysql-swift/Sources/MySQL/Query.swift /Users/tomohisa/oss/tomohisa_mysql-swift/Sources/MySQL/QueryParameterType.swift /Users/tomohisa/oss/tomohisa_mysql-swift/Sources/MySQL/Result.swift /Users/tomohisa/oss/tomohisa_mysql-swift/Sources/MySQL/ResultType.swift /Users/tomohisa/oss/tomohisa_mysql-swift/Sources/MySQL/SQLType.swift /Users/tomohisa/oss/tomohisa_mysql-swift/Sources/MySQL/Sync.swift /Users/tomohisa/oss/tomohisa_mysql-swift/Sources/MySQL/Transaction.swift -I /Users/tomohisa/oss/tomohisa_mysql-swift/.build/debug -j8 -D SWIFT_PACKAGE -Onone -g -enable-testing -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -Xcc -I/usr/local/include/mysql -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk -Xcc -fmodule-map-file=/Users/tomohisa/oss/tomohisa_mysql-swift/Packages/CMySQL-1.1.2/module.modulemap -module-cache-path /Users/tomohisa/oss/tomohisa_mysql-swift/.build/debug/ModuleCache
