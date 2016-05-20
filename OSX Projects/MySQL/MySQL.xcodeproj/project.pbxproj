@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		52166C781CEE9C9D00FCF92D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 52166C771CEE9C9D00FCF92D /* libz.tbd */; };
 		523BC35E1CC9C1660007F0A7 /* Blob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523BC35D1CC9C1660007F0A7 /* Blob.swift */; };
 		523BC37D1CC9CBBC0007F0A7 /* BlobTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523BC37C1CC9CBBC0007F0A7 /* BlobTests.swift */; };
 		523BC37F1CC9CBC10007F0A7 /* SQLTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523BC37E1CC9CBC10007F0A7 /* SQLTypeTests.swift */; };
@@ -82,6 +83,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		52166C771CEE9C9D00FCF92D /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		523BC35D1CC9C1660007F0A7 /* Blob.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Blob.swift; sourceTree = "<group>"; };
 		523BC37C1CC9CBBC0007F0A7 /* BlobTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlobTests.swift; sourceTree = "<group>"; };
 		523BC37E1CC9CBC10007F0A7 /* SQLTypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLTypeTests.swift; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52166C781CEE9C9D00FCF92D /* libz.tbd in Frameworks */,
 				529828B51CB3E2B3001FE958 /* SQLFormatter.framework in Frameworks */,
 				523CBAB51C295EE500B01A6C /* libssl.a in Frameworks */,
 				52F722011BDBD4C50066B725 /* libstdc++.tbd in Frameworks */,
@@ -146,6 +149,7 @@
 		5292157D1BDB8CD5009B031A = {
 			isa = PBXGroup;
 			children = (
+				52166C771CEE9C9D00FCF92D /* libz.tbd */,
 				529828921CB3E27E001FE958 /* SQLFormatter.xcodeproj */,
 				523CBAB21C295EE500B01A6C /* libcrypto.a */,
 				523CBAB31C295EE500B01A6C /* libssl.a */,
