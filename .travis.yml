@@ -7,13 +7,11 @@ dist: trusty
 osx_image: xcode7.3
 addons:
   mariadb: '10.1'
-services:
-  - mysql
 env:
   - SWIFT_VERSION=DEVELOPMENT-SNAPSHOT-2016-05-09-a
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update       ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install mysql; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install mariadb; fi
 install:
   - eval "$(curl -sL https://gist.githubusercontent.com/kylef/5c0475ff02b7c7671d2a/raw/02090c7ede5a637b76e6df1710e83cd0bbe7dcdf/swiftenv-install.sh)"
 before_script:
