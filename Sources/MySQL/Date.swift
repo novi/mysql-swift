@@ -24,21 +24,21 @@ internal final class SQLDateCalender {
         self.save(calendar: newCal, forTimeZone: timeZone)
         return newCal
     }
-
+    
     private static func save(calendar cal: NSCalendar, forTimeZone timeZone: Connection.TimeZone) {
         cals[timeZone] = cal
     }
 }
 
 public struct SQLDate {
-
+    
     public enum DateType {
         case date
         case dateTime
         case time
         case year
     }
-
+    
     internal let timeInterval: NSTimeInterval?
     internal let sqlDate: String?
     internal let dateType: DateType
@@ -48,21 +48,21 @@ public struct SQLDate {
         self.sqlDate = nil
         self.dateType = dateType
     }
-
+    
     public init(_ timeIntervalSince1970: NSTimeInterval, dateType:DateType = .dateTime) {
         self.timeInterval = timeIntervalSince1970
         self.sqlDate = nil
         self.dateType = dateType
     }
-
+    
     internal init(dateType:DateType = .dateTime) {
         self.init(NSDate(),dateType: dateType)
     }
-
+    
     internal init(sqlDate: String, timeZone: Connection.TimeZone) throws {
-
+        
         SQLDateCalender.mutex.lock()
-
+        
         defer {
             SQLDateCalender.mutex.unlock()
         }
@@ -161,14 +161,14 @@ public struct SQLDate {
         }
         throw QueryError.invalidSQLDate(sqlDate)
     }
-
+    
     private func pad(num: Int32, digits: Int = 2) -> String {
         return pad(num: Int(num), digits: digits)
     }
     private func pad(num: Int8, digits: Int = 2) -> String {
         return pad(num: Int(num), digits: digits)
     }
-
+    
     private func pad(num: Int, digits: Int = 2) -> String {
         var str = String(num)
         if num < 0 {
@@ -240,7 +240,7 @@ extension SQLDate {
 }
 
 extension SQLDate: Equatable {
-
+    
 }
 
 public func ==(lhs: SQLDate, rhs: SQLDate) -> Bool {
