@@ -3,7 +3,7 @@ import PackageDescription
 let package = Package(
     name: "MySQL",
     dependencies: [
-        .Package(url: "https://github.com/tomohisa/CMySQL.git", majorVersion: 1, minor: 1)
+        .Package(url: "https://github.com/novi/CMySQL.git", majorVersion: 2)
     ],
     targets: [
                  Target(name: "SQLFormatter"),
