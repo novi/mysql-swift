@@ -4,7 +4,7 @@ mysql-swift
 [![Swift 3.0](https://img.shields.io/badge/Swift-3.0-orange.svg)](https://swift.org)
 ![Platform Linux, OSX](https://img.shields.io/badge/Platforms-Linux%2C%20OSX-lightgray.svg)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
-[![Build Status](https://travis-ci.org/novi/mysql-swift.svg?branch=master)](https://travis-ci.org/novi/mysql-swift)
+[![Travis CI](https://travis-ci.org/novi/mysql-swift.svg)](https://travis-ci.org/novi/mysql-swift)
 
 
 
