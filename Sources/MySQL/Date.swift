@@ -12,9 +12,9 @@ import SQLFormatter
 
 internal final class SQLDateCalender {
     private static let mutex = Mutex()
-
+		
     private static var cals: [Connection.TimeZone:NSCalendar] = [:]
-
+		
     internal static func calendar(forTimezone timeZone: Connection.TimeZone) -> NSCalendar {
         if let cal = cals[timeZone] {
             return cal
