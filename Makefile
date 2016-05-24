@@ -13,12 +13,12 @@ ifeq ($(OS),Darwin)
 endif
 
 all: build
-
+	
 build:
-	$(SWIFT) build $(BUILDOPTS) > log.txt
-
+	$(SWIFT) build -v $(BUILDOPTS)
+	
 test: build
 	$(SWIFT) test
-
+	
 clean:
-	rm -rf Packages .build
+	$(SWIFT) build --clean dist

@@ -1,0 +1,5 @@
+module CMySQL [system] {
+header "/usr/local/include/mysql/mysql.h"
+export *
+}
+
