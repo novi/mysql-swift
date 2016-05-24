@@ -32,21 +32,31 @@ internal final class SQLDateCalender {
 
 public struct SQLDate {
 
+    public enum DateType {
+        case date
+        case dateTime
+        case time
+        case year
+    }
+
     internal let timeInterval: NSTimeInterval?
     internal let sqlDate: String?
+    internal let dateType: DateType
 
-    public init(_ date: NSDate) {
+    public init(_ date: NSDate, dateType:DateType = .dateTime) {
         self.timeInterval = date.timeIntervalSince1970
         self.sqlDate = nil
+        self.dateType = dateType
     }
 
-    public init(_ timeIntervalSince1970: NSTimeInterval) {
+    public init(_ timeIntervalSince1970: NSTimeInterval, dateType:DateType = .dateTime) {
         self.timeInterval = timeIntervalSince1970
         self.sqlDate = nil
+        self.dateType = dateType
     }
 
-    internal init() {
-        self.init(NSDate())
+    internal init(dateType:DateType = .dateTime) {
+        self.init(NSDate(),dateType: dateType)
     }
 
     internal init(sqlDate: String, timeZone: Connection.TimeZone) throws {
@@ -69,12 +79,62 @@ public struct SQLDate {
                 comp.second = 0
                 let cal = SQLDateCalender.calendar(forTimezone: timeZone)
                 if let date = cal.date(from: comp) {
+                    self.dateType = .year
                     self.timeInterval = date.timeIntervalSince1970
                     return
                 }
             }
+        case 8:
+            let chars:[Character] = Array(sqlDate.characters)
+            if  let hour = Int(String(chars[0...1])),
+                let minute = Int(String(chars[3...4])),
+                let second = Int(String(chars[6...7])) {
+                let year = 2000
+                let month = 1
+                let day = 1
+                let comp = NSDateComponents()
+                comp.year = year
+                comp.month = month
+                comp.day = day
+                comp.hour = hour
+                comp.minute = minute
+                comp.second = second
+                let cal = SQLDateCalender.calendar(forTimezone: timeZone)
+                if let date = cal.date(from :comp) {
+                    self.dateType = .time
+                    self.timeInterval = date.timeIntervalSince1970
+                    return
+                }
+            }
+        case 10:
+            let chars:[Character] = Array(sqlDate.characters)
+            self.dateType = .date
+            if let year = Int(String(chars[0...3])),
+                let month = Int(String(chars[5...6])),
+                let day = Int(String(chars[8...9]))
+                where year > 0 && day > 0 && month > 0 {
+                let hour = 0
+                let minute = 0
+                let second = 0
+                let comp = NSDateComponents()
+                comp.year = year
+                comp.month = month
+                comp.day = day
+                comp.hour = hour
+                comp.minute = minute
+                comp.second = second
+                let cal = SQLDateCalender.calendar(forTimezone: timeZone)
+                if let date = cal.date(from :comp) {
+                    self.timeInterval = date.timeIntervalSince1970
+                    return
+                }
+            } else {
+                self.timeInterval = nil
+                return
+            }
         case 19:
             let chars:[Character] = Array(sqlDate.characters)
+            self.dateType = .dateTime
             if let year = Int(String(chars[0...3])),
                 let month = Int(String(chars[5...6])),
                 let day = Int(String(chars[8...9])),
@@ -93,13 +153,15 @@ public struct SQLDate {
                         self.timeInterval = date.timeIntervalSince1970
                         return
                     }
+            } else {
+                self.timeInterval = nil
+                return
             }
         default: break
         }
-        self.timeInterval = nil
-        // throw QueryError.invalidSQLDate(sqlDate)
+        throw QueryError.invalidSQLDate(sqlDate)
     }
-    
+
     private func pad(num: Int32, digits: Int = 2) -> String {
         return pad(num: Int(num), digits: digits)
     }
@@ -129,10 +191,27 @@ extension SQLDate: QueryParameter {
             return cal.components([ .year, .month,  .day,  .hour, .minute, .second], from: date)
             } // TODO: in Linux
         guard let comp = compOptional else {
-            return "0000-00-00 00:00:00"
+            switch self.dateType {
+            case .date:
+                return "0000-00-00"
+            case .time:
+                return "00:00:00"
+            case .year:
+                return "0000"
+            case .dateTime:
+                return "0000-00-00 00:00:00"
+            }
         }
-        // YYYY-MM-DD HH:MM:SS
-        return QueryParameterWrap( "'\(pad(num: comp.year, digits: 4))-\(pad(num: comp.month))-\(pad(num: comp.day)) \(pad(num: comp.hour)):\(pad(num: comp.minute)):\(pad(num: comp.second))'" )
+        switch self.dateType {
+        case .date:
+            return QueryParameterWrap( "'\(pad(num: comp.year, digits: 4))-\(pad(num: comp.month))-\(pad(num: comp.day))'" )
+        case .time:
+            return QueryParameterWrap( "'\(pad(num: comp.hour)):\(pad(num: comp.minute)):\(pad(num: comp.second))'" )
+        case .year:
+            return QueryParameterWrap( "'\(pad(num: comp.year, digits: 4))'" )
+        case .dateTime:
+            return QueryParameterWrap( "'\(pad(num: comp.year, digits: 4))-\(pad(num: comp.month))-\(pad(num: comp.day)) \(pad(num: comp.hour)):\(pad(num: comp.minute)):\(pad(num: comp.second))'" )
+        }
     }
 }
 
@@ -149,8 +228,8 @@ extension SQLDate : CustomStringConvertible {
 }
 
 extension SQLDate {
-    public static func now() -> SQLDate {
-        return SQLDate()
+    public static func now(dateType:DateType = .dateTime) -> SQLDate {
+        return SQLDate(dateType:dateType)
     }
     public func date() -> NSDate? {
         guard let timeInterval = self.timeInterval else {
