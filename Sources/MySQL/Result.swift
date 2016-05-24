@@ -10,8 +10,7 @@ infix operator <| { associativity left precedence 150 }
 infix operator <|? { associativity left precedence 150 }
 
 public protocol QueryRowResultType {
-    //typealias QueryResultType = Self
-    static func decodeRow(r: QueryRowResult) throws -> Self //.QueryResultType
+    static func decodeRow(r: QueryRowResult) throws -> Self
 }
 
 public func <| <T: SQLStringDecodable>(r: QueryRowResult, key: String) throws -> T {
@@ -75,14 +74,14 @@ public struct QueryRowResult {
     
     func checkFieldBounds(at index: Int) throws {
         guard cols.count > index else {
-            throw QueryError.FieldIndexOutOfBounds(fieldCount: cols.count, attemped: index, fieldName: fields[index].name)
+            throw QueryError.fieldIndexOutOfBounds(fieldCount: cols.count, attemped: index, fieldName: fields[index].name)
         }
     }
     
     func castOrFail<T: SQLStringDecodable>(_ obj: String, key: String) throws -> T {
         //print("casting val \(obj) to \(T.self)")
         guard let val = T.from(string: obj) as T? else {
-            throw QueryError.CastError(actual: obj, expected: "\(T.self)", key: key)
+            throw QueryError.castError(actual: obj, expected: "\(T.self)", key: key)
         }
         return val
     }
@@ -106,10 +105,10 @@ public struct QueryRowResult {
     func getValue<T: SQLStringDecodable>(val: Connection.FieldValue, key: String) throws -> T {
         switch val {
         case .Null:
-            throw QueryError.CastError(actual: "NULL", expected: "\(T.self)", key: key)
+            throw QueryError.castError(actual: "NULL", expected: "\(T.self)", key: key)
         case .Date(let date):
             guard let val = date as? T else {
-                throw QueryError.CastError(actual: "\(date)", expected: "\(T.self)", key: key)
+                throw QueryError.castError(actual: "\(date)", expected: "\(T.self)", key: key)
             }
             return val
         case .Binary(let binary):
@@ -128,7 +127,7 @@ public struct QueryRowResult {
     
     public func getValue<T: SQLStringDecodable>(forKey key: String) throws -> T {
         guard let val = columnMap[key] else {
-            throw QueryError.MissingKeyError(key: key)
+            throw QueryError.missingKeyError(key: key)
         }
         return try getValue(val: val, key: key)
     }    

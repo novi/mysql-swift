@@ -1,7 +1,7 @@
 mysql-swift
 ===========
 
-[![Swift 2.2](https://img.shields.io/badge/Swift-2.2-orange.svg)](https://swift.org)
+[![Swift 3.0](https://img.shields.io/badge/Swift-3.0-orange.svg)](https://swift.org)
 ![Platform Linux, OSX](https://img.shields.io/badge/Platforms-Linux%2C%20OSX-lightgray.svg)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Build Status](https://travis-ci.org/novi/mysql-swift.svg?branch=master)](https://travis-ci.org/novi/mysql-swift)
@@ -14,7 +14,7 @@ This is inspired by Node.js' [mysql](https://github.com/felixge/node-mysql) and 
 * Based on libmysqlclient
 * Raw SQL query
 * Simple query formatting and escaping (same as Node's)
-* Decoding and mapping selecting results to struct
+* Decoding and mapping queried results to struct
 
 _Note:_ No asynchronous support currently. It depends libmysqlclient.
 
@@ -25,26 +25,33 @@ struct User: QueryRowResultType, QueryParameterDictionaryType {
     let id: Int
     let userName: String
     let age: Int?
+    let status: Status
     let createdAt: SQLDate
     
-    // Decode query results (selecting rows) to the model
-    // see selecting sample
+    enum Status: String, SQLEnumType {
+        case created = "created"
+        case verified = "verified"
+    }
+    
+    // Decode query results (selecting rows) to a model
     static func decodeRow(r: QueryRowResult) throws -> User {
         return try User(
             id: r <| 0, // as index
             userName: r <| "name", // as field name
-            age: r <|? 3, // nullable field
+            age: r <|? 3, // nullable field,
+            status: r <| "status", // string enum type
             createdAt: r <| "created_at"
         )
     }
     
-    // Use the model as a query paramter
-    // see inserting sample
+    // Use this model as a query paramter
+    // See inserting example
     func queryParameter() throws -> QueryDictionary {
         return QueryDictionary([
             //"id": // auto increment
             "name": userName,
             "age": age,
+            "status": status,
             "created_at": createdAt
         ])
     }

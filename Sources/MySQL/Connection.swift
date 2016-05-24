@@ -15,7 +15,7 @@ internal struct MySQLUtil {
             return "generic error"
         }
         guard let ch = mysql_error(mysql) else {
-          return "generic error"
+            return "generic error"
         }
         guard let str = String(validatingUTF8: ch) else {
             return "generic error"
@@ -109,9 +109,8 @@ public func ==(lhs: Connection.TimeZone, rhs: Connection.TimeZone) -> Bool {
 
 extension Connection {
     public enum Error: ErrorProtocol {
-        case GenericError(String)
-        case ConnectionError(String)
-        case ConnectionPoolGetConnectionError
+        case connectionError(String)
+        case connectionPoolGetConnectionError
     }
 }
 
@@ -136,7 +135,9 @@ public final class Connection {
     internal func connect() throws -> UnsafeMutablePointer<MYSQL> {
         dispose()
 
-        let mysql = mysql_init(nil)
+        guard let mysql = mysql_init(nil) else {
+            fatalError("mysql_init() failed.")
+        }
 
         var timeoutPtr = UnsafeMutablePointer<Int>(allocatingCapacity: 1)
         timeoutPtr.pointee = options.timeout
@@ -158,11 +159,11 @@ public final class Connection {
             options.database,
             UInt32(options.port), nil, 0) == nil {
             // error
-                throw Error.ConnectionError(MySQLUtil.getMySQLError(mysql))
+                throw Error.connectionError(MySQLUtil.getMySQLError(mysql))
         }
         mysql_set_character_set(mysql, options.encoding.rawValue)
         self.mysql_ = mysql
-        return mysql!
+        return mysql
     }
 
     internal func connectIfNeeded() throws -> UnsafeMutablePointer<MYSQL> {

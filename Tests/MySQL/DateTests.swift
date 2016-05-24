@@ -12,7 +12,7 @@ import Foundation
 @testable import MySQL
 
 extension DateTests {
-    static var allTests : [(String, DateTests -> () throws -> Void)] {
+    static var allTests : [(String, (DateTests) -> () throws -> Void)] {
         return [
                    ("testSQLDate", testSQLDate),
                    ("testSQLCalendar", testSQLCalendar)

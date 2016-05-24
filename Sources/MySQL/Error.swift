@@ -8,15 +8,16 @@
 
 public enum QueryError: ErrorProtocol {
     
-    case QueryExecutionError(message: String, query: String)
-    case ResultFetchError(message: String, query: String)
-    case ResultNoField(query: String)
-    case ResultFieldFetchError(query: String)
-    case ResultParseError(message: String, result: String)
+    case queryExecutionError(message: String, query: String)
+    case resultFetchError(message: String, query: String)
+    case resultNoField(query: String)
+    case resultRowFetchError(query: String)
+    case resultFieldFetchError(query: String)
+    case resultParseError(message: String, result: String)
     
-    case FieldIndexOutOfBounds(fieldCount: Int, attemped: Int, fieldName: String)
-    case CastError(actual: String, expected: String, key: String)
-    case MissingKeyError(key: String)
+    case fieldIndexOutOfBounds(fieldCount: Int, attemped: Int, fieldName: String)
+    case castError(actual: String, expected: String, key: String)
+    case missingKeyError(key: String)
     
-    case InvalidSQLDate(String)
+    case invalidSQLDate(String)
 }
