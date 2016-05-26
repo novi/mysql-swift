@@ -88,25 +88,26 @@ try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
 
 # Dependencies
 
-* libmysqlclient 6.1.6 (named CMySQL in Swift)
+* MariaDB Connector/C (libmysqlclient) 2.2.3
 
 # Installation
 
 ## OS X
 
-* Install `mysql`(includes libmysqlclient).
+* Install `mariadb`(includes libmysqlclient).
 
 
 ```sh
-$ brew install mysql
+$ brew install mariadb
 ```
 
 ## Ubuntu Linux
 
 * Install `libmysqlclient`
+* Follow [Setting up MariaDB Repositories](https://downloads.mariadb.org/mariadb/repositories/#mirror=yamagata-university) and set up your repository for operating system.
 
 ```sh
-$ sudo apt-get install libmysqlclient-dev
+$ sudo apt-get install libmariadbclient-dev
 ```
 
 * Add `mysql-swift` to `Package.swift` of your project.
@@ -127,7 +128,7 @@ _Note:_ To build with Swift Package Manager(`swift build`), you may need to spec
 # Linux
 swift build -Xlinker -L/usr/lib
 # OS X 
-swift build -Xlinker -L/usr/local/lib -Xcc -I/usr/local/include/mysql
+swift build -Xlinker -L/usr/local/lib -Xcc -I/usr/local/include -Xcc -I/usr/local/include/mysql
 ```
 
 # Usage
