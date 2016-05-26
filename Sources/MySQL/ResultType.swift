@@ -12,6 +12,12 @@ extension Int: SQLStringDecodable {
     }
 }
 
+extension UInt: SQLStringDecodable {
+    public static func from(string: String) -> UInt? {
+        return UInt(string)
+    }
+}
+
 extension Int64: SQLStringDecodable {
     public static func from(string: String) -> Int64? {
         return Int64(string)
