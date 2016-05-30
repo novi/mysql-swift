@@ -10,7 +10,7 @@ import XCTest
 import MySQL
 
 extension BlobQueryTests {
-    static var allTests : [(String, BlobQueryTests -> () throws -> Void)] {
+    static var allTests : [(String, (BlobQueryTests) -> () throws -> Void)] {
         return [
                    ("testInsertForCombinedUnicodeCharacter", testInsertForCombinedUnicodeCharacter),
                     ("testBlobAndTextOnBinCollation", testBlobAndTextOnBinCollation),
