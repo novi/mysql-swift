@@ -9,28 +9,28 @@
 import XCTest
 @testable import MySQL
 
-class ConnectionPoolTests: XCTestCase, MySQLTestType, XCTestCaseProvider {
-
-    var allTests: [(String, () throws -> Void)] {
-        return self.dynamicType.allTests.map{ ($0.0, $0.1(self)) }
+extension ConnectionPoolTests {
+    static var allTests : [(String, ConnectionPoolTests -> () throws -> Void)] {
+        return [
+                   ("testGetConnection", testGetConnection),
+                   ("testExecutionBlock", testExecutionBlock)
+        ]
     }
+}
+
+class ConnectionPoolTests: XCTestCase, MySQLTestType {
+
     
     var constants: TestConstantsType!
     var pool: ConnectionPool!
     
-    #if os(OSX)
     override func setUp() {
         super.setUp()
         
         prepare()
     }
-    #else
-    func setUp() {
-        prepare()
-    }
-    #endif
 
-    func testGetConnection() {
+    func testGetConnection() throws {
         
         let initialConnection = 1
         
@@ -39,7 +39,7 @@ class ConnectionPoolTests: XCTestCase, MySQLTestType, XCTestCaseProvider {
         
         var connections: [Connection] = []
         for _ in 0..<initialConnection {
-            let con = try! pool.getConnection()
+            let con = try pool.getConnection()
             connections.append(con)
         }
         XCTAssertEqual(connections.count, initialConnection)
@@ -51,7 +51,7 @@ class ConnectionPoolTests: XCTestCase, MySQLTestType, XCTestCaseProvider {
         
         // get connection while max connections count
         while connections.count < pool.maxConnections {
-            let con = try! pool.getConnection()
+            let con = try pool.getConnection()
             connections.append(con)
         }
         
@@ -59,8 +59,8 @@ class ConnectionPoolTests: XCTestCase, MySQLTestType, XCTestCaseProvider {
         XCTAssertEqual(pool.pool.count, pool.maxConnections)
         XCTAssertEqual(pool.inUseConnections, pool.maxConnections)
         
-        let failureConn = try? pool.getConnection() // this connection getting failure
-        XCTAssertNil(failureConn)
+        // this connection getting failure
+        XCTAssertThrowsError(try pool.getConnection())
         
         for c in connections {
             // release connections that we have got
@@ -72,10 +72,10 @@ class ConnectionPoolTests: XCTestCase, MySQLTestType, XCTestCaseProvider {
     }
     
     
-    func testExecutionBlock() {
+    func testExecutionBlock() throws {
         
         var thisConn: Connection!
-        try! pool.execute { conn in
+        try pool.execute { conn in
             thisConn = conn
             XCTAssertEqual(conn.isInUse, true)
             try conn.query("SELECT 1 + 2;")

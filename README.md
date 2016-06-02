@@ -1,7 +1,7 @@
 mysql-swift
 ===========
 
-[![Swift 2.2](https://img.shields.io/badge/Swift-2.2-orange.svg)](https://swift.org)
+[![Swift 3.0](https://img.shields.io/badge/Swift-3.0-orange.svg)](https://swift.org)
 ![Platform Linux, OSX](https://img.shields.io/badge/Platforms-Linux%2C%20OSX-lightgray.svg)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Build Status](https://travis-ci.org/novi/mysql-swift.svg?branch=master)](https://travis-ci.org/novi/mysql-swift)
@@ -14,7 +14,7 @@ This is inspired by Node.js' [mysql](https://github.com/felixge/node-mysql) and 
 * Based on libmysqlclient
 * Raw SQL query
 * Simple query formatting and escaping (same as Node's)
-* Decoding and mapping selecting results to struct
+* Decoding and mapping queried results to struct
 
 _Note:_ No asynchronous support currently. It depends libmysqlclient.
 
@@ -25,26 +25,33 @@ struct User: QueryRowResultType, QueryParameterDictionaryType {
     let id: Int
     let userName: String
     let age: Int?
+    let status: Status
     let createdAt: SQLDate
     
-    // Decode query results (selecting rows) to the model
-    // see selecting sample
+    enum Status: String, SQLEnumType {
+        case created = "created"
+        case verified = "verified"
+    }
+    
+    // Decode query results (selecting rows) to a model
     static func decodeRow(r: QueryRowResult) throws -> User {
         return try User(
             id: r <| 0, // as index
             userName: r <| "name", // as field name
-            age: r <|? 3, // nullable field
+            age: r <|? 3, // nullable field,
+            status: r <| "status", // string enum type
             createdAt: r <| "created_at"
         )
     }
     
-    // Use the model as a query paramter
-    // see inserting sample
+    // Use this model as a query paramter
+    // See inserting example
     func queryParameter() throws -> QueryDictionary {
         return QueryDictionary([
             //"id": // auto increment
             "name": userName,
             "age": age,
+            "status": status,
             "created_at": createdAt
         ])
     }
@@ -77,40 +84,30 @@ try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
 
 # Requirements
 
-* Swift 2.2 or Later (includes Linux support)
-* OS X 10.10 or Later
+* Swift 3 (development snapshot)
 
 # Dependencies
 
-* libmysqlclient 6.1.6 (named CMySQL in Swift)
+* MariaDB Connector/C (libmysqlclient) 2.2.3
 
 # Installation
 
-## Cocoa (OS X)
+## OS X
 
-Simply use Carthage.
-
-* Place `libmysqlclient` and `openssl` on `/usr/local`  by using `brew install mysql openssl`.
-* Add `github "novi/mysql-swift" "master"` to your `Cartfile`.
-* Run `carthage update`.
-
-## Swift 2.2 or later
-
-### OS X
-
-* Install `mysql`(includes libmysqlclient).
+* Install `mariadb`(includes libmysqlclient).
 
 
 ```sh
-$ brew install mysql
+$ brew install mariadb
 ```
 
-### Ubuntu Linux
+## Ubuntu Linux
 
 * Install `libmysqlclient`
+* Follow [Setting up MariaDB Repositories](https://downloads.mariadb.org/mariadb/repositories/#mirror=yamagata-university) and set up your repository for operating system.
 
 ```sh
-$ sudo apt-get install libmysqlclient-dev
+$ sudo apt-get install libmariadbclient-dev
 ```
 
 * Add `mysql-swift` to `Package.swift` of your project.
@@ -120,7 +117,7 @@ import PackageDescription
 
 let package = Package(
     dependencies: [
-        .Package(url: "https://github.com/novi/mysql-swift.git", majorVersion: 0)
+        .Package(url: "https://github.com/novi/mysql-swift.git", majorVersion: 0, minor: 2)
     ]
 )
 ```
@@ -131,7 +128,7 @@ _Note:_ To build with Swift Package Manager(`swift build`), you may need to spec
 # Linux
 swift build -Xlinker -L/usr/lib
 # OS X 
-swift build -Xlinker -L/usr/local/lib -Xcc -I/usr/local/include/mysql
+swift build -Xlinker -L/usr/local/lib -Xcc -I/usr/local/include -Xcc -I/usr/local/include/mysql
 ```
 
 # Usage

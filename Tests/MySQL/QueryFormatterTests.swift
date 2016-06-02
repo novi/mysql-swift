@@ -8,14 +8,22 @@
 
 import XCTest
 @testable import MySQL
+import SQLFormatter
 
-class QueryFormatterTests: XCTestCase, XCTestCaseProvider {
-    
-    var allTests: [(String, () throws -> Void)] {
-        return self.dynamicType.allTests.map{ ($0.0, $0.1(self)) }
+extension QueryFormatterTests {
+    static var allTests : [(String, (QueryFormatterTests) -> () throws -> Void)] {
+        return [
+                   ("testBasicFormatting", testBasicFormatting),
+                   ("testPlaceholder", testPlaceholder),
+                    ("testStringUtil", testStringUtil)
+        ]
     }
+}
+
+
+class QueryFormatterTests: XCTestCase {
     
-    func testBasicFormatting() {
+    func testBasicFormatting() throws {
         
         let params: (String, String, Int, String, Int?) = (
             "i.d",
@@ -24,12 +32,15 @@ class QueryFormatterTests: XCTestCase, XCTestCaseProvider {
             "user's",
             nil
         )
-        let formatted = try! QueryFormatter.format("SELECT name,??,id FROM users WHERE ?? = ? OR name = ? OR age is ?;", args: build(params), option: queryOption)
+        let args = build(params)
+        
+        let formatted = try QueryFormatter.format(query: "SELECT name,??,id FROM users WHERE ?? = ? OR name = ? OR age is ?;", args: Connection.buildArgs(args, option: queryOption) )
         XCTAssertEqual(formatted, "SELECT name,`i`.`d`,id FROM users WHERE `id` = 1 OR name = 'user\\'s' OR age is NULL;")
     }
     
-    func testPlaceholder() {
-        let formatted = try! QueryFormatter.format("SELECT ??, ?, ??, ?, ?", args: ["name", "message??", "col", "hello??", "hello?"], option: queryOption)
+    func testPlaceholder() throws {
+        let params: [QueryParameter] = ["name", "message??", "col", "hello??", "hello?"]
+        let formatted = try QueryFormatter.format(query: "SELECT ??, ?, ??, ?, ?", args: Connection.buildArgs(params, option: queryOption))
         XCTAssertEqual(formatted, "SELECT `name`, 'message??', `col`, 'hello??', 'hello?'")
     }
     
