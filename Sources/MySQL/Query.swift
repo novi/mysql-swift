@@ -52,8 +52,6 @@ extension Connection {
     internal struct Field {
         let name: String
         let type: enum_field_types
-        let isBinary: Bool
-        let flags: UInt32
         init?(f: MYSQL_FIELD) {
             if f.name == nil {
                 return nil
@@ -63,8 +61,6 @@ extension Connection {
             }
             self.name = fs
             self.type = f.type
-            self.flags = f.flags
-            self.isBinary = f.flags & UInt32(BINARY_FLAG) > 0 ? true : false
         }
         var isDate: Bool {
             return type == MYSQL_TYPE_DATE ||
@@ -96,7 +92,7 @@ extension Connection {
                 fatalError() // TODO
             case .Binary(let binary):
                 guard let string = String(validatingUTF8: binary.buffer) else {
-                    throw QueryError.resultParseError(message: "", result: "")
+                    throw QueryError.resultParseError(message: "invalid utf8 string bytes.", result: "")
                 }
                 return string
             }
