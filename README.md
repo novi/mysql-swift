@@ -90,8 +90,6 @@ try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
 
 * MariaDB Connector/C (libmysqlclient) 2.2.3
 
-# Installation
-
 ## OS X
 
 * Install `mariadb`(includes libmysqlclient).
@@ -110,6 +108,10 @@ $ brew install mariadb
 $ sudo apt-get install libmariadbclient-dev
 ```
 
+# Installation
+
+## Swift Package Manager
+
 * Add `mysql-swift` to `Package.swift` of your project.
 
 ```swift
@@ -122,13 +124,22 @@ let package = Package(
 )
 ```
 
-_Note:_ To build with Swift Package Manager(`swift build`), you may need to specify library path for libmysql to link it.
+_Note:_ You may need to specify library path for libmysqlclient to link it.
 
 ```sh
 # Linux
 swift build -Xlinker -L/usr/lib
 # OS X 
 swift build -Xlinker -L/usr/local/lib -Xcc -I/usr/local/include -Xcc -I/usr/local/include/mysql
+```
+
+## Carthage
+
+* Add `github "novi/mysql-swift" "master"` to your Cartfile.
+* Run `carthage update` with specifying Swift 3 Toolchain.
+
+```
+TOOLCHAINS="Swift Development Snapshot 2016-05-31 (a)" carthage update
 ```
 
 # Usage
