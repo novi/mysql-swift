@@ -1,16 +1,10 @@
 import XCTest
-@testable import MySQLTestSuite
-@testable import SQLFormatterTestSuite
+import MySQLTestSuite
+import SQLFormatterTestSuite
 
-XCTMain([
-            testCase( DateTests.allTests ),
-            testCase( EscapeTests.allTests ),
-            testCase( QueryFormatterTests.allTests ),
-            testCase( ConnectionPoolTests.allTests ),
-            testCase( ConnectionTests.allTests ),
-            testCase( QueryTests.allTests ),
-            testCase( BlobQueryTests.allTests ),
-            testCase( SQLTypeTests.allTests ),
-            
-            testCase( SQLFormatterTests.allTests )
-    ])
+var tests = [XCTestCaseEntry]()
+
+tests += MySQLTestSuite.allTests()
+tests += SQLFormatterTestSuite.allTests()
+
+XCTMain(tests)

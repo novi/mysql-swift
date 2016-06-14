@@ -79,6 +79,7 @@
 /* Begin PBXFileReference section */
 		520D2C0C1D0FD81900D73753 /* libssl.35.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libssl.35.tbd; path = usr/lib/libssl.35.tbd; sourceTree = SDKROOT; };
 		520D2C0E1D0FD81D00D73753 /* libcrypto.35.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcrypto.35.tbd; path = usr/lib/libcrypto.35.tbd; sourceTree = SDKROOT; };
+		520D2C231D0FDBE300D73753 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
 		52166C771CEE9C9D00FCF92D /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		52166C7B1CEEA9EE00FCF92D /* libmysqlclient.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmysqlclient.dylib; path = /usr/local/lib/libmysqlclient.dylib; sourceTree = "<absolute>"; };
 		523BC35D1CC9C1660007F0A7 /* Blob.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Blob.swift; sourceTree = "<group>"; };
@@ -196,6 +197,7 @@
 		52965F881C82F6C500E35C64 /* MySQL */ = {
 			isa = PBXGroup;
 			children = (
+				520D2C231D0FDBE300D73753 /* XCTestManifests.swift */,
 				523BC37C1CC9CBBC0007F0A7 /* BlobTests.swift */,
 				52965F891C82F6C500E35C64 /* ConnectionPoolTests.swift */,
 				52965F8A1C82F6C500E35C64 /* ConnectionTests.swift */,
