@@ -10,40 +10,54 @@ import CoreFoundation
 import Foundation
 import SQLFormatter
 
+#if os(OSX)
+#else
+public typealias Calendar = NSCalendar
+public typealias Date = NSDate
+public typealias TimeZone = NSTimeZone
+public typealias TimeInterval = NSTimeInterval
+public typealias DateComponents = NSDateComponents
+#endif
+
 internal final class SQLDateCalendar {
     private static let mutex = Mutex()
     
-    private static var cals: [Connection.TimeZone:NSCalendar] = [:]
+    private static var cals: [Connection.TimeZone:Calendar] = [:]
     
-    internal static func calendar(forTimezone timeZone: Connection.TimeZone) -> NSCalendar {
+    internal static func calendar(forTimezone timeZone: Connection.TimeZone) -> Calendar {
         if let cal = cals[timeZone] {
             return cal
         }
+        #if os(OSX)
+        let newCal = Calendar(calendarIdentifier: Calendar.Identifier.gregorian)!
+        newCal.timeZone = unsafeBitCast(timeZone.timeZone, to: TimeZone.self)
+        #else
         let newCal = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
-        newCal.timeZone = unsafeBitCast(timeZone.timeZone, to: NSTimeZone.self) // TODO: in Linux
+        newCal.timeZone = unsafeBitCast(timeZone.timeZone, to: NSTimeZone.self)
+        #endif
         self.save(calendar: newCal, forTimeZone: timeZone)
         return newCal
     }
     
-    private static func save(calendar cal: NSCalendar, forTimeZone timeZone: Connection.TimeZone) {
+    private static func save(calendar cal: Calendar, forTimeZone timeZone: Connection.TimeZone) {
         cals[timeZone] = cal
     }
 }
 
 public struct SQLDate {
     
-    internal let timeInterval: NSTimeInterval
+    internal let timeInterval: TimeInterval
     
-    public init(_ date: NSDate) {
+    public init(_ date: Date) {
         self.timeInterval = date.timeIntervalSince1970
     }
     
-    public init(_ timeIntervalSince1970: NSTimeInterval) {
+    public init(_ timeIntervalSince1970: TimeInterval) {
         self.timeInterval = timeIntervalSince1970
     }
     
     internal init() {
-        self.init(NSDate())
+        self.init(Date())
     }
     
     internal init(sqlDate: String, timeZone: Connection.TimeZone) throws {
@@ -57,7 +71,7 @@ public struct SQLDate {
         switch sqlDate.characters.count {
         case 4:
             if let year = Int(sqlDate) {
-                let comp = NSDateComponents()
+                var comp = DateComponents()
                 comp.year = year
                 comp.month = 1
                 comp.day = 1
@@ -78,7 +92,7 @@ public struct SQLDate {
                 let hour = Int(String(chars[11...12])),
                 let minute = Int(String(chars[14...15])),
                 let second = Int(String(chars[17...18])) where year > 0 && day > 0 && month > 0 {
-                    let comp = NSDateComponents()
+                    var comp = DateComponents()
                     comp.year = year
                     comp.month = month
                     comp.day = day
@@ -138,8 +152,8 @@ extension SQLDate {
     public static func now() -> SQLDate {
         return SQLDate()
     }
-    public func date() -> NSDate {
-        return NSDate(timeIntervalSince1970: timeInterval)
+    public func date() -> Date {
+        return Date(timeIntervalSince1970: timeInterval)
     }
 }
 
@@ -151,7 +165,7 @@ public func ==(lhs: SQLDate, rhs: SQLDate) -> Bool {
     return lhs.timeInterval == rhs.timeInterval
 }
 
-extension NSDate: QueryParameter {
+extension Date: QueryParameter {
     public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
         return SQLDate(self).queryParameter(option: option)
     }
