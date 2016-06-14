@@ -10,7 +10,7 @@ import CoreFoundation
 import Foundation
 import SQLFormatter
 
-internal final class SQLDateCalender {
+internal final class SQLDateCalendar {
     private static let mutex = Mutex()
     
     private static var cals: [Connection.TimeZone:NSCalendar] = [:]
@@ -48,10 +48,10 @@ public struct SQLDate {
     
     internal init(sqlDate: String, timeZone: Connection.TimeZone) throws {
         
-        SQLDateCalender.mutex.lock()
+        SQLDateCalendar.mutex.lock()
         
         defer {
-            SQLDateCalender.mutex.unlock()
+            SQLDateCalendar.mutex.unlock()
         }
         
         switch sqlDate.characters.count {
@@ -64,7 +64,7 @@ public struct SQLDate {
                 comp.hour = 0
                 comp.minute = 0
                 comp.second = 0
-                let cal = SQLDateCalender.calendar(forTimezone: timeZone)
+                let cal = SQLDateCalendar.calendar(forTimezone: timeZone)
                 if let date = cal.date(from: comp) {
                     self.timeInterval = date.timeIntervalSince1970
                     return
@@ -85,7 +85,7 @@ public struct SQLDate {
                     comp.hour = hour
                     comp.minute = minute
                     comp.second = second
-                    let cal = SQLDateCalender.calendar(forTimezone: timeZone)
+                    let cal = SQLDateCalendar.calendar(forTimezone: timeZone)
                     if let date = cal.date(from :comp) {
                         self.timeInterval = date.timeIntervalSince1970
                         return
@@ -118,8 +118,8 @@ public struct SQLDate {
 
 extension SQLDate: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        let comp = SQLDateCalender.mutex.sync { () -> NSDateComponents? in
-            let cal = SQLDateCalender.calendar(forTimezone: option.timeZone)
+        let comp = SQLDateCalendar.mutex.sync { () -> NSDateComponents? in
+            let cal = SQLDateCalendar.calendar(forTimezone: option.timeZone)
             return cal.components([ .year, .month,  .day,  .hour, .minute, .second], from: date())
             }! // TODO: in Linux
         
