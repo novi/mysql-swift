@@ -10,8 +10,7 @@ import CoreFoundation
 import Foundation
 import SQLFormatter
 
-#if os(OSX)
-#else
+#if SWIFT3_DEV
 public typealias Calendar = NSCalendar
 public typealias Date = NSDate
 public typealias TimeZone = NSTimeZone
@@ -28,7 +27,7 @@ internal final class SQLDateCalendar {
         if let cal = cals[timeZone] {
             return cal
         }
-        #if os(OSX)
+        #if !SWIFT3_DEV
         let newCal = Calendar(calendarIdentifier: Calendar.Identifier.gregorian)!
         newCal.timeZone = unsafeBitCast(timeZone.timeZone, to: TimeZone.self)
         #else

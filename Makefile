@@ -15,7 +15,7 @@ endif
 all: build
 	
 build:
-	$(SWIFT) build -v $(BUILDOPTS)
+	$(SWIFT) build -v $(BUILDOPTS) -Xswiftc -DSWIFT3_DEV
 	
 test: build
 	$(SWIFT) test
