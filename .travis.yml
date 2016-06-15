@@ -4,7 +4,9 @@ os:
 language: generic
 sudo: required
 dist: trusty
-osx_image: xcode8
+osx_image:
+  - xcode7.3 
+  - xcode8
 addons:
   mariadb: '10.1'
 env:
@@ -19,6 +21,9 @@ before_script:
   - mysql -u root -e "create database IF NOT EXISTS test;"
 script:
   - make
-  - make test
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then xcodebuild -project OSX\ Projects/MySQL/MySQL.xcodeproj -scheme MySQL build test ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make test; fi
+  # xcode 7.3
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && `xcode-select -p` != "/Applications/Xcode-beta.app/Contents/Developer" ]]; make test; fi
+  # xcode 8
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && `xcode-select -p` == "/Applications/Xcode-beta.app/Contents/Developer" ]]; then xcodebuild -project OSX\ Projects/MySQL/MySQL.xcodeproj -scheme MySQL build test ; fi
   
