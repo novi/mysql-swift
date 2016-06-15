@@ -1,16 +1,21 @@
-os:
-  - linux
-  - osx
 language: generic
 sudo: required
-dist: trusty
-osx_image:
-  - xcode7.3 
-  - xcode8
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      env: PERFORM_MAKE_TEST=1
+    - os: osx
+      osx_image: xcode7.3 
+      env: PERFORM_MAKE_TEST=1
+    - os: osx
+      osx_image: xcode8
+      env: PERFORM_XCODEBUILD=1 #PERFORM_MAKE_TEST=1 is error for now
 addons:
   mariadb: '10.1'
 env:
-  - SWIFT_VERSION=DEVELOPMENT-SNAPSHOT-2016-06-06-a
+  global:
+    - SWIFT_VERSION=DEVELOPMENT-SNAPSHOT-2016-06-06-a
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update       ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install mariadb; fi
@@ -21,9 +26,6 @@ before_script:
   - mysql -u root -e "create database IF NOT EXISTS test;"
 script:
   - make
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make test; fi
-  # xcode 7.3
-  - if [[ "$TRAVIS_OS_NAME" == "osx" && `xcode-select -p` != "/Applications/Xcode-beta.app/Contents/Developer" ]]; make test; fi
-  # xcode 8
-  - if [[ "$TRAVIS_OS_NAME" == "osx" && `xcode-select -p` == "/Applications/Xcode-beta.app/Contents/Developer" ]]; then xcodebuild -project OSX\ Projects/MySQL/MySQL.xcodeproj -scheme MySQL build test ; fi
+  - if [[ "$PERFORM_MAKE_TEST" == "1" ]]; then make test; fi
+  - if [[ "$PERFORM_XCODEBUILD" == "osx" ]]; then xcodebuild -project OSX\ Projects/MySQL/MySQL.xcodeproj -scheme MySQL build test ; fi
   
