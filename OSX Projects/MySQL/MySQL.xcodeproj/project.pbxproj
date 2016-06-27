@@ -35,6 +35,7 @@
 		529828B31CB3E2A4001FE958 /* Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529828AA1CB3E2A4001FE958 /* Sync.swift */; };
 		529828B41CB3E2A4001FE958 /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529828AB1CB3E2A4001FE958 /* Transaction.swift */; };
 		529828B51CB3E2B3001FE958 /* SQLFormatter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 529828981CB3E27F001FE958 /* SQLFormatter.framework */; };
+		52E9AE031D212ABC00ED55BE /* IDType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E9AE021D212ABC00ED55BE /* IDType.swift */; };
 		52F5C6851CBE70BE008D46BF /* QueryParameterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F5C6841CBE70BE008D46BF /* QueryParameterType.swift */; };
 		52F5C6871CBE7705008D46BF /* ParameterBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F5C6861CBE7705008D46BF /* ParameterBuilder.swift */; };
 		52F722011BDBD4C50066B725 /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 52F722001BDBD4C50066B725 /* libstdc++.tbd */; };
@@ -109,6 +110,7 @@
 		529828AA1CB3E2A4001FE958 /* Sync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sync.swift; sourceTree = "<group>"; };
 		529828AB1CB3E2A4001FE958 /* Transaction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		52B2AF671C21A0900004BD07 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Package.swift; path = ../../Package.swift; sourceTree = "<group>"; };
+		52E9AE021D212ABC00ED55BE /* IDType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IDType.swift; sourceTree = "<group>"; };
 		52EB7BFA1C96B439009B4F55 /* LinuxMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LinuxMain.swift; path = ../../../Tests/LinuxMain.swift; sourceTree = "<group>"; };
 		52F5C6841CBE70BE008D46BF /* QueryParameterType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryParameterType.swift; sourceTree = "<group>"; };
 		52F5C6861CBE7705008D46BF /* ParameterBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterBuilder.swift; sourceTree = "<group>"; };
@@ -221,13 +223,14 @@
 				529828A51CB3E2A4001FE958 /* Date.swift */,
 				529828A61CB3E2A4001FE958 /* Error.swift */,
 				529828A71CB3E2A4001FE958 /* Query.swift */,
+				529828AB1CB3E2A4001FE958 /* Transaction.swift */,
 				529828A81CB3E2A4001FE958 /* Result.swift */,
 				52F5C6861CBE7705008D46BF /* ParameterBuilder.swift */,
 				52F5C6841CBE70BE008D46BF /* QueryParameterType.swift */,
 				529828A91CB3E2A4001FE958 /* ResultType.swift */,
 				529828AA1CB3E2A4001FE958 /* Sync.swift */,
+				52E9AE021D212ABC00ED55BE /* IDType.swift */,
 				523BC3801CC9CC180007F0A7 /* SQLType.swift */,
-				529828AB1CB3E2A4001FE958 /* Transaction.swift */,
 			);
 			name = MySQL;
 			path = ../../../Sources/MySQL;
@@ -369,6 +372,7 @@
 				529828B21CB3E2A4001FE958 /* ResultType.swift in Sources */,
 				529828B11CB3E2A4001FE958 /* Result.swift in Sources */,
 				529828B31CB3E2A4001FE958 /* Sync.swift in Sources */,
+				52E9AE031D212ABC00ED55BE /* IDType.swift in Sources */,
 				529828B01CB3E2A4001FE958 /* Query.swift in Sources */,
 				529828AF1CB3E2A4001FE958 /* Error.swift in Sources */,
 				529828AC1CB3E2A4001FE958 /* Connection.swift in Sources */,
