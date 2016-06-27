@@ -35,7 +35,7 @@ class BlobQueryTests: XCTestCase, QueryTestType {
     func testInsertForCombinedUnicodeCharacter() throws {
         let str = "'ﾞ and áäèëî , ¥"
         
-        let obj = Row.BlobTextRow(id: 0, text1: str, binary1: SQLBinary() )
+        let obj = Row.BlobTextRow(id: .noID, text1: str, binary1: SQLBinary() )
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, obj])
         }
@@ -50,7 +50,7 @@ class BlobQueryTests: XCTestCase, QueryTestType {
         try createBinaryBlobTable()
         
         
-        let obj = Row.BlobTextRow(id: 0, text1: "", binary1: SQLBinary(testBinary) )
+        let obj = Row.BlobTextRow(id: .noID, text1: "", binary1: SQLBinary(testBinary) )
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, obj])
         }

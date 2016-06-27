@@ -109,13 +109,13 @@ class QueryTests: XCTestCase, QueryTestType {
         let name = "name 's"
         let age = 25
         
-        let userNil = User(id: 0, name: name, age: age, createdAt: someDate, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil)
+        let userNil = User(id: .noID, name: name, age: age, createdAt: someDate, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil)
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, userNil])
         }
         XCTAssertEqual(status.insertedId, 1)
         
-        let userFill = User(id: 0, name: name, age: age, createdAt: someDate, nameOptional: "fuga", ageOptional: 50, createdAtOptional: anotherDate, done: true, doneOptional: false)
+        let userFill = User(id: .noID, name: name, age: age, createdAt: someDate, nameOptional: "fuga", ageOptional: 50, createdAtOptional: anotherDate, done: true, doneOptional: false)
         let status2: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, userFill])
         }
@@ -134,7 +134,7 @@ class QueryTests: XCTestCase, QueryTestType {
         XCTAssertEqual(rows.count, 2)
         
         // first row
-        XCTAssertEqual(rows[0].id, 1)
+        XCTAssertEqual(rows[0].id.id, UserID(1))
         XCTAssertEqual(rows[0].name, name)
         XCTAssertEqual(rows[0].age, age)
         XCTAssertEqual(rows[0].createdAt, someDate)
@@ -147,7 +147,7 @@ class QueryTests: XCTestCase, QueryTestType {
         XCTAssertNil(rows[0].doneOptional)
         
         // second row
-        XCTAssertEqual(rows[1].id, 2)
+        XCTAssertEqual(rows[1].id.id, UserID(2))
         XCTAssertEqual(rows[1].name, name)
         XCTAssertEqual(rows[1].age, age)
         XCTAssertEqual(rows[1].createdAt, someDate)
@@ -181,7 +181,7 @@ class QueryTests: XCTestCase, QueryTestType {
         XCTAssertEqual(rows.count, 2)
         
         // first row
-        XCTAssertEqual(rows[0].id, 1)
+        XCTAssertEqual(rows[0].id.id, UserID(1))
         XCTAssertEqual(rows[0].name, name)
         XCTAssertEqual(rows[0].age, age)
         XCTAssertEqual(rows[0].createdAt, someDate)
@@ -194,7 +194,7 @@ class QueryTests: XCTestCase, QueryTestType {
         XCTAssertNil(rows[0].doneOptional)
         
         // second row
-        XCTAssertEqual(rows[1].id, 2)
+        XCTAssertEqual(rows[1].id.id, UserID(2))
         XCTAssertEqual(rows[1].name, name)
         XCTAssertEqual(rows[1].age, age)
         XCTAssertEqual(rows[1].createdAt, someDate)
@@ -217,7 +217,7 @@ class QueryTests: XCTestCase, QueryTestType {
         typealias User = Row.UserDecodeWithIndex
         
         let date = SQLDate.now()
-        let user = User(id: 0, name: "日本語123🍣あいう", age: 123, createdAt: date, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil)
+        let user = User(id: .noID, name: "日本語123🍣あいう", age: 123, createdAt: date, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil)
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, user])
         }

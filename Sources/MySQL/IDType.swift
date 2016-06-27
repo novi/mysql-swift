@@ -9,7 +9,7 @@
 import SQLFormatter
 
 public protocol IDType: SQLStringDecodable, QueryParameter, Hashable {
-    associatedtype T: SQLStringDecodable, Equatable, QueryParameter, Hashable
+    associatedtype T: SQLStringDecodable, Equatable, QueryParameter, Hashable, CustomStringConvertible
     var id: T { get }
     init(_ id: T)
 }
