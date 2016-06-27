@@ -20,12 +20,6 @@ extension DateTests {
     }
 }
 
-extension XCTestCase {
-    var queryOption: QueryParameterOption {
-        return QueryParameterOption(timeZone: Connection.TimeZone(GMTOffset: 0))
-    }
-}
-
 class DateTests : XCTestCase {
     
     func testSQLDate() throws {

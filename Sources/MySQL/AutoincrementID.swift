@@ -24,11 +24,23 @@ public enum AutoincrementID<I: IDType> {
     }
 }
 
+extension AutoincrementID: Equatable {
+    
+}
+
+public func ==<I>(lhs: AutoincrementID<I>, rhs: AutoincrementID<I>) -> Bool {
+    switch (lhs, rhs) {
+    case (.noID, .noID): return true
+    case (.ID(let lhs), .ID(let rhs) ): return lhs.id == rhs.id
+    default: return false
+    }
+}
+
 extension AutoincrementID: CustomStringConvertible {
     public var description: String {
         switch self {
         case .noID: return "noID"
-        case .ID(let id): return id.id.description
+        case .ID(let id): return "\(id.id)"
         }
     }
 }
@@ -49,8 +61,14 @@ extension AutoincrementID: SQLStringDecodable {
 extension AutoincrementID: QueryParameter {
     public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
         switch self {
-        case .noID: fatalError("TODO")
+        case .noID: return ""
         case .ID(let id): return try id.queryParameter(option: option)
+        }
+    }
+    public var omitOnQueryParameter: Bool {
+        switch self {
+        case .noID: return true
+        case .ID: return false
         }
     }
 }

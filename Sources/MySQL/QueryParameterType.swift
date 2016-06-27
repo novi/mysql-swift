@@ -10,6 +10,13 @@ import SQLFormatter
 
 public protocol QueryParameter {
     func queryParameter(option: QueryParameterOption) throws -> QueryParameterType
+    var omitOnQueryParameter: Bool { get }
+}
+
+public extension QueryParameter {
+    var omitOnQueryParameter: Bool {
+        return false
+    }
 }
 
 public protocol QueryParameterDictionaryType: QueryParameter {
@@ -47,7 +54,9 @@ public struct QueryDictionary: QueryParameter {
     public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
         var keyVals: [String] = []
         for (k, v) in dict {
-            keyVals.append("\(SQLString.escapeId(string: k)) = \(try QueryOptional(v).queryParameter(option: option).escaped())")
+            if v == nil || v?.omitOnQueryParameter == false {
+                keyVals.append("\(SQLString.escapeId(string: k)) = \(try QueryOptional(v).queryParameter(option: option).escaped())")
+            }
         }
         return QueryParameterWrap( keyVals.joined(separator:  ", ") )
     }
@@ -71,7 +80,12 @@ public struct QueryArray: QueryParameter, QueryArrayType {
         self.arr = arr.map { Optional($0) }
     }
     public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
-        return QueryParameterWrap( try arr.map({
+        return QueryParameterWrap( try arr.filter({ val in
+            if let valid = val {
+                return valid.omitOnQueryParameter == false
+            }
+            return true
+        }).map({
             if let val = $0 as? QueryArrayType {
                 return "(" + (try val.queryParameter(option: option).escaped()) + ")"
             }
@@ -93,6 +107,15 @@ extension Optional: QueryParameter {
         }
         return try val.queryParameter(option: option)
     }
+    public var omitOnQueryParameter: Bool {
+        guard let value = self else {
+            return false
+        }
+        guard let val = value as? QueryParameter else {
+            return false
+        }
+        return val.omitOnQueryParameter
+    }
 }
 
 
@@ -106,6 +129,9 @@ struct QueryOptional: QueryParameter {
             return QueryParameterNull().queryParameter(option: option)
         }
         return try val.queryParameter(option: option)
+    }
+    var omitOnQueryParameter: Bool {
+        return val?.omitOnQueryParameter ?? false
     }
 }
 

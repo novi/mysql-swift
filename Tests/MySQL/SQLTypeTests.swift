@@ -13,7 +13,8 @@ extension SQLTypeTests {
     static var allTests : [(String, (SQLTypeTests) -> () throws -> Void)] {
         return [
                    ("testIDType", testIDType),
-                    ("testEnumType", testEnumType)
+                    ("testEnumType", testEnumType),
+                    ("testAutoincrementType", testAutoincrementType)
         ]
     }
 }
@@ -54,6 +55,18 @@ class SQLTypeTests: XCTestCase {
         
         let nilVal: SomeEnum? = SomeEnum.from(string: "other foo")
         XCTAssertNil(nilVal)
+    }
+    
+    func testAutoincrementType() throws {
+        
+        let userID: AutoincrementID<UserID> = .ID(UserID(333))
+        XCTAssertEqual(userID, AutoincrementID.ID(UserID(333)))
+        
+        let someStringID: AutoincrementID<SomeStringID> = .ID(SomeStringID("id678@"))
+        XCTAssertEqual(someStringID, AutoincrementID.ID(SomeStringID("id678@")))
+        
+        let noID: AutoincrementID<UserID> = .noID
+        XCTAssertEqual(noID, AutoincrementID.noID)
     }
 
 }

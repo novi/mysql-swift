@@ -24,6 +24,13 @@ struct BlobTextID: IDType {
     }
 }
 
+struct SomeStringID: IDType {
+    let id: String
+    init(_ id: String) {
+        self.id = id
+    }
+}
+
 
 struct Row {
     

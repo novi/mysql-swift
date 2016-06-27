@@ -7,7 +7,8 @@
 //
 
 import XCTest
-import MySQL
+@testable import MySQL
+@testable import SQLFormatter
 
 /*
  
@@ -50,6 +51,12 @@ extension MySQLTestType {
         self.pool = ConnectionPool(options: constants)
         
         XCTAssertEqual(constants.timeZone, Connection.TimeZone(GMTOffset: 60 * 60 * 9), "test MySQL's timezone should be JST")
+    }
+}
+
+extension XCTestCase {
+    var queryOption: QueryParameterOption {
+        return QueryParameterOption(timeZone: Connection.TimeZone(GMTOffset: 0))
     }
 }
 
