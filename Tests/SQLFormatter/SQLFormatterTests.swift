@@ -10,7 +10,7 @@ import XCTest
 @testable import SQLFormatter
 
 extension SQLFormattingTests {
-    static var allTests : [(String, SQLFormattingTests -> () throws -> Void)] {
+    static var allTests : [(String, (SQLFormattingTests) -> () throws -> Void)] {
         return [
                    ("testDummy", testDummy)
         ]
