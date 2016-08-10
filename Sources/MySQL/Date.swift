@@ -10,15 +10,6 @@ import CoreFoundation
 import Foundation
 import SQLFormatter
 
-#if SWIFT3_DEV
-/*public typealias Calendar = NSCalendar
-public typealias Date = NSDate
-public typealias TimeZone = NSTimeZone
-public typealias TimeInterval = NSTimeInterval
-public typealias DateComponents = NSDateComponents
- */
-#endif
-
 internal final class SQLDateCalendar {
     fileprivate static let mutex = Mutex()
     
@@ -28,12 +19,12 @@ internal final class SQLDateCalendar {
         if let cal = cals[timeZone] {
             return cal
         }
-        #if !SWIFT3_DEV
+        #if os(macOS)
         var newCal = Calendar(identifier: Calendar.Identifier.gregorian)
         newCal.timeZone = unsafeBitCast(timeZone.timeZone, to: TimeZone.self)
         #else
-        let newCal = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
-        newCal.timeZone = unsafeBitCast(timeZone.timeZone, to: NSTimeZone.self)
+        let newCal = Calendar(identifier: NSCalendarIdentifierGregorian)!
+        newCal.timeZone = unsafeBitCast(timeZone.timeZone, to: TimeZone.self)
         #endif
         self.save(calendar: newCal, forTimeZone: timeZone)
         return newCal
@@ -141,6 +132,14 @@ extension SQLDate: QueryParameter {
         return QueryParameterWrap( "'\(pad(num: comp.year ?? 0, digits: 4))-\(pad(num: comp.month ?? 0))-\(pad(num: comp.day ?? 0)) \(pad(num: comp.hour ?? 0)):\(pad(num: comp.minute ?? 0)):\(pad(num: comp.second ?? 0))'" )
     }
 }
+
+#if !os(macOS)
+    extension Calendar {
+        func dateComponents(_ comp: Calendar.Unit, from date: Date) -> DateComponents {
+            return self.components(comp, from: date)!
+        }
+    }
+#endif
 
 extension SQLDate : CustomStringConvertible {
     public var description: String {

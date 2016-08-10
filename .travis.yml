@@ -6,16 +6,14 @@ matrix:
       dist: trusty
       env: PERFORM_MAKE_TEST=1
     - os: osx
-      osx_image: xcode7.3 
-      env: PERFORM_MAKE_TEST=1
-    - os: osx
       osx_image: xcode8
       env: PERFORM_XCODEBUILD=1 #PERFORM_MAKE_TEST=1 is error for now
 addons:
   mariadb: '10.1'
 env:
   global:
-    - SWIFT_VERSION=DEVELOPMENT-SNAPSHOT-2016-06-06-a
+    - SWIFT_VERSION=DEVELOPMENT-SNAPSHOT-2016-08-04-a
+    - TOOLCHAINS=org.swift.3020160804a
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update       ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install mariadb; fi
@@ -27,5 +25,5 @@ before_script:
 script:
   - make
   - if [[ "$PERFORM_MAKE_TEST" == "1" ]]; then make test; fi
-  - if [[ "$PERFORM_XCODEBUILD" == "osx" ]]; then xcodebuild -project OSX\ Projects/MySQL/MySQL.xcodeproj -scheme MySQL build test ; fi
+  - if [[ "$PERFORM_XCODEBUILD" == "1" ]]; then xcodebuild -project OSX\ Projects/MySQL/MySQL.xcodeproj -scheme MySQL build test ; fi
   
