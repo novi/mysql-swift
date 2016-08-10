@@ -1,10 +1,10 @@
 import XCTest
-import MySQLTestSuite
-import SQLFormatterTestSuite
+import MySQLTests
+import SQLFormatterTests
 
 var tests = [XCTestCaseEntry]()
 
-tests += MySQLTestSuite.allTests()
-tests += SQLFormatterTestSuite.allTests()
+tests += MySQLTests.allTests()
+tests += SQLFormatterTests.allTests()
 
 XCTMain(tests)

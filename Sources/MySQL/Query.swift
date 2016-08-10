@@ -99,7 +99,7 @@ extension Connection {
         }
     }
     
-    private func query<T: QueryRowResultType>(query formattedQuery: String) throws -> ([T], QueryStatus) {
+    fileprivate func query<T: QueryRowResultType>(query formattedQuery: String) throws -> ([T], QueryStatus) {
         let mysql = try connectIfNeeded()
         
         func queryPrefix() -> String {
@@ -159,7 +159,7 @@ extension Connection {
             var cols:[FieldValue] = []
             for i in 0..<fieldCount {
                 let field = fields[i]
-                if let valf = row[i] where row[i] != nil {
+                if let valf = row[i], row[i] != nil {
                     let binary = FieldValue.makeBinary(ptr: valf, length: lengths[i])
                     if field.isDate {
                         cols.append(FieldValue.Date(try SQLDate(sqlDate: binary.string(), timeZone: options.timeZone)))
@@ -202,7 +202,7 @@ extension Connection {
         let option = QueryParameterOption(
             timeZone: options.timeZone
         )
-        let queryString = try QueryFormatter.format(query: query, args: self.dynamicType.buildArgs(args, option: option))
+        let queryString = try QueryFormatter.format(query: query, args: type(of: self).buildArgs(args, option: option))
         return try self.query(query: queryString)
     }
     

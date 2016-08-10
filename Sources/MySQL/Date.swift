@@ -11,15 +11,16 @@ import Foundation
 import SQLFormatter
 
 #if SWIFT3_DEV
-public typealias Calendar = NSCalendar
+/*public typealias Calendar = NSCalendar
 public typealias Date = NSDate
 public typealias TimeZone = NSTimeZone
 public typealias TimeInterval = NSTimeInterval
 public typealias DateComponents = NSDateComponents
+ */
 #endif
 
 internal final class SQLDateCalendar {
-    private static let mutex = Mutex()
+    fileprivate static let mutex = Mutex()
     
     private static var cals: [Connection.TimeZone:Calendar] = [:]
     
@@ -28,7 +29,7 @@ internal final class SQLDateCalendar {
             return cal
         }
         #if !SWIFT3_DEV
-        let newCal = Calendar(calendarIdentifier: Calendar.Identifier.gregorian)!
+        var newCal = Calendar(identifier: Calendar.Identifier.gregorian)
         newCal.timeZone = unsafeBitCast(timeZone.timeZone, to: TimeZone.self)
         #else
         let newCal = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
@@ -90,7 +91,7 @@ public struct SQLDate {
                 let day = Int(String(chars[8...9])),
                 let hour = Int(String(chars[11...12])),
                 let minute = Int(String(chars[14...15])),
-                let second = Int(String(chars[17...18])) where year > 0 && day > 0 && month > 0 {
+                let second = Int(String(chars[17...18])), year > 0 && day > 0 && month > 0 {
                     var comp = DateComponents()
                     comp.year = year
                     comp.month = month
@@ -110,14 +111,14 @@ public struct SQLDate {
         throw QueryError.invalidSQLDate(sqlDate)
     }
     
-    private func pad(num: Int32, digits: Int = 2) -> String {
+    fileprivate func pad(num: Int32, digits: Int = 2) -> String {
         return pad(num: Int(num), digits: digits)
     }
-    private func pad(num: Int8, digits: Int = 2) -> String {
+    fileprivate func pad(num: Int8, digits: Int = 2) -> String {
         return pad(num: Int(num), digits: digits)
     }
     
-    private func pad(num: Int, digits: Int = 2) -> String {
+    fileprivate func pad(num: Int, digits: Int = 2) -> String {
         var str = String(num)
         if num < 0 {
             return str
@@ -131,13 +132,13 @@ public struct SQLDate {
 
 extension SQLDate: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        let comp = SQLDateCalendar.mutex.sync { () -> NSDateComponents? in
+        let comp = SQLDateCalendar.mutex.sync { () -> DateComponents in
             let cal = SQLDateCalendar.calendar(forTimezone: option.timeZone)
-            return cal.components([ .year, .month,  .day,  .hour, .minute, .second], from: date())
-            }! // TODO: in Linux
+            return cal.dateComponents([ .year, .month,  .day,  .hour, .minute, .second], from: date())
+            } // TODO: in Linux
         
         // YYYY-MM-DD HH:MM:SS
-        return QueryParameterWrap( "'\(pad(num: comp.year, digits: 4))-\(pad(num: comp.month))-\(pad(num: comp.day)) \(pad(num: comp.hour)):\(pad(num: comp.minute)):\(pad(num: comp.second))'" )
+        return QueryParameterWrap( "'\(pad(num: comp.year ?? 0, digits: 4))-\(pad(num: comp.month ?? 0))-\(pad(num: comp.day ?? 0)) \(pad(num: comp.hour ?? 0)):\(pad(num: comp.minute ?? 0)):\(pad(num: comp.second ?? 0))'" )
     }
 }
 

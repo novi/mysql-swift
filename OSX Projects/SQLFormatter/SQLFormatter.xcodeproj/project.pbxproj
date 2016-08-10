@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		52547E671CBF7E2A00B42F71 /* SQLFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547E661CBF7E2A00B42F71 /* SQLFormatterTests.swift */; };
+		525B38411D5AF3C400AE29A5 /* SQLFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525B38401D5AF3C400AE29A5 /* SQLFormatterTests.swift */; };
 		5298287C1CB3E258001FE958 /* SQLFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5298287B1CB3E258001FE958 /* SQLFormatter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		529828831CB3E258001FE958 /* SQLFormatter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 529828781CB3E258001FE958 /* SQLFormatter.framework */; };
 		529828A01CB3E290001FE958 /* QueryFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5298289D1CB3E290001FE958 /* QueryFormatter.swift */; };
@@ -25,7 +25,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		52547E661CBF7E2A00B42F71 /* SQLFormatterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLFormatterTests.swift; sourceTree = "<group>"; };
+		525B38401D5AF3C400AE29A5 /* SQLFormatterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLFormatterTests.swift; sourceTree = "<group>"; };
 		529828781CB3E258001FE958 /* SQLFormatter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SQLFormatter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5298287B1CB3E258001FE958 /* SQLFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SQLFormatter.h; sourceTree = "<group>"; };
 		5298287D1CB3E258001FE958 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -54,13 +54,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		52547E651CBF7E2A00B42F71 /* SQLFormatter */ = {
+		525B383F1D5AF3C400AE29A5 /* SQLFormatterTests */ = {
 			isa = PBXGroup;
 			children = (
-				52547E661CBF7E2A00B42F71 /* SQLFormatterTests.swift */,
+				525B38401D5AF3C400AE29A5 /* SQLFormatterTests.swift */,
 			);
-			name = SQLFormatter;
-			path = ../../../Tests/SQLFormatter;
+			name = SQLFormatterTests;
+			path = ../../../Tests/SQLFormatterTests;
 			sourceTree = "<group>";
 		};
 		5298286E1CB3E258001FE958 = {
@@ -94,7 +94,7 @@
 		529828861CB3E258001FE958 /* SQLFormatterTests */ = {
 			isa = PBXGroup;
 			children = (
-				52547E651CBF7E2A00B42F71 /* SQLFormatter */,
+				525B383F1D5AF3C400AE29A5 /* SQLFormatterTests */,
 				529828891CB3E258001FE958 /* Info.plist */,
 			);
 			path = SQLFormatterTests;
@@ -227,7 +227,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				52547E671CBF7E2A00B42F71 /* SQLFormatterTests.swift in Sources */,
+				525B38411D5AF3C400AE29A5 /* SQLFormatterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
