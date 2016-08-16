@@ -7,7 +7,7 @@ matrix:
       env: PERFORM_MAKE_TEST=1
     - os: osx
       osx_image: xcode8
-      env: PERFORM_XCODEBUILD=1  PERFORM_MAKE_TEST=1
+      env: PERFORM_XCODEBUILD=1 #PERFORM_MAKE_TEST=1
 addons:
   mariadb: '10.1'
 env:
