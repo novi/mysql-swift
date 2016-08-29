@@ -8,6 +8,7 @@
 
 import CMySQL
 import CoreFoundation
+import Foundation
 
 internal struct MySQLUtil {
     internal static func getMySQLError(_ mysqlPtr: UnsafeMutablePointer<MYSQL>?) -> String {
@@ -31,7 +32,7 @@ public protocol ConnectionOption {
     var user: String { get }
     var password: String { get }
     var database: String { get }
-    var timeZone: Connection.TimeZone { get }
+    var timeZone: TimeZone { get }
     var encoding: Connection.Encoding { get }
     var timeout: Int { get }
     var reconnect: Bool { get }
@@ -40,8 +41,8 @@ public protocol ConnectionOption {
 
 public extension ConnectionOption {
     // Provide default options
-    var timeZone: Connection.TimeZone {
-        return Connection.TimeZone(GMTOffset: 0)
+    var timeZone: TimeZone {
+        return TimeZone(identifier: "UTC")!
     }
     var encoding: Connection.Encoding {
         return .UTF8
@@ -58,53 +59,11 @@ public extension ConnectionOption {
 }
 
 extension Connection {
-    
-    public final class TimeZone: Equatable, Hashable {
-        let timeZone: CFTimeZone
-        public init(name: String) {
-#if os(Linux)
-                let s = name.withCString { p in
-                    CFStringCreateWithCString(nil, p, UInt32(kCFStringEncodingUTF8))
-                }
-#elseif os(OSX)
-                let s = name.withCString { p in
-                    CFStringCreateWithCString(nil, p, CFStringBuiltInEncodings.UTF8.rawValue)
-                }
-#endif
-            
-            self.timeZone = CFTimeZoneCreateWithName(nil, s, true)
-        }
-        public init(GMTOffset: Int) {
-            self.timeZone = CFTimeZoneCreateWithTimeIntervalFromGMT(nil, Double(GMTOffset))
-        }
-        public var hashValue: Int {
-            return Int(bitPattern: CFHash(timeZone))
-        }
-    }
-    
     public enum Encoding: String {
         case UTF8 = "utf8"
         case UTF8MB4 = "utf8mb4"
     }
     
-}
-
-extension Connection.TimeZone: CustomStringConvertible {
-    public var description: String {
-        return "\(timeZone)"
-    }
-}
-
-public func ==(lhs: Connection.TimeZone, rhs: Connection.TimeZone) -> Bool {
-#if os(Linux)
-    return CFEqual(lhs.timeZone, rhs.timeZone) ||
-        CFTimeZoneGetSecondsFromGMT(lhs.timeZone, 0) == CFTimeZoneGetSecondsFromGMT(rhs.timeZone, 0) ||
-        CFStringCompare(CFTimeZoneGetName(lhs.timeZone), CFTimeZoneGetName(rhs.timeZone), 0) == kCFCompareEqualTo
-#elseif os(OSX)
-    return CFEqual(lhs.timeZone, rhs.timeZone) ||
-        CFTimeZoneGetSecondsFromGMT(lhs.timeZone, 0) == CFTimeZoneGetSecondsFromGMT(rhs.timeZone, 0) ||
-        CFStringCompare(CFTimeZoneGetName(lhs.timeZone), CFTimeZoneGetName(rhs.timeZone), []) == .compareEqualTo
-#endif
 }
 
 extension Connection {
