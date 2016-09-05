@@ -101,8 +101,8 @@ $ brew install mariadb
 
 ## Ubuntu Linux
 
-* Install `libmysqlclient`
-* Follow [Setting up MariaDB Repositories](https://downloads.mariadb.org/mariadb/repositories/#mirror=yamagata-university) and set up your repository for operating system.
+* Install `libmariadbclient`
+* Follow [Setting up MariaDB Repositories](https://downloads.mariadb.org/mariadb/repositories/#mirror=yamagata-university) and set up your repository.
 
 ```sh
 $ sudo apt-get install libmariadbclient-dev

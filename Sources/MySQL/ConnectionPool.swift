@@ -33,10 +33,10 @@ final public class ConnectionPool: CustomStringConvertible {
     public init(options: ConnectionOption) {
         self.options = options
         
-        if self.dynamicType.libraryInitialized == false && mysql_server_init(0, nil, nil) != 0 { // mysql_library_init
+        if type(of: self).libraryInitialized == false && mysql_server_init(0, nil, nil) != 0 { // mysql_library_init
             fatalError("could not initialize MySQL library")
         }
-        self.dynamicType.libraryInitialized = true
+        type(of: self).libraryInitialized = true
         
         
         for _ in 0..<initialConnections {
@@ -99,12 +99,12 @@ final public class ConnectionPool: CustomStringConvertible {
 
 extension ConnectionPool {
     
-    public func execute<T>( _ block: @noescape(conn: Connection) throws -> T  ) throws -> T {
+    public func execute<T>( _ block: @noescape(_ conn: Connection) throws -> T  ) throws -> T {
         let conn = try getConnection()
         defer {
             releaseConnection(conn)
         }
-        return try block(conn: conn)
+        return try block(conn)
     }
     
 }
