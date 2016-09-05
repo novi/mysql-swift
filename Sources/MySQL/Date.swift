@@ -11,42 +11,42 @@ import Foundation
 import SQLFormatter
 
 internal final class SQLDateCalendar {
-    fileprivate static let mutex = Mutex()
+    private static let mutex = Mutex()
     
-    private static var cals: [TimeZone:Calendar] = [:]
+    private static var cals: [Connection.TimeZone:NSCalendar] = [:]
     
-    internal static func calendar(forTimezone timeZone: TimeZone) -> Calendar {
+    internal static func calendar(forTimezone timeZone: Connection.TimeZone) -> NSCalendar {
         if let cal = cals[timeZone] {
             return cal
         }
-        var newCal = Calendar(identifier: Calendar.Identifier.gregorian)
-        newCal.timeZone = timeZone
+        let newCal = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
+        newCal.timeZone = unsafeBitCast(timeZone.timeZone, to: NSTimeZone.self) // TODO: in Linux
         self.save(calendar: newCal, forTimeZone: timeZone)
         return newCal
     }
     
-    private static func save(calendar cal: Calendar, forTimeZone timeZone: TimeZone) {
+    private static func save(calendar cal: NSCalendar, forTimeZone timeZone: Connection.TimeZone) {
         cals[timeZone] = cal
     }
 }
 
 public struct SQLDate {
     
-    internal let timeInterval: TimeInterval
+    internal let timeInterval: NSTimeInterval
     
-    public init(_ date: Date) {
+    public init(_ date: NSDate) {
         self.timeInterval = date.timeIntervalSince1970
     }
     
-    public init(_ timeIntervalSince1970: TimeInterval) {
+    public init(_ timeIntervalSince1970: NSTimeInterval) {
         self.timeInterval = timeIntervalSince1970
     }
     
     internal init() {
-        self.init(Date())
+        self.init(NSDate())
     }
     
-    internal init(sqlDate: String, timeZone: TimeZone) throws {
+    internal init(sqlDate: String, timeZone: Connection.TimeZone) throws {
         
         SQLDateCalendar.mutex.lock()
         
@@ -57,7 +57,7 @@ public struct SQLDate {
         switch sqlDate.characters.count {
         case 4:
             if let year = Int(sqlDate) {
-                var comp = DateComponents()
+                let comp = NSDateComponents()
                 comp.year = year
                 comp.month = 1
                 comp.day = 1
@@ -77,8 +77,8 @@ public struct SQLDate {
                 let day = Int(String(chars[8...9])),
                 let hour = Int(String(chars[11...12])),
                 let minute = Int(String(chars[14...15])),
-                let second = Int(String(chars[17...18])), year > 0 && day > 0 && month > 0 {
-                    var comp = DateComponents()
+                let second = Int(String(chars[17...18])) where year > 0 && day > 0 && month > 0 {
+                    let comp = NSDateComponents()
                     comp.year = year
                     comp.month = month
                     comp.day = day
@@ -97,14 +97,14 @@ public struct SQLDate {
         throw QueryError.invalidSQLDate(sqlDate)
     }
     
-    fileprivate func pad(num: Int32, digits: Int = 2) -> String {
+    private func pad(num: Int32, digits: Int = 2) -> String {
         return pad(num: Int(num), digits: digits)
     }
-    fileprivate func pad(num: Int8, digits: Int = 2) -> String {
+    private func pad(num: Int8, digits: Int = 2) -> String {
         return pad(num: Int(num), digits: digits)
     }
     
-    fileprivate func pad(num: Int, digits: Int = 2) -> String {
+    private func pad(num: Int, digits: Int = 2) -> String {
         var str = String(num)
         if num < 0 {
             return str
@@ -118,13 +118,13 @@ public struct SQLDate {
 
 extension SQLDate: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        let comp = SQLDateCalendar.mutex.sync { () -> DateComponents in
+        let comp = SQLDateCalendar.mutex.sync { () -> NSDateComponents? in
             let cal = SQLDateCalendar.calendar(forTimezone: option.timeZone)
-            return cal.dateComponents([ .year, .month,  .day,  .hour, .minute, .second], from: date())
-            } // TODO: in Linux
+            return cal.components([ .year, .month,  .day,  .hour, .minute, .second], from: date())
+            }! // TODO: in Linux
         
         // YYYY-MM-DD HH:MM:SS
-        return QueryParameterWrap( "'\(pad(num: comp.year ?? 0, digits: 4))-\(pad(num: comp.month ?? 0))-\(pad(num: comp.day ?? 0)) \(pad(num: comp.hour ?? 0)):\(pad(num: comp.minute ?? 0)):\(pad(num: comp.second ?? 0))'" )
+        return QueryParameterWrap( "'\(pad(num: comp.year, digits: 4))-\(pad(num: comp.month))-\(pad(num: comp.day)) \(pad(num: comp.hour)):\(pad(num: comp.minute)):\(pad(num: comp.second))'" )
     }
 }
 
@@ -138,8 +138,8 @@ extension SQLDate {
     public static func now() -> SQLDate {
         return SQLDate()
     }
-    public func date() -> Date {
-        return Date(timeIntervalSince1970: timeInterval)
+    public func date() -> NSDate {
+        return NSDate(timeIntervalSince1970: timeInterval)
     }
 }
 
@@ -151,7 +151,7 @@ public func ==(lhs: SQLDate, rhs: SQLDate) -> Bool {
     return lhs.timeInterval == rhs.timeInterval
 }
 
-extension Date: QueryParameter {
+extension NSDate: QueryParameter {
     public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
         return SQLDate(self).queryParameter(option: option)
     }

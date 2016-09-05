@@ -8,7 +8,6 @@
 
 import XCTest
 import MySQL
-import Foundation
 
 /*
  
@@ -33,7 +32,7 @@ struct DummyConstants: TestConstantsType {
     let database: String = "test"
     let tableName: String = "unit_test_db_3894"
     let encoding: Connection.Encoding = .UTF8MB4
-    let timeZone: TimeZone = TimeZone(abbreviation: "JST")! // JST
+    let timeZone: Connection.TimeZone = Connection.TimeZone(GMTOffset: 60 * 60 * 9) // JST
 }
 
 protocol TestConstantsType: ConnectionOption {
@@ -50,7 +49,7 @@ extension MySQLTestType {
         self.constants = DummyConstants() // !!! Replace with your MySQL connection !!!
         self.pool = ConnectionPool(options: constants)
         
-        XCTAssertEqual(constants.timeZone, TimeZone(abbreviation: "JST"), "test MySQL's timezone should be JST")
+        XCTAssertEqual(constants.timeZone, Connection.TimeZone(GMTOffset: 60 * 60 * 9), "test MySQL's timezone should be JST")
     }
 }
 

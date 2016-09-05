@@ -99,7 +99,7 @@ class QueryTests: XCTestCase, QueryTestType {
     }
     
     var anotherDate: SQLDate {
-        return SQLDate(Date(timeIntervalSinceReferenceDate: 60*60*24*67))
+        return SQLDate(NSDate(timeIntervalSinceReferenceDate: 60*60*24*67))
     }
     
     func testInsertRow() throws {

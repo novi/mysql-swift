@@ -9,25 +9,18 @@
 import XCTest
 @testable import SQLFormatter
 
-extension SQLFormattingTests {
-    static var allTests : [(String, (SQLFormattingTests) -> () throws -> Void)] {
+extension SQLFormatterTests {
+    static var allTests : [(String, SQLFormatterTests -> () throws -> Void)] {
         return [
                    ("testDummy", testDummy)
         ]
     }
 }
 
-class SQLFormattingTests: XCTestCase {
+class SQLFormatterTests: XCTestCase {
     
     func testDummy() throws {
         XCTAssertTrue(true)
     }
+    
 }
-
-#if !os(OSX)
-    public func allTests() -> [XCTestCaseEntry] {
-        return [
-            testCase( SQLFormattingTests.allTests ),
-        ]
-    }
-#endif
