@@ -22,7 +22,7 @@ extension DateTests {
 
 extension XCTestCase {
     var queryOption: QueryParameterOption {
-        return QueryParameterOption(timeZone: Connection.TimeZone(GMTOffset: 0))
+        return QueryParameterOption(timeZone: TimeZone(identifier: "UTC")!)
     }
 }
 
@@ -30,8 +30,8 @@ class DateTests : XCTestCase {
     
     func testSQLDate() throws {
         
-        let gmt = QueryParameterOption(timeZone: Connection.TimeZone(GMTOffset: 0))
-        let losAngeles = QueryParameterOption(timeZone: Connection.TimeZone(name: "America/Los_Angeles"))
+        let gmt = QueryParameterOption(timeZone: TimeZone(identifier: "UTC")!)
+        let losAngeles = QueryParameterOption(timeZone: TimeZone(identifier: "America/Los_Angeles")!)
         
         let expected = "2003-01-02 03:04:05" // no timezone
         
@@ -58,7 +58,7 @@ class DateTests : XCTestCase {
     }
     
     func testSQLCalendar() {
-        let gmt = Connection.TimeZone(GMTOffset: 100)
+        let gmt = TimeZone(abbreviation: "PDT")!
         let cal1 = SQLDateCalendar.calendar(forTimezone: gmt)
         let cal2 = SQLDateCalendar.calendar(forTimezone: gmt)
         //Unmanaged.passUnretained(cal1).toOpaque()

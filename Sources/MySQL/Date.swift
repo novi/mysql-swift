@@ -13,19 +13,19 @@ import SQLFormatter
 internal final class SQLDateCalendar {
     fileprivate static let mutex = Mutex()
     
-    private static var cals: [Connection.TimeZone:Calendar] = [:]
+    private static var cals: [TimeZone:Calendar] = [:]
     
-    internal static func calendar(forTimezone timeZone: Connection.TimeZone) -> Calendar {
+    internal static func calendar(forTimezone timeZone: TimeZone) -> Calendar {
         if let cal = cals[timeZone] {
             return cal
         }
         var newCal = Calendar(identifier: Calendar.Identifier.gregorian)
-        newCal.timeZone = unsafeBitCast(timeZone.timeZone, to: TimeZone.self)
+        newCal.timeZone = timeZone
         self.save(calendar: newCal, forTimeZone: timeZone)
         return newCal
     }
     
-    private static func save(calendar cal: Calendar, forTimeZone timeZone: Connection.TimeZone) {
+    private static func save(calendar cal: Calendar, forTimeZone timeZone: TimeZone) {
         cals[timeZone] = cal
     }
 }
@@ -46,7 +46,7 @@ public struct SQLDate {
         self.init(Date())
     }
     
-    internal init(sqlDate: String, timeZone: Connection.TimeZone) throws {
+    internal init(sqlDate: String, timeZone: TimeZone) throws {
         
         SQLDateCalendar.mutex.lock()
         

@@ -8,6 +8,7 @@
 
 import CMySQL
 import SQLFormatter
+import Foundation
 
 public struct QueryStatus: CustomStringConvertible {
     public let affectedRows: Int
@@ -183,7 +184,7 @@ extension Connection {
 }
 
 public struct QueryParameterOption: QueryParameterOptionType {
-    let timeZone: Connection.TimeZone
+    let timeZone: TimeZone
 }
 
 
