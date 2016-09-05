@@ -33,12 +33,11 @@ final class Mutex {
 
 extension Mutex {
     
-    func sync<T>( block: @noescape() throws -> T) rethrows -> T {
+    func sync<T>( block: @noescape() -> T) -> T {
         lock()
-        defer {
-            unlock()
-        }
-        return try block()
+        let result = block()
+        unlock()
+        return result
     }
     
 }

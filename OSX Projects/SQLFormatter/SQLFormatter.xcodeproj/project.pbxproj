@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		525B38411D5AF3C400AE29A5 /* SQLFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525B38401D5AF3C400AE29A5 /* SQLFormatterTests.swift */; };
+		52547E671CBF7E2A00B42F71 /* SQLFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547E661CBF7E2A00B42F71 /* SQLFormatterTests.swift */; };
 		5298287C1CB3E258001FE958 /* SQLFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5298287B1CB3E258001FE958 /* SQLFormatter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		529828831CB3E258001FE958 /* SQLFormatter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 529828781CB3E258001FE958 /* SQLFormatter.framework */; };
 		529828A01CB3E290001FE958 /* QueryFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5298289D1CB3E290001FE958 /* QueryFormatter.swift */; };
@@ -25,7 +25,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		525B38401D5AF3C400AE29A5 /* SQLFormatterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLFormatterTests.swift; sourceTree = "<group>"; };
+		52547E661CBF7E2A00B42F71 /* SQLFormatterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLFormatterTests.swift; sourceTree = "<group>"; };
 		529828781CB3E258001FE958 /* SQLFormatter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SQLFormatter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5298287B1CB3E258001FE958 /* SQLFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SQLFormatter.h; sourceTree = "<group>"; };
 		5298287D1CB3E258001FE958 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -54,13 +54,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		525B383F1D5AF3C400AE29A5 /* SQLFormatterTests */ = {
+		52547E651CBF7E2A00B42F71 /* SQLFormatter */ = {
 			isa = PBXGroup;
 			children = (
-				525B38401D5AF3C400AE29A5 /* SQLFormatterTests.swift */,
+				52547E661CBF7E2A00B42F71 /* SQLFormatterTests.swift */,
 			);
-			name = SQLFormatterTests;
-			path = ../../../Tests/SQLFormatterTests;
+			name = SQLFormatter;
+			path = ../../../Tests/SQLFormatter;
 			sourceTree = "<group>";
 		};
 		5298286E1CB3E258001FE958 = {
@@ -94,7 +94,7 @@
 		529828861CB3E258001FE958 /* SQLFormatterTests */ = {
 			isa = PBXGroup;
 			children = (
-				525B383F1D5AF3C400AE29A5 /* SQLFormatterTests */,
+				52547E651CBF7E2A00B42F71 /* SQLFormatter */,
 				529828891CB3E258001FE958 /* Info.plist */,
 			);
 			path = SQLFormatterTests;
@@ -167,7 +167,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Yusuke Ito";
 				TargetAttributes = {
 					529828771CB3E258001FE958 = {
@@ -227,7 +227,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				525B38411D5AF3C400AE29A5 /* SQLFormatterTests.swift in Sources */,
+				52547E671CBF7E2A00B42F71 /* SQLFormatterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,7 +285,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -326,7 +325,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
-				SWIFT_VERSION = 3.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -367,7 +365,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = jp.novi.SQLFormatter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 			};
 			name = Release;
 		};
@@ -390,7 +387,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = jp.novi.SQLFormatterTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 			};
 			name = Release;
 		};
