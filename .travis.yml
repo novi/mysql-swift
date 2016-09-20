@@ -12,8 +12,8 @@ addons:
   mariadb: '10.1'
 env:
   global:
-    - SWIFT_VERSION=DEVELOPMENT-SNAPSHOT-2016-09-04-a
-    - TOOLCHAINS=org.swift.3020160904a
+    - SWIFT_VERSION=DEVELOPMENT-SNAPSHOT-2016-09-19-a
+    - TOOLCHAINS=org.swift.3020160919a
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update       ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install mariadb; fi
