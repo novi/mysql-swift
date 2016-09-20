@@ -24,14 +24,14 @@ extension Connection {
 
 extension ConnectionPool {
     
-    public func transaction<T>( _ block: @noescape(conn: Connection) throws -> T  ) throws -> T {
+    public func transaction<T>( _ block: @noescape(_ conn: Connection) throws -> T  ) throws -> T {
         let conn = try getConnection()
         defer {
             releaseConnection(conn)
         }
         try conn.beginTransaction()
         do {
-            let result = try block(conn: conn)
+            let result = try block(conn)
             try conn.commit()
             return result
         } catch (let e) {

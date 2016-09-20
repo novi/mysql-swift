@@ -22,7 +22,7 @@ extension DateTests {
 
 extension XCTestCase {
     var queryOption: QueryParameterOption {
-        return QueryParameterOption(timeZone: Connection.TimeZone(GMTOffset: 0))
+        return QueryParameterOption(timeZone: TimeZone(identifier: "UTC")!)
     }
 }
 
@@ -30,16 +30,16 @@ class DateTests : XCTestCase {
     
     func testSQLDate() throws {
         
-        let gmt = QueryParameterOption(timeZone: Connection.TimeZone(GMTOffset: 0))
-        let losAngeles = QueryParameterOption(timeZone: Connection.TimeZone(name: "America/Los_Angeles"))
+        let gmt = QueryParameterOption(timeZone: TimeZone(identifier: "UTC")!)
+        let losAngeles = QueryParameterOption(timeZone: TimeZone(identifier: "America/Los_Angeles")!)
         
         let expected = "2003-01-02 03:04:05" // no timezone
         
-        let date = SQLDate(NSDate(timeIntervalSince1970: 1041476645)) // "2003-01-02 03:04:05" at GMT
+        let date = SQLDate(Date(timeIntervalSince1970: 1041476645)) // "2003-01-02 03:04:05" at GMT
         XCTAssertEqual(date.queryParameter(option: gmt).escaped(), "'\(expected)'")
         
         let sqlDate = try SQLDate(sqlDate: expected, timeZone: losAngeles.timeZone)
-        let dateAtLos = SQLDate(NSDate(timeIntervalSince1970: 1041476645 + 3600*8))
+        let dateAtLos = SQLDate(Date(timeIntervalSince1970: 1041476645 + 3600*8))
         
         XCTAssertEqual(sqlDate.timeInterval, dateAtLos.timeInterval, "create date from sql string")
         XCTAssertEqual(sqlDate.queryParameter(option: losAngeles).escaped(), "'\(expected)'")
@@ -58,10 +58,11 @@ class DateTests : XCTestCase {
     }
     
     func testSQLCalendar() {
-        let gmt = Connection.TimeZone(GMTOffset: 100)
+        let gmt = TimeZone(abbreviation: "PDT")!
         let cal1 = SQLDateCalendar.calendar(forTimezone: gmt)
         let cal2 = SQLDateCalendar.calendar(forTimezone: gmt)
-        XCTAssertTrue(unsafeAddress(of: cal1) == unsafeAddress(of: cal2))
+        //Unmanaged.passUnretained(cal1).toOpaque()
+        //XCTAssertTrue(unsafeAddress(of: cal1 as AnyObject) == unsafeAddress(of: cal2 as AnyObject))
         XCTAssertEqual(cal1, cal2)
         XCTAssertEqual(cal1.hashValue, cal2.hashValue)
     }
