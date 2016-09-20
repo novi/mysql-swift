@@ -98,16 +98,17 @@ public final class Connection {
             fatalError("mysql_init() failed.")
         }
         
-        var timeoutPtr = UnsafeMutablePointer<Int>.allocate(capacity: 1)
-        timeoutPtr.pointee = options.timeout
-        defer {
+        do {
+            let timeoutPtr = UnsafeMutablePointer<Int>.allocate(capacity: 1)
+            timeoutPtr.pointee = options.timeout
+            mysql_options(mysql, MYSQL_OPT_CONNECT_TIMEOUT, timeoutPtr)
             timeoutPtr.deallocate(capacity: 1)
         }
-        mysql_options(mysql, MYSQL_OPT_CONNECT_TIMEOUT, timeoutPtr)
         
-        var reconnectPtr = UnsafeMutablePointer<my_bool>.allocate(capacity: 1)
-        reconnectPtr.pointee = options.reconnect == false ? 0 : 1
-        defer {
+        do {
+            let reconnectPtr = UnsafeMutablePointer<my_bool>.allocate(capacity: 1)
+            reconnectPtr.pointee = options.reconnect == false ? 0 : 1
+            mysql_options(mysql, MYSQL_OPT_RECONNECT, reconnectPtr)
             reconnectPtr.deallocate(capacity: 1)
         }
         
