@@ -26,7 +26,7 @@ public protocol QueryParameterOptionType {
 }
 
 
-public struct QueryParameterNull: QueryParameter, NilLiteralConvertible {
+public struct QueryParameterNull: QueryParameter, ExpressibleByNilLiteral {
     
     public init() {
         
