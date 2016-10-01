@@ -18,7 +18,7 @@ final public class ConnectionPool: CustomStringConvertible {
     public var initialConnections: Int = 1 {
         didSet {
             while pool.count < initialConnections {
-                preparedNewConnection()
+                _ = preparedNewConnection()
             }
         }
     }
@@ -40,7 +40,7 @@ final public class ConnectionPool: CustomStringConvertible {
         
         
         for _ in 0..<initialConnections {
-            preparedNewConnection()
+            _ = preparedNewConnection()
         }
     }
     
@@ -99,7 +99,7 @@ final public class ConnectionPool: CustomStringConvertible {
 
 extension ConnectionPool {
     
-    public func execute<T>( _ block: @noescape(_ conn: Connection) throws -> T  ) throws -> T {
+    public func execute<T>( _ block: (_ conn: Connection) throws -> T  ) throws -> T {
         let conn = try getConnection()
         defer {
             releaseConnection(conn)
