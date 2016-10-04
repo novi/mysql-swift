@@ -6,8 +6,15 @@
 //  Copyright © 2015 Yusuke Ito. All rights reserved.
 //
 
-infix operator <| { associativity left precedence 150 }
-infix operator <|? { associativity left precedence 150 }
+
+precedencegroup DecodingPrecedence {
+    associativity: left
+    higherThan: AssignmentPrecedence
+}
+
+infix operator <| : DecodingPrecedence
+infix operator <|? : DecodingPrecedence
+
 
 public protocol QueryRowResultType {
     static func decodeRow(r: QueryRowResult) throws -> Self
