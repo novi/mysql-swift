@@ -119,7 +119,7 @@ import PackageDescription
 
 let package = Package(
     dependencies: [
-        .Package(url: "https://github.com/novi/mysql-swift.git", majorVersion: 0, minor: 2)
+        .Package(url: "https://github.com/novi/mysql-swift.git", majorVersion: 0)
     ]
 )
 ```
