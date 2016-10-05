@@ -10,21 +10,21 @@
 extension Connection {
     
     func beginTransaction() throws {
-        try query("START TRANSACTION;")
+        _ = try query("START TRANSACTION;")
     }
 
     func commit() throws {
-        try query("COMMIT;")
+        _ = try query("COMMIT;")
     }
     
     func rollback() throws {
-        try query("ROLLBACK;")
+        _ = try query("ROLLBACK;")
     }
 }
 
 extension ConnectionPool {
     
-    public func transaction<T>( _ block: @noescape(_ conn: Connection) throws -> T  ) throws -> T {
+    public func transaction<T>( _ block: (_ conn: Connection) throws -> T  ) throws -> T {
         let conn = try getConnection()
         defer {
             releaseConnection(conn)
