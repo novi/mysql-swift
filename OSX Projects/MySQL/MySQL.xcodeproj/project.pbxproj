@@ -24,6 +24,7 @@
 		525B383E1D5AF3B600AE29A5 /* XCTestManifests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525B38331D5AF3B600AE29A5 /* XCTestManifests.swift */; };
 		5292158B1BDB8CD6009B031A /* MySQL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5292158A1BDB8CD6009B031A /* MySQL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		529215921BDB8CD6009B031A /* MySQL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 529215871BDB8CD6009B031A /* MySQL.framework */; };
+		529358A21DACD6CB00BE214E /* SQLFormatter.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 529828981CB3E27F001FE958 /* SQLFormatter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		529828AC1CB3E2A4001FE958 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529828A31CB3E2A4001FE958 /* Connection.swift */; };
 		529828AD1CB3E2A4001FE958 /* ConnectionPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529828A41CB3E2A4001FE958 /* ConnectionPool.swift */; };
 		529828AE1CB3E2A4001FE958 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529828A51CB3E2A4001FE958 /* Date.swift */; };
@@ -70,6 +71,16 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5293589F1DACD6C600BE214E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				529358A21DACD6CB00BE214E /* SQLFormatter.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,6 +270,7 @@
 				529215831BDB8CD6009B031A /* Frameworks */,
 				529215841BDB8CD6009B031A /* Headers */,
 				529215851BDB8CD6009B031A /* Resources */,
+				5293589F1DACD6C600BE214E /* CopyFiles */,
 			);
 			buildRules = (
 			);
