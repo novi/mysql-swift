@@ -6,6 +6,8 @@
 //  Copyright © 2015 Yusuke Ito. All rights reserved.
 //
 
+import Foundation
+
 extension Int: SQLStringDecodable {
     public static func from(string: String) -> Int? {
         return Int(string)

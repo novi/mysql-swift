@@ -7,6 +7,7 @@
 //
 
 import MySQL
+import Foundation
 
 struct Row {
     

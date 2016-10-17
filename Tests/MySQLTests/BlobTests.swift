@@ -8,6 +8,7 @@
 
 import XCTest
 import MySQL
+import Foundation
 
 extension BlobQueryTests {
     static var allTests : [(String, (BlobQueryTests) -> () throws -> Void)] {
