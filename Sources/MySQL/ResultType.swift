@@ -57,3 +57,9 @@ extension SQLDate: SQLStringDecodable {
         return nil // Invalid Constructor (use init instead)
     }
 }
+
+extension Date: SQLStringDecodable {
+    public static func from(string: String) -> Date? {
+        return nil // Invalid Constructor (use init instead)
+    }
+}

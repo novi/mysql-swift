@@ -73,26 +73,23 @@ extension Connection {
     }
     
     enum FieldValue {
-        case Null
-        case Binary(SQLBinary) // Note: bytes includes utf8 terminating character(0) at end
-        case Date(SQLDate)
+        case null
+        case binary(Data)
+        case date(Date)
         
         static func makeBinary(ptr: UnsafeMutablePointer<Int8>, length: UInt) -> FieldValue {
-            var bytes = Array<Int8>.init(repeating: 0, count: Int(length+1))
-            for i in 0..<Int(length) {
-                bytes[i] = ptr[i]
-            }
-            return FieldValue.Binary( SQLBinary(buffer: bytes, length: Int(length)) )
+            let data = Data(bytes: unsafeBitCast(ptr, to: UnsafeRawPointer.self), count: Int(length))
+            return FieldValue.binary(data)
         }
         
         func string() throws -> String {
             switch self {
-            case .Null:
-                fatalError() // TODO
-            case .Date:
-                fatalError() // TODO
-            case .Binary(let binary):
-                guard let string = String(validatingUTF8: binary.buffer) else {
+            case .null:
+                fatalError("TODO")
+            case .date:
+                fatalError("TODO")
+            case .binary(let data):
+                guard let string = String(data: data, encoding: .utf8) else {
                     throw QueryError.resultParseError(message: "invalid utf8 string bytes.", result: "")
                 }
                 return string
@@ -163,12 +160,12 @@ extension Connection {
                 if let valf = row[i], row[i] != nil {
                     let binary = FieldValue.makeBinary(ptr: valf, length: lengths[i])
                     if field.isDate {
-                        cols.append(FieldValue.Date(try SQLDate(sqlDate: binary.string(), timeZone: options.timeZone)))
+                        cols.append(FieldValue.date(try Date(sqlDate: binary.string(), timeZone: options.timeZone)))
                     } else {
                         cols.append(binary)
                     }                    
                 } else {
-                    cols.append(FieldValue.Null)
+                    cols.append(FieldValue.null)
                 }
                 
             }

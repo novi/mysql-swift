@@ -30,21 +30,8 @@ internal final class SQLDateCalendar {
     }
 }
 
-public struct SQLDate {
-    
-    internal let timeInterval: TimeInterval
-    
-    public init(_ date: Date) {
-        self.timeInterval = date.timeIntervalSince1970
-    }
-    
-    public init(_ timeIntervalSince1970: TimeInterval) {
-        self.timeInterval = timeIntervalSince1970
-    }
-    
-    internal init() {
-        self.init(Date())
-    }
+
+extension Date {
     
     internal init(sqlDate: String, timeZone: TimeZone) throws {
         
@@ -66,7 +53,7 @@ public struct SQLDate {
                 comp.second = 0
                 let cal = SQLDateCalendar.calendar(forTimezone: timeZone)
                 if let date = cal.date(from: comp) {
-                    self.timeInterval = date.timeIntervalSince1970
+                    self = date
                     return
                 }
             }
@@ -78,18 +65,18 @@ public struct SQLDate {
                 let hour = Int(String(chars[11...12])),
                 let minute = Int(String(chars[14...15])),
                 let second = Int(String(chars[17...18])), year > 0 && day > 0 && month > 0 {
-                    var comp = DateComponents()
-                    comp.year = year
-                    comp.month = month
-                    comp.day = day
-                    comp.hour = hour
-                    comp.minute = minute
-                    comp.second = second
-                    let cal = SQLDateCalendar.calendar(forTimezone: timeZone)
-                    if let date = cal.date(from :comp) {
-                        self.timeInterval = date.timeIntervalSince1970
-                        return
-                    }
+                var comp = DateComponents()
+                comp.year = year
+                comp.month = month
+                comp.day = day
+                comp.hour = hour
+                comp.minute = minute
+                comp.second = second
+                let cal = SQLDateCalendar.calendar(forTimezone: timeZone)
+                if let date = cal.date(from :comp) {
+                    self = date
+                    return
+                }
             }
         default: break
         }
@@ -116,15 +103,35 @@ public struct SQLDate {
     }
 }
 
-extension SQLDate: QueryParameter {
+extension Date: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
         let comp = SQLDateCalendar.mutex.sync { () -> DateComponents in
             let cal = SQLDateCalendar.calendar(forTimezone: option.timeZone)
-            return cal.dateComponents([ .year, .month,  .day,  .hour, .minute, .second], from: date())
-            } // TODO: in Linux
+            return cal.dateComponents([ .year, .month,  .day,  .hour, .minute, .second], from: self)
+        } // TODO: in Linux
         
         // YYYY-MM-DD HH:MM:SS
         return QueryParameterWrap( "'\(pad(num: comp.year ?? 0, digits: 4))-\(pad(num: comp.month ?? 0))-\(pad(num: comp.day ?? 0)) \(pad(num: comp.hour ?? 0)):\(pad(num: comp.minute ?? 0)):\(pad(num: comp.second ?? 0))'" )
+    }
+}
+
+@available(*, deprecated)
+public struct SQLDate {
+    
+    fileprivate let nsDate: Date
+    
+    public init(_ date: Date) {
+        self.nsDate = date
+    }
+    
+    public init(_ timeIntervalSince1970: TimeInterval) {
+        self.nsDate = Date(timeIntervalSince1970: timeIntervalSince1970)
+    }
+}
+
+extension SQLDate: QueryParameter {
+    public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
+        return self.nsDate.queryParameter(option: option)
     }
 }
 
@@ -136,10 +143,10 @@ extension SQLDate : CustomStringConvertible {
 
 extension SQLDate {
     public static func now() -> SQLDate {
-        return SQLDate()
+        return SQLDate(Date())
     }
     public func date() -> Date {
-        return Date(timeIntervalSince1970: timeInterval)
+        return self.nsDate
     }
 }
 
@@ -148,12 +155,6 @@ extension SQLDate: Equatable {
 }
 
 public func ==(lhs: SQLDate, rhs: SQLDate) -> Bool {
-    return lhs.timeInterval == rhs.timeInterval
-}
-
-extension Date: QueryParameter {
-    public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
-        return SQLDate(self).queryParameter(option: option)
-    }
+    return lhs.nsDate == rhs.nsDate
 }
 

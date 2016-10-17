@@ -44,7 +44,7 @@ extension QueryTestType {
             "PRIMARY KEY (`id`)" +
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
         
-        try conn.query(query)
+        _ = try conn.query(query)
     }
     
     func createBlobTable() throws {
@@ -58,7 +58,7 @@ extension QueryTestType {
             "PRIMARY KEY (`id`)" +
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
         
-        try conn.query(query)
+        _ = try conn.query(query)
     }
     
     func createBinaryBlobTable() throws {
@@ -72,12 +72,12 @@ extension QueryTestType {
             "PRIMARY KEY (`id`)" +
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;"
         
-        try conn.query(query)
+        _ = try conn.query(query)
     }
     
     func dropTestTable() throws {
         let conn = try pool.getConnection()
-        try conn.query("DROP TABLE IF EXISTS \(constants.tableName)")
+        _ = try conn.query("DROP TABLE IF EXISTS \(constants.tableName)")
     }
 }
 
@@ -94,12 +94,12 @@ class QueryTests: XCTestCase, QueryTestType {
         try! createTestTable()
     }
     
-    var someDate: SQLDate {
-        return try! SQLDate(sqlDate: "2015-12-27 16:54:00", timeZone: pool.options.timeZone)
+    var someDate: Date {
+        return try! Date(sqlDate: "2015-12-27 16:54:00", timeZone: pool.options.timeZone)
     }
     
-    var anotherDate: SQLDate {
-        return SQLDate(Date(timeIntervalSinceReferenceDate: 60*60*24*67))
+    var anotherDate: Date {
+        return Date(timeIntervalSinceReferenceDate: 60*60*24*67)
     }
     
     func testInsertRow() throws {
@@ -109,26 +109,26 @@ class QueryTests: XCTestCase, QueryTestType {
         let name = "name 's"
         let age = 25
         
-        let userNil = User(id: 0, name: name, age: age, createdAt: someDate, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil)
+        let userNil = User(id: 0, name: name, age: age, createdAt: someDate, createdAtSQLDate: SQLDate(someDate), nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil)
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, userNil])
         }
         XCTAssertEqual(status.insertedId, 1)
         
-        let userFill = User(id: 0, name: name, age: age, createdAt: someDate, nameOptional: "fuga", ageOptional: 50, createdAtOptional: anotherDate, done: true, doneOptional: false)
+        let userFill = User(id: 0, name: name, age: age, createdAt: someDate, createdAtSQLDate: SQLDate(someDate), nameOptional: "fuga", ageOptional: 50, createdAtOptional: anotherDate, done: true, doneOptional: false)
         let status2: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, userFill])
         }
         XCTAssertEqual(status2.insertedId, 2)
         
-        var rows:[User]!
-        
+        let rows:[User]
         do {
             rows = try pool.execute { conn in
             try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional FROM ??", [constants.tableName])
         }
         } catch (let e) {
             print(e)
+            throw e
         }
         
         XCTAssertEqual(rows.count, 2)
@@ -138,6 +138,7 @@ class QueryTests: XCTestCase, QueryTestType {
         XCTAssertEqual(rows[0].name, name)
         XCTAssertEqual(rows[0].age, age)
         XCTAssertEqual(rows[0].createdAt, someDate)
+        XCTAssertEqual(rows[0].createdAtSQLDate, SQLDate(someDate))
         
         XCTAssertNil(rows[0].nameOptional)
         XCTAssertNil(rows[0].ageOptional)
@@ -151,6 +152,7 @@ class QueryTests: XCTestCase, QueryTestType {
         XCTAssertEqual(rows[1].name, name)
         XCTAssertEqual(rows[1].age, age)
         XCTAssertEqual(rows[1].createdAt, someDate)
+        XCTAssertEqual(rows[1].createdAtSQLDate, SQLDate(someDate))
         
         XCTAssertNotNil(rows[1].nameOptional)
         XCTAssertNotNil(rows[1].ageOptional)
@@ -216,8 +218,8 @@ class QueryTests: XCTestCase, QueryTestType {
         
         typealias User = Row.UserDecodeWithIndex
         
-        let date = SQLDate.now()
-        let user = User(id: 0, name: "日本語123🍣あいう", age: 123, createdAt: date, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil)
+        let date = Date()
+        let user = User(id: 0, name: "日本語123🍣あいう", age: 123, createdAt: date, createdAtSQLDate: SQLDate(date),nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil)
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, user])
         }
