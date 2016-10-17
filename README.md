@@ -26,7 +26,7 @@ struct User: QueryRowResultType, QueryParameterDictionaryType {
     let userName: String
     let age: Int?
     let status: Status
-    let createdAt: SQLDate
+    let createdAt: Date
     
     enum Status: String, SQLEnumType {
         case created = "created"
@@ -71,7 +71,7 @@ let rows: [User] = try conn.query("SELECT id,name,created_at,age FROM users WHER
 
 // Inserting
 let age: Int? = 26
-let user = User(id: 0, userName: "novi", age: age, createdAt: SQLDate.now())
+let user = User(id: 0, userName: "novi", age: age, createdAt: Date())
 let status = try conn.query("INSERT INTO users SET ?", [user]) as QueryStatus
 let newId = status.insertedId
         
