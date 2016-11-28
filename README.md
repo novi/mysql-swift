@@ -90,7 +90,7 @@ try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
 
 * MariaDB Connector/C (libmysqlclient) 2.2.3
 
-## OS X
+## macOS
 
 * Install `mariadb`(includes libmysqlclient).
 
@@ -128,9 +128,9 @@ _Note:_ You may need to specify library path for libmysqlclient to link with.
 
 ```sh
 # Linux
-swift build -Xlinker -L/usr/lib
-# OS X 
-swift build -Xlinker -L/usr/local/lib -Xcc -I/usr/local/include -Xcc -I/usr/local/include/mysql
+swift build -Xlinker -L/usr/lib -Xlinker -lmysqlclient
+# macOS 
+swift build -Xlinker -L/usr/local/lib -Xcc -I/usr/local/include -Xcc -I/usr/local/include/mysql -Xlinker -lmysqlclient
 ```
 
 # Usage
