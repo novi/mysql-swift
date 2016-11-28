@@ -6,6 +6,7 @@
 //  Copyright © 2015 Yusuke Ito. All rights reserved.
 //
 
+import Foundation
 
 precedencegroup DecodingPrecedence {
     associativity: left
@@ -61,9 +62,9 @@ public struct QueryRowResult {
             return false
         }
         switch val {
-        case .Null:
+        case .null:
             return true
-        case .Binary, .Date:
+        case .binary, .date:
             return false
         }
     }
@@ -72,9 +73,9 @@ public struct QueryRowResult {
         try checkFieldBounds(at: index)
         
         switch cols[index] {
-        case .Null:
+        case .null:
             return true
-        case .Binary, .Date:
+        case .binary, .date:
             return false
         }
     }
@@ -111,16 +112,27 @@ public struct QueryRowResult {
     
     func getValue<T: SQLStringDecodable>(val: Connection.FieldValue, key: String) throws -> T {
         switch val {
-        case .Null:
+        case .null:
             throw QueryError.castError(actual: "NULL", expected: "\(T.self)", key: key)
-        case .Date(let date):
+        case .date(let date):
+            if "\(T.self)" == "SQLDate" {
+                if let sqlDate = SQLDate(date) as? T {
+                    return sqlDate
+                }
+            }
             guard let val = date as? T else {
                 throw QueryError.castError(actual: "\(date)", expected: "\(T.self)", key: key)
             }
             return val
-        case .Binary(let binary):
-            if let bin = binary as? T {
+        case .binary(let data):
+            //print("T is \(T.self)")
+            if let bin = data as? T {
                 return bin
+            }
+            if "\(T.self)" == "SQLBinary" {
+                if let bin = SQLBinary(data) as? T {
+                    return bin
+                }
             }
             return try castOrFail(val.string(), key: key)
         }

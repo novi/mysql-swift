@@ -6,6 +6,8 @@
 //  Copyright © 2015 Yusuke Ito. All rights reserved.
 //
 
+import Foundation
+
 extension Int: SQLStringDecodable {
     public static func from(string: String) -> Int? {
         return Int(string)
@@ -54,6 +56,12 @@ extension Bool: SQLStringDecodable {
 
 extension SQLDate: SQLStringDecodable {
     public static func from(string: String) -> SQLDate? {
+        return nil // Invalid Constructor (use init instead)
+    }
+}
+
+extension Date: SQLStringDecodable {
+    public static func from(string: String) -> Date? {
         return nil // Invalid Constructor (use init instead)
     }
 }

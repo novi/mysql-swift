@@ -6,8 +6,10 @@
 //  Copyright © 2016 Yusuke Ito. All rights reserved.
 //
 
+import Foundation
 import SQLFormatter
 
+@available(*, deprecated)
 public struct SQLBinary {
     let buffer: [Int8]
     let length: Int
@@ -30,6 +32,14 @@ public struct SQLBinary {
         self.buffer = buffer
         self.length = length
     }
+    
+    init(_ data: Data) {
+        self.init(Array(data))
+    }
+    
+    fileprivate var nsData: Data {
+        return Data(bytes: unsafeBitCast(buffer, to: [UInt8].self))
+    }
 }
 
 extension SQLBinary: SQLStringDecodable {
@@ -40,17 +50,7 @@ extension SQLBinary: SQLStringDecodable {
 
 extension SQLBinary: QueryParameterType {
     public func escaped() -> String {
-        var buffer = "x'"
-        for d in data {
-            let unsigned = unsafeBitCast(d, to: UInt8.self)
-            let str = String(unsigned, radix: 16)
-            if str.characters.count == 1 {
-                buffer.append("0")
-            }
-            buffer.append(str)
-        }
-        buffer.append("'")
-        return buffer
+        return nsData.escaped()
     }
 }
 
@@ -60,3 +60,34 @@ extension SQLBinary: QueryParameter {
         return self
     }
 }
+
+// for (NS)Data
+
+
+extension Data: SQLStringDecodable {
+    public static func from(string: String) -> Data? {
+        fatalError("construct via init(:)")
+    }
+}
+
+extension Data: QueryParameterType {
+    public func escaped() -> String {
+        var buffer: [Character] = ["x", "'"]
+        for d in self {
+            let str = String(d, radix: 16)
+            if str.characters.count == 1 {
+                buffer.append("0")
+            }
+            buffer.append(contentsOf: str.characters)
+        }
+        buffer.append("'")
+        return String(buffer)
+    }
+}
+
+extension Data: QueryParameter {
+    public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
+        return self
+    }
+}
+
