@@ -7,6 +7,9 @@ let package = Package(
                  Target(name: "MySQL", dependencies: ["SQLFormatter"])
     ],
     dependencies: [
-        .Package(url: "https://github.com/novi/CMySQL-MariaDB.git", majorVersion: 2)
+        .Package(url: "https://github.com/novi/CMySQL-MariaDB.git", majorVersion: 3)
+    ],
+    exclude: [
+        "Carthage", "OSX Projects"
     ]
 )

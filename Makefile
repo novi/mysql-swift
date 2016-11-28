@@ -1,4 +1,4 @@
-BUILD_OPTS=-Xlinker -L/usr/lib
+BUILD_OPTS=-Xlinker -L/usr/lib -Xlinker -lmysqlclient
 
 SWIFTC=swiftc
 SWIFT=swift
@@ -10,7 +10,7 @@ endif
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
 	SWIFTC=xcrun -sdk macosx swiftc
-	BUILD_OPTS=-Xlinker -L/usr/local/opt/mariadb/lib -Xlinker -L/usr/local/opt/openssl/lib -Xcc -I/usr/local/include/mysql -Xcc -I/usr/local/include
+	BUILD_OPTS=-Xlinker -L/usr/local/opt/mariadb/lib -Xlinker -L/usr/local/opt/openssl/lib -Xcc -I/usr/local/include/mysql -Xcc -I/usr/local/include -Xlinker -lmysqlclient
 endif
 
 all: debug test
