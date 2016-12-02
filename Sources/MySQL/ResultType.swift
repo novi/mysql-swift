@@ -26,6 +26,24 @@ extension Int64: SQLStringDecodable {
     }
 }
 
+extension Int32: SQLStringDecodable {
+    public static func from(string: String) -> Int32? {
+        return Int32(string)
+    }
+}
+
+extension UInt64: SQLStringDecodable {
+    public static func from(string: String) -> UInt64? {
+        return UInt64(string)
+    }
+}
+
+extension UInt32: SQLStringDecodable {
+    public static func from(string: String) -> UInt32? {
+        return UInt32(string)
+    }
+}
+
 extension Float: SQLStringDecodable {
     public static func from(string: String) -> Float? {
         return Float(string)
