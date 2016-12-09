@@ -9,10 +9,34 @@
 import MySQL
 import Foundation
 
+
+
+struct UserID: IDType {
+    let id: Int
+    init(_ id: Int) {
+        self.id = id
+    }
+}
+
+struct BlobTextID: IDType {
+    let id: Int
+    init(_ id: Int) {
+        self.id = id
+    }
+}
+
+struct SomeStringID: IDType {
+    let id: String
+    init(_ id: String) {
+        self.id = id
+    }
+}
+
+
 struct Row {
     
     struct UserDecodeWithIndex: QueryRowResultType, QueryParameterDictionaryType {
-        let id: Int
+        let id: AutoincrementID<UserID>
         
         let name: String
         let age: Int
@@ -47,7 +71,7 @@ struct Row {
         
         func queryParameter() throws -> QueryDictionary {
             return QueryDictionary([
-                //"id": // auto increment
+                "id": id,
                 "name": name,
                 "age": age,
                 "created_at": createdAt,
@@ -63,7 +87,7 @@ struct Row {
     }
     
     struct UserDecodeWithKey: QueryRowResultType {
-        let id: Int
+        let id: AutoincrementID<UserID>
         
         let name: String
         let age: Int
@@ -95,7 +119,7 @@ struct Row {
     }
     
     struct BlobTextRow: QueryRowResultType, QueryParameterDictionaryType {
-        let id: Int
+        let id: AutoincrementID<BlobTextID>
         
         let text1: String
         let binary1: Data
@@ -113,7 +137,7 @@ struct Row {
         
         func queryParameter() throws -> QueryDictionary {
             return QueryDictionary([
-                                       //"id": // auto increment
+               "id": id,
                 "text1": text1,
                 "binary1": binary1
                 ])

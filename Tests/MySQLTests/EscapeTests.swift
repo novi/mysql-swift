@@ -19,6 +19,7 @@ extension EscapeTests {
                    ("testArrayType", testArrayType),
                    ("testNestedArray", testNestedArray),
                    ("testDictionary", testDictionary),
+                   ("testAutoincrement", testAutoincrement)
         ]
     }
 }
@@ -88,6 +89,32 @@ class EscapeTests: XCTestCase {
         
         XCTAssertEqual(try QueryArray(strs).queryParameter(option: queryOption).escaped(), "\'Sup\\\'er\', NULL, (\'Sup\\\'er\', NULL)")
         
+    }
+    
+    func testAutoincrement() throws {
+        let strVal: String = "Sup'er"
+        
+        do {
+            let userID: AutoincrementID<UserID> = .ID(UserID(333))
+            XCTAssertEqual(try userID.queryParameter(option: queryOption).escaped(), "333")
+            let arr: [QueryParameter] = [strVal, userID]
+            XCTAssertEqual(try QueryArray(arr).queryParameter(option: queryOption).escaped(), "\'Sup\\\'er\', 333")
+        }
+        
+        do {
+            let stringID: AutoincrementID<SomeStringID> = .ID(SomeStringID("id-555@"))
+            XCTAssertEqual(try stringID.queryParameter(option: queryOption).escaped(), "\'id-555@\'")
+            let arr: [QueryParameter] = [strVal, stringID]
+            XCTAssertEqual(try QueryArray(arr).queryParameter(option: queryOption).escaped(), "\'Sup\\\'er\', \'id-555@\'")
+        }
+        
+        do {
+            let noID: AutoincrementID<UserID> = .noID
+            XCTAssertEqual(try noID.queryParameter(option: queryOption).escaped(), "\'\'")
+            
+            let arr: [QueryParameter] = [strVal, noID]
+            XCTAssertEqual(try QueryArray(arr).queryParameter(option: queryOption).escaped(), "\'Sup\\\'er\'")
+        }
     }
     
     func testDictionary() {
