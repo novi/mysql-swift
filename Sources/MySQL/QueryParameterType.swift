@@ -149,6 +149,24 @@ extension UInt: QueryParameter {
     }
 }
 
+extension UInt64: QueryParameter {
+    public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
+        return QueryParameterWrap( String(self) )
+    }
+}
+
+extension Int32: QueryParameter {
+    public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
+        return QueryParameterWrap( String(self) )
+    }
+}
+
+extension UInt32: QueryParameter {
+    public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
+        return QueryParameterWrap( String(self) )
+    }
+}
+
 extension Double: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
         return QueryParameterWrap( String(self) )
