@@ -14,7 +14,7 @@ This is inspired by Node.js' [mysql](https://github.com/felixge/node-mysql) and 
 * Based on libmysqlclient
 * Raw SQL query
 * Simple query formatting and escaping (same as Node's)
-* Decoding and mapping queried results to struct
+* Decoding and mapping queried results to Swift struct or class
 
 _Note:_ No asynchronous support currently. It depends libmysqlclient.
 
@@ -124,7 +124,7 @@ let package = Package(
 )
 ```
 
-_Note:_ You may need to specify library path for libmysqlclient to link it.
+_Note:_ You may need to specify library path for libmysqlclient to link with.
 
 ```sh
 # Linux
@@ -140,30 +140,30 @@ swift build -Xlinker -L/usr/local/lib -Xcc -I/usr/local/include -Xcc -I/usr/loca
 1. Create a pool with options (hostname, port, password,...).
 2. Get a connection from the pool.
 3. Execute query and fetch rows or status.
-4. Back the connection to the pool (as `release`),
+4. Back the connection to the pool (call `release()`),
 
 ```swift
-	let options = Options(host: "db.example.tokyo"...)
-	let pool = ConnectionPool(options: options) // Create pool with options
+	let options = Options(host: "your.mysql.host"...)
+	let pool = ConnectionPool(options: options) // Create a pool with options
 	
 	let conn = try pool.getConnection() // Get free connection
 	conn.query("SELECT 1 + 2;")
 	conn.release() // Release and back connection to the pool
 ```
 
-or You can just use `pool.execute()`. It automatically get and release connection. 
+or You can just use `pool.execute()`. It automatically get and release a connection. 
 
 ```swift
 	let rows: [User] = try pool.execute { conn in
 		// The connection is held in this block
-		try conn.query("SELECT * FROM users;") // And also it returns result to outside execute block
+		try conn.query("SELECT * FROM users;") // And it returns result to outside execute block
 	}
 ```
 
 ## Transaction
 
 ```swift
-	let options = Options(host: "db.example.tokyo"...)
+	let options = Options(host: "your.mysql.host"...)
 	let pool = ConnectionPool(options: options) // Create pool with options
 	
 	let wholeStaus: QueryStatus = try pool.transaction { conn in
