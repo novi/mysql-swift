@@ -2,7 +2,7 @@ mysql-swift
 ===========
 
 [![Swift 3.0](https://img.shields.io/badge/Swift-3.0-orange.svg)](https://swift.org)
-![Platform Linux, OSX](https://img.shields.io/badge/Platforms-Linux%2C%20OSX-lightgray.svg)
+![Platform Linux, macOS](https://img.shields.io/badge/Platforms-Linux%2C%20macOS-lightgray.svg)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Build Status](https://travis-ci.org/novi/mysql-swift.svg?branch=master)](https://travis-ci.org/novi/mysql-swift)
 
@@ -131,15 +131,6 @@ _Note:_ You may need to specify library path for libmysqlclient to link it.
 swift build -Xlinker -L/usr/lib
 # OS X 
 swift build -Xlinker -L/usr/local/lib -Xcc -I/usr/local/include -Xcc -I/usr/local/include/mysql
-```
-
-## Carthage
-
-* Add `github "novi/mysql-swift" "master"` to your Cartfile.
-* Run `carthage update` with specifying Swift 3 Toolchain.
-
-```
-TOOLCHAINS="Swift Development Snapshot 2016-05-31 (a)" carthage update
 ```
 
 # Usage
