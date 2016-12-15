@@ -11,21 +11,27 @@ import SQLFormatter
 import Foundation
 
 public struct QueryStatus: CustomStringConvertible {
-    public let affectedRows: Int
-    public let insertedId: Int
+    public let affectedRows: UInt64
+    
+    public let insertedID: UInt64
+    
+    @available(*, deprecated)
+    public var insertedId: Int {
+        return Int(insertedID)
+    }
     
     init(mysql: UnsafeMutablePointer<MYSQL>) {
-        self.insertedId = Int(mysql_insert_id(mysql))
+        self.insertedID = mysql_insert_id(mysql)
         let arows = mysql_affected_rows(mysql)
         if arows == (~0) {
             self.affectedRows = 0 // error or select statement
         } else {
-            self.affectedRows = Int(arows)
+            self.affectedRows = arows
         }
     }
     
     public var description: String {
-        return "inserted id = \(insertedId), affected rows = \(affectedRows)"
+        return "inserted id = \(insertedID), affected rows = \(affectedRows)"
     }
 }
 
