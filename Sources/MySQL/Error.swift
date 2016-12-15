@@ -16,8 +16,8 @@ public enum QueryError: Error {
     case resultParseError(message: String, result: String)
     
     case fieldIndexOutOfBounds(fieldCount: Int, attemped: Int, fieldName: String)
-    case castError(actual: String, expected: String, key: String)
-    case missingKeyError(key: String)
+    case castError(actualValue: String, expectedType: String, field: String)
+    case missingFieldError(field: String)
     
     case invalidSQLDate(String)
 }

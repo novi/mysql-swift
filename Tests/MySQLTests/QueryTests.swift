@@ -113,13 +113,13 @@ class QueryTests: XCTestCase, QueryTestType {
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, userNil])
         }
-        XCTAssertEqual(status.insertedId, 1)
+        XCTAssertEqual(status.insertedID, 1)
         
         let userFill = User(id: .ID(UserID(134)), name: name, age: age, createdAt: someDate, createdAtSQLDate: SQLDate(someDate), nameOptional: "fuga", ageOptional: 50, createdAtOptional: anotherDate, done: true, doneOptional: false)
         let status2: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, userFill])
         }
-        XCTAssertEqual(status2.insertedId, 134)
+        XCTAssertEqual(status2.insertedID, 134)
         
         let rows:[User]
         do {
@@ -226,7 +226,7 @@ class QueryTests: XCTestCase, QueryTestType {
         }
         
         let rows: [User] = try pool.execute{ conn in
-            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional FROM ?? WHERE id = ?", [constants.tableName, status.insertedId])
+            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional FROM ?? WHERE id = ?", [constants.tableName, status.insertedID])
         }
         XCTAssertEqual(rows.count, 1)
         let fetched = rows[0]

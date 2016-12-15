@@ -21,16 +21,16 @@ public protocol QueryRowResultType {
     static func decodeRow(r: QueryRowResult) throws -> Self
 }
 
-public func <| <T: SQLStringDecodable>(r: QueryRowResult, key: String) throws -> T {
-    return try r.getValue(forKey: key)
+public func <| <T: SQLStringDecodable>(r: QueryRowResult, field: String) throws -> T {
+    return try r.getValue(forField: field)
 }
 
 public func <| <T: SQLStringDecodable>(r: QueryRowResult, index: Int) throws -> T {
     return try r.getValue(at: index)
 }
 
-public func <|? <T: SQLStringDecodable>(r: QueryRowResult, key: String) throws -> T? {
-    return try r.getValueNullable(forKey: key)
+public func <|? <T: SQLStringDecodable>(r: QueryRowResult, field: String) throws -> T? {
+    return try r.getValueNullable(forField: field)
 }
 
 public func <|? <T: SQLStringDecodable>(r: QueryRowResult, index: Int) throws -> T? {
@@ -45,7 +45,7 @@ public struct QueryRowResult {
     
     let fields: [Connection.Field]
     let cols: [Connection.FieldValue]
-    let columnMap: [String: Connection.FieldValue]
+    let columnMap: [String: Connection.FieldValue] // the key is field name
     
     init(fields: [Connection.Field], cols: [Connection.FieldValue]) {
         self.fields = fields
@@ -57,8 +57,8 @@ public struct QueryRowResult {
         self.columnMap = map
     }
     
-    func isNull(forKey key: String) -> Bool {
-        guard let val = columnMap[key] else {
+    func isNull(forField field: String) -> Bool {
+        guard let val = columnMap[field] else {
             return false
         }
         switch val {
@@ -86,10 +86,10 @@ public struct QueryRowResult {
         }
     }
     
-    func castOrFail<T: SQLStringDecodable>(_ obj: String, key: String) throws -> T {
+    func castOrFail<T: SQLStringDecodable>(_ obj: String, field: String) throws -> T {
         //print("casting val \(obj) to \(T.self)")
         guard let val = T.from(string: obj) as T? else {
-            throw QueryError.castError(actual: obj, expected: "\(T.self)", key: key)
+            throw QueryError.castError(actualValue: obj, expectedType: "\(T.self)", field: field)
         }
         return val
     }
@@ -103,25 +103,25 @@ public struct QueryRowResult {
         return try self.getValue(at: index) as T
     }
     
-    public func getValueNullable<T: SQLStringDecodable>(forKey key: String) throws -> T? {
-        if isNull(forKey: key) {
+    public func getValueNullable<T: SQLStringDecodable>(forField field: String) throws -> T? {
+        if isNull(forField: field) {
             return nil
         }
-        return try self.getValue(forKey: key) as T
+        return try self.getValue(forField: field) as T
     }
     
-    func getValue<T: SQLStringDecodable>(val: Connection.FieldValue, key: String) throws -> T {
+    func getValue<T: SQLStringDecodable>(val: Connection.FieldValue, field: String) throws -> T {
         switch val {
         case .null:
-            throw QueryError.castError(actual: "NULL", expected: "\(T.self)", key: key)
+            throw QueryError.castError(actualValue: "NULL", expectedType: "\(T.self)", field: field)
         case .date(let date):
-            if "\(T.self)" == "SQLDate" {
+            if "\(T.self)" == "SQLDate" { // TODO:
                 if let sqlDate = SQLDate(date) as? T {
                     return sqlDate
                 }
             }
             guard let val = date as? T else {
-                throw QueryError.castError(actual: "\(date)", expected: "\(T.self)", key: key)
+                throw QueryError.castError(actualValue: "\(date)", expectedType: "\(T.self)", field: field)
             }
             return val
         case .binary(let data):
@@ -129,25 +129,25 @@ public struct QueryRowResult {
             if let bin = data as? T {
                 return bin
             }
-            if "\(T.self)" == "SQLBinary" {
+            if "\(T.self)" == "SQLBinary" { // TODO:
                 if let bin = SQLBinary(data) as? T {
                     return bin
                 }
             }
-            return try castOrFail(val.string(), key: key)
+            return try castOrFail(val.string(), field: field)
         }
     }
     
     public func getValue<T: SQLStringDecodable>(at index: Int) throws -> T {
         try checkFieldBounds(at: index)
         
-        return try getValue(val: cols[index], key: "\(index)")
+        return try getValue(val: cols[index], field: "\(index)")
     }
     
-    public func getValue<T: SQLStringDecodable>(forKey key: String) throws -> T {
-        guard let val = columnMap[key] else {
-            throw QueryError.missingKeyError(key: key)
+    public func getValue<T: SQLStringDecodable>(forField field: String) throws -> T {
+        guard let val = columnMap[field] else {
+            throw QueryError.missingFieldError(field: field)
         }
-        return try getValue(val: val, key: key)
+        return try getValue(val: val, field: field)
     }    
 }

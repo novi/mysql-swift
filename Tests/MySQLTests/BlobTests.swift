@@ -40,7 +40,7 @@ class BlobQueryTests: XCTestCase, QueryTestType {
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, obj])
         }
-        XCTAssertEqual(status.insertedId, 1)
+        XCTAssertEqual(status.insertedID, 1)
         
     }
     
@@ -55,7 +55,7 @@ class BlobQueryTests: XCTestCase, QueryTestType {
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, obj])
         }
-        XCTAssertEqual(status.insertedId, 1)
+        XCTAssertEqual(status.insertedID, 1)
         
         let rows: [Row.BlobTextRow] = try pool.execute{ conn in
             try conn.query("SELECT * FROM ??", [constants.tableName])

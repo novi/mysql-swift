@@ -78,7 +78,7 @@ class ConnectionPoolTests: XCTestCase, MySQLTestType {
         try pool.execute { conn in
             thisConn = conn
             XCTAssertEqual(conn.isInUse, true)
-            try conn.query("SELECT 1 + 2;")
+            _ = try conn.query("SELECT 1 + 2;")
         }
         XCTAssertEqual(thisConn.isInUse, false)
     }
