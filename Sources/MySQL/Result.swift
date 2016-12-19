@@ -38,7 +38,7 @@ public func <|? <T: SQLStringDecodable>(r: QueryRowResult, index: Int) throws ->
 }
 
 public protocol SQLStringDecodable {
-    static func from(string: String) -> Self?
+    static func fromSQL(string: String) throws -> Self
 }
 
 public struct QueryRowResult {
@@ -87,11 +87,12 @@ public struct QueryRowResult {
     }
     
     func castOrFail<T: SQLStringDecodable>(_ obj: String, field: String) throws -> T {
-        //print("casting val \(obj) to \(T.self)")
-        guard let val = T.from(string: obj) as T? else {
-            throw QueryError.castError(actualValue: obj, expectedType: "\(T.self)", field: field)
+        print("casting val \(obj) to \(T.self)")
+        do {
+            return try T.fromSQL(string: obj)
+        } catch {
+            throw QueryError.SQLStringDecodeError(error: error, actualValue: obj, expectedType: "\(T.self)", field: field)
         }
-        return val
     }
     
     public func getValueNullable<T: SQLStringDecodable>(at index: Int) throws -> T? {
@@ -146,7 +147,7 @@ public struct QueryRowResult {
     
     public func getValue<T: SQLStringDecodable>(forField field: String) throws -> T {
         guard let val = columnMap[field] else {
-            throw QueryError.missingFieldError(field: field)
+            throw QueryError.missingField(field: field)
         }
         return try getValue(val: val, field: field)
     }    

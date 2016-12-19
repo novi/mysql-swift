@@ -39,8 +39,8 @@ class SQLTypeTests: XCTestCase {
         let someID: QueryParameter = SomeID(1234)
         XCTAssertEqual(try someID.queryParameter(option: queryOption).escaped(), "1234")
         
-        let id: SomeID? = SomeID.from(string: "5678")
-        XCTAssertEqual(id!.id, 5678)
+        let id: SomeID = try SomeID.fromSQL(string: "5678")
+        XCTAssertEqual(id.id, 5678)
     }
     
     func testEnumType() throws {
@@ -49,12 +49,11 @@ class SQLTypeTests: XCTestCase {
         let escaped = "second' 2".escaped()
         XCTAssertEqual(try someVal.queryParameter(option: queryOption).escaped() , escaped)
         
-        let validVal: SomeEnum? = SomeEnum.from(string: "first 1")
+        let validVal: SomeEnum = try SomeEnum.fromSQL(string: "first 1")
         
-        XCTAssertEqual(validVal!, SomeEnum.first)
+        XCTAssertEqual(validVal, SomeEnum.first)
         
-        let nilVal: SomeEnum? = SomeEnum.from(string: "other foo")
-        XCTAssertNil(nilVal)
+        XCTAssertThrowsError(try SomeEnum.fromSQL(string: "other foo"))
     }
     
     func testAutoincrementType() throws {

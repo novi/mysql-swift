@@ -47,11 +47,8 @@ extension AutoincrementID: CustomStringConvertible {
 
 
 extension AutoincrementID: SQLStringDecodable {
-    public static func from(string: String) -> AutoincrementID<I>? {
-        guard let id = I.from(string: string) else {
-            return nil
-        }
-        return AutoincrementID(id)
+    public static func fromSQL(string: String) throws -> AutoincrementID<I> {
+        return AutoincrementID(try I.fromSQL(string: string))
     }
     public init(_ id: I) {
         self = .ID(id)
