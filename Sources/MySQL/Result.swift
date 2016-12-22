@@ -87,7 +87,7 @@ public struct QueryRowResult {
     }
     
     func castOrFail<T: SQLStringDecodable>(_ obj: String, field: String) throws -> T {
-        print("casting val \(obj) to \(T.self)")
+        //print("casting val \(obj) to \(T.self)")
         do {
             return try T.fromSQL(string: obj)
         } catch {
