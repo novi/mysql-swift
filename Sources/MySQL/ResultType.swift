@@ -9,63 +9,87 @@
 import Foundation
 
 extension Int: SQLStringDecodable {
-    public static func from(string: String) -> Int? {
-        return Int(string)
+    public static func fromSQL(string: String) throws -> Int {
+        guard let val = Int(string) else {
+            throw QueryError.initializationError
+        }
+        return val
     }
 }
 
 extension UInt: SQLStringDecodable {
-    public static func from(string: String) -> UInt? {
-        return UInt(string)
+    public static func fromSQL(string: String) throws -> UInt {
+        guard let val = UInt(string) else {
+            throw QueryError.initializationError
+        }
+        return val
     }
 }
 
 extension Int64: SQLStringDecodable {
-    public static func from(string: String) -> Int64? {
-        return Int64(string)
+    public static func fromSQL(string: String) throws -> Int64 {
+        guard let val = Int64(string) else {
+            throw QueryError.initializationError
+        }
+        return val
     }
 }
 
 extension Int32: SQLStringDecodable {
-    public static func from(string: String) -> Int32? {
-        return Int32(string)
+    public static func fromSQL(string: String) throws -> Int32 {
+        guard let val = Int32(string) else {
+            throw QueryError.initializationError
+        }
+        return val
     }
 }
 
 extension UInt64: SQLStringDecodable {
-    public static func from(string: String) -> UInt64? {
-        return UInt64(string)
+    public static func fromSQL(string: String) throws -> UInt64 {
+        guard let val = UInt64(string) else {
+            throw QueryError.initializationError
+        }
+        return val
     }
 }
 
 extension UInt32: SQLStringDecodable {
-    public static func from(string: String) -> UInt32? {
-        return UInt32(string)
+    public static func fromSQL(string: String) throws -> UInt32 {
+        guard let val = UInt32(string) else {
+            throw QueryError.initializationError
+        }
+        return val
     }
 }
 
 extension Float: SQLStringDecodable {
-    public static func from(string: String) -> Float? {
-        return Float(string)
+    public static func fromSQL(string: String) throws -> Float {
+        guard let val = Float(string) else {
+            throw QueryError.initializationError
+        }
+        return val
     }
 }
 
 extension Double: SQLStringDecodable {
-    public static func from(string: String) -> Double? {
-        return Double(string)
+    public static func fromSQL(string: String) throws -> Double {
+        guard let val = Double(string) else {
+            throw QueryError.initializationError
+        }
+        return val
     }
 }
 
 extension String: SQLStringDecodable {
-    public static func from(string: String) -> String? {
+    public static func fromSQL(string: String) throws -> String {
         return string
     }
 }
 
 extension Bool: SQLStringDecodable {
-    public static func from(string: String) -> Bool? {
+    public static func fromSQL(string: String) throws -> Bool {
         guard let val = Int(string) else {
-            return nil
+            throw QueryError.initializationError
         }
         return Bool(val == 0 ? false : true )
     }
@@ -73,13 +97,13 @@ extension Bool: SQLStringDecodable {
 
 
 extension SQLDate: SQLStringDecodable {
-    public static func from(string: String) -> SQLDate? {
-        return nil // Invalid Constructor (use init instead)
+    public static func fromSQL(string: String) throws -> SQLDate {
+        fatalError("invalid constructor (use init instead)")
     }
 }
 
 extension Date: SQLStringDecodable {
-    public static func from(string: String) -> Date? {
-        return nil // Invalid Constructor (use init instead)
+    public static func fromSQL(string: String) throws -> Date {
+        fatalError("invalid constructor (use init instead)")
     }
 }

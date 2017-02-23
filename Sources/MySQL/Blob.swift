@@ -43,7 +43,7 @@ public struct SQLBinary {
 }
 
 extension SQLBinary: SQLStringDecodable {
-    public static func from(string: String) -> SQLBinary? {
+    public static func fromSQL(string: String) throws -> SQLBinary {
         fatalError("construct via init(binary:)")
     }
 }
@@ -65,7 +65,7 @@ extension SQLBinary: QueryParameter {
 
 
 extension Data: SQLStringDecodable {
-    public static func from(string: String) -> Data? {
+    public static func fromSQL(string: String) throws -> Data {
         fatalError("construct via init(:)")
     }
 }

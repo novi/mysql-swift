@@ -14,8 +14,11 @@ public protocol SQLEnumType: SQLStringDecodable, RawRepresentable, QueryParamete
 }
 
 extension SQLEnumType where RawValue == String {
-    public static func from(string: String) -> Self? {
-        return Self.init(rawValue: string)
+    public static func fromSQL(string: String) throws -> Self {
+        guard let val = Self.init(rawValue: string) else {
+            throw QueryError.enumDecodeError
+        }
+        return val
     }
 }
 

@@ -15,12 +15,10 @@ public protocol IDType: SQLStringDecodable, QueryParameter, Hashable {
 }
 
 public extension IDType {
-    static func from(string: String) -> Self? {
-        guard let val = T.from(string: string) else {
-            return nil
-        }
-        return Self(val)
+    static func fromSQL(string: String) throws -> Self {
+        return Self(try T.fromSQL(string: string))
     }
+    
     func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
         return try id.queryParameter(option: option)
     }
