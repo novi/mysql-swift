@@ -33,5 +33,8 @@ distclean:
 test:
 	$(SWIFT) test $(BUILD_OPTS)
 
+genxcodeproj:
+	$(SWIFT) package generate-xcodeproj --enable-code-coverage $(BUILD_OPTS) -Xswiftc -I/usr/local/opt/mariadb/include 
+	
 genxcodeproj31:
 	$(SWIFT) package generate-xcodeproj --enable-code-coverage --xcconfig-overrides=Config.xcconfig
