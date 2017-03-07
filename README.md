@@ -2,6 +2,7 @@ mysql-swift
 ===========
 
 [![Swift 3.0](https://img.shields.io/badge/Swift-3.0-orange.svg)](https://swift.org)
+[![Swift 3.1](https://img.shields.io/badge/Swift-3.1-orange.svg)](https://swift.org)
 ![Platform Linux, macOS](https://img.shields.io/badge/Platforms-Linux%2C%20macOS-lightgray.svg)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Build Status](https://travis-ci.org/novi/mysql-swift.svg?branch=master)](https://travis-ci.org/novi/mysql-swift)
@@ -127,18 +128,18 @@ let package = Package(
 _Note:_ You may need to specify library path for libmysqlclient to link with.
 
 ```sh
-# Linux
+* Linux
 swift build -Xlinker -L/usr/lib -Xlinker -lmysqlclient
-# macOS 
+* macOS 
 swift build -Xlinker -L/usr/local/opt/mariadb/lib -Xlinker -L/usr/local/opt/openssl/lib -Xcc -I/usr/local/opt/mariadb/include -Xlinker -lmysqlclient
 ```
 
 ## Generate Xcode project
 
 ```
-# Swift 3.0.2
+* Swift 3.0.2
 $ make genxcodeproj
-# Swift 3.1
+* Swift 3.1
 $ make genxcodeproj31
 ```
 
