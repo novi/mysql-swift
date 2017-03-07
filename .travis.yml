@@ -1,16 +1,15 @@
 language: generic
 sudo: required
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-      env: PERFORM_MAKE_TEST=1
-    - os: osx
-      osx_image: xcode8.2
-      env: SWIFT_VERSION=3.0.2 PERFORM_MAKE_TEST=1
-    - os: osx
-      osx_image: xcode8.2
-      env: SWIFT_VERSION=3.1-DEVELOPMENT-SNAPSHOT-2017-03-06-a PERFORM_MAKE_TEST=1
+osx_image: xcode8.2
+os:
+  - linux
+  - osx
+env:
+  global:
+    - PERFORM_MAKE_TEST=1
+  matrix:
+    - SWIFT_VERSION=3.0.2
+    - SWIFT_VERSION=3.1-DEVELOPMENT-SNAPSHOT-2017-03-06-a   
 addons:
   mariadb: '10.1'
 before_install:
