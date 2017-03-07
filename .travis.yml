@@ -13,10 +13,6 @@ matrix:
       env: SWIFT_VERSION=3.1-DEVELOPMENT-SNAPSHOT-2017-03-06-a PERFORM_MAKE_TEST=1
 addons:
   mariadb: '10.1'
-env:
-  global:
-    #- SWIFT_VERSION=3.0.2
-    #- TOOLCHAINS=org.swift.3020160919a
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update       ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install mariadb; fi
