@@ -84,7 +84,7 @@ try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
 
 # Requirements
 
-* Swift 3 (development snapshot)
+* Swift 3.0.2 or Swift 3.1
 
 # Dependencies
 
@@ -130,7 +130,16 @@ _Note:_ You may need to specify library path for libmysqlclient to link with.
 # Linux
 swift build -Xlinker -L/usr/lib -Xlinker -lmysqlclient
 # macOS 
-swift build -Xlinker -L/usr/local/lib -Xcc -I/usr/local/include -Xcc -I/usr/local/include/mysql -Xlinker -lmysqlclient
+swift build -Xlinker -L/usr/local/opt/mariadb/lib -Xlinker -L/usr/local/opt/openssl/lib -Xcc -I/usr/local/opt/mariadb/include -Xlinker -lmysqlclient
+```
+
+## Generate Xcode project
+
+```
+# Swift 3.0.2
+$ make genxcodeproj
+# Swift 3.1
+$ make genxcodeproj31
 ```
 
 # Usage
