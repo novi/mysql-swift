@@ -8,6 +8,6 @@ let package = Package(
         Target(name: "MySQL", dependencies: ["CMySQL", "SQLFormatter"])
     ],
     exclude: [
-        "OSX Projects", "Xcode"
+        "Xcode"
     ]
 )
