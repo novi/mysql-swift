@@ -22,7 +22,7 @@ debug: CONF_ENV=debug
 debug: build_;
 
 build_:
-	$(SWIFT) build -v --configuration $(CONF_ENV) $(BUILD_OPTS)
+	$(SWIFT) build --configuration $(CONF_ENV) $(BUILD_OPTS)
 	
 clean:
 	$(SWIFT) build --clean build
@@ -31,5 +31,5 @@ distclean:
 	$(SWIFT) build --clean dist
 	
 test:
-	$(SWIFT) test -v $(BUILD_OPTS)
+	$(SWIFT) test $(BUILD_OPTS)
 
