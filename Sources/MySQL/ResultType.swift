@@ -96,12 +96,6 @@ extension Bool: SQLStringDecodable {
 }
 
 
-extension SQLDate: SQLStringDecodable {
-    public static func fromSQL(string: String) throws -> SQLDate {
-        fatalError("invalid constructor (use init instead)")
-    }
-}
-
 extension Date: SQLStringDecodable {
     public static func fromSQL(string: String) throws -> Date {
         fatalError("invalid constructor (use init instead)")

@@ -129,32 +129,3 @@ public struct SQLDate {
     }
 }
 
-extension SQLDate: QueryParameter {
-    public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return self.nsDate.queryParameter(option: option)
-    }
-}
-
-extension SQLDate : CustomStringConvertible {
-    public var description: String {
-        return date().description
-    }
-}
-
-extension SQLDate {
-    public static func now() -> SQLDate {
-        return SQLDate(Date())
-    }
-    public func date() -> Date {
-        return self.nsDate
-    }
-}
-
-extension SQLDate: Equatable {
-    
-}
-
-public func ==(lhs: SQLDate, rhs: SQLDate) -> Bool {
-    return lhs.nsDate == rhs.nsDate
-}
-

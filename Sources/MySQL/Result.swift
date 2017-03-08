@@ -116,11 +116,6 @@ public struct QueryRowResult {
         case .null:
             throw QueryError.castError(actualValue: "NULL", expectedType: "\(T.self)", field: field)
         case .date(let date):
-            if "\(T.self)" == "SQLDate" { // TODO:
-                if let sqlDate = SQLDate(date) as? T {
-                    return sqlDate
-                }
-            }
             guard let val = date as? T else {
                 throw QueryError.castError(actualValue: "\(date)", expectedType: "\(T.self)", field: field)
             }
@@ -129,11 +124,6 @@ public struct QueryRowResult {
             //print("T is \(T.self)")
             if let bin = data as? T {
                 return bin
-            }
-            if "\(T.self)" == "SQLBinary" { // TODO:
-                if let bin = SQLBinary(data) as? T {
-                    return bin
-                }
             }
             return try castOrFail(val.string(), field: field)
         }
