@@ -42,25 +42,6 @@ public struct SQLBinary {
     }
 }
 
-extension SQLBinary: SQLStringDecodable {
-    public static func fromSQL(string: String) throws -> SQLBinary {
-        fatalError("construct via init(binary:)")
-    }
-}
-
-extension SQLBinary: QueryParameterType {
-    public func escaped() -> String {
-        return nsData.escaped()
-    }
-}
-
-
-extension SQLBinary: QueryParameter {
-    public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
-        return self
-    }
-}
-
 // for (NS)Data
 
 

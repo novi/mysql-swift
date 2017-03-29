@@ -42,8 +42,6 @@ struct Row {
         let age: Int
         let createdAt: Date
         
-        let createdAtSQLDate: SQLDate
-        
         let nameOptional: String?
         let ageOptional: Int?
         let createdAtOptional: Date?
@@ -58,7 +56,6 @@ struct Row {
                 name: r <| 1,
                 age: r <| 2,
                 createdAt: r <| 3,
-                createdAtSQLDate: r <| 3,
                 
                 nameOptional: r <|? 4,
                 ageOptional: r <|? 5,
@@ -123,15 +120,13 @@ struct Row {
         
         let text1: String
         let binary1: Data
-        let binary1Alt: SQLBinary
         
         static func decodeRow(r: QueryRowResult) throws -> BlobTextRow {
             return try BlobTextRow(
                 id: r <| "id",
                 
                 text1: r <| "text1",
-                binary1: r <| "binary1",
-                binary1Alt: r <| "binary1"
+                binary1: r <| "binary1"
             )
         }
         
