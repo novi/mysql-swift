@@ -1,0 +1,10 @@
+//
+//  Config.xcconfig
+//  MySQL
+//
+//  Created by Yusuke Ito on 3/7/17.
+//
+//
+
+HEADER_SEARCH_PATHS = $(inherited) /usr/local/opt/mariadb/include
+OTHER_LDFLAGS = $(inherited) -L/usr/local/opt/mariadb/lib -lmysqlclient

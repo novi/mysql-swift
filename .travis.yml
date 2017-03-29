@@ -1,24 +1,23 @@
 language: generic
 sudo: required
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-      env: PERFORM_MAKE_TEST=1
-    - os: osx
-      osx_image: xcode8
-      env: PERFORM_XCODEBUILD=1 PERFORM_MAKE_TEST=1
-addons:
-  mariadb: '10.1'
+dist: trusty
+osx_image: xcode8.2
+os:
+  - linux
+  - osx
 env:
   global:
-    - SWIFT_VERSION=DEVELOPMENT-SNAPSHOT-2016-09-19-a
-    - TOOLCHAINS=org.swift.3020160919a
+    - PERFORM_MAKE_TEST=1
+  matrix:
+    - SWIFT_VERSION=3.0.2
+    - SWIFT_VERSION=3.1-DEVELOPMENT-SNAPSHOT-2017-03-06-a   
+addons:
+  mariadb: '10.1'
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update       ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install mariadb; fi
 install:
-  - eval "$(curl -sL https://gist.githubusercontent.com/kylef/5c0475ff02b7c7671d2a/raw/02090c7ede5a637b76e6df1710e83cd0bbe7dcdf/swiftenv-install.sh)"
+  - if [[ "$SWIFT_VERSION" != "3.0.2" ]] || [[ "$TRAVIS_OS_NAME" != "osx" ]]; then eval "$(curl -sL https://gist.githubusercontent.com/kylef/5c0475ff02b7c7671d2a/raw/02090c7ede5a637b76e6df1710e83cd0bbe7dcdf/swiftenv-install.sh)" ; fi
 before_script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mysql.server start; fi
   - mysql -u root -e "create database IF NOT EXISTS test;"
@@ -26,5 +25,4 @@ script:
   - make debug
   - make release
   - if [[ "$PERFORM_MAKE_TEST" == "1" ]]; then make test; fi
-  - if [[ "$PERFORM_XCODEBUILD" == "1" ]]; then xcodebuild -project OSX\ Projects/MySQL/MySQL.xcodeproj -scheme MySQL build test ; fi
   

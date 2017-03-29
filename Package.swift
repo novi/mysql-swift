@@ -3,10 +3,11 @@ import PackageDescription
 let package = Package(
     name: "MySQL",
     targets: [
-                 Target(name: "SQLFormatter"),
-                 Target(name: "MySQL", dependencies: ["SQLFormatter"])
+        Target(name: "CMySQL"),
+        Target(name: "SQLFormatter"),
+        Target(name: "MySQL", dependencies: ["CMySQL", "SQLFormatter"])
     ],
-    dependencies: [
-        .Package(url: "https://github.com/novi/CMySQL-MariaDB.git", majorVersion: 2)
+    exclude: [
+        "Xcode"
     ]
 )
