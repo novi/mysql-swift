@@ -10,7 +10,7 @@ env:
     - PERFORM_MAKE_TEST=1
   matrix:
     - SWIFT_VERSION=3.0.2
-    - SWIFT_VERSION=3.1-DEVELOPMENT-SNAPSHOT-2017-03-06-a   
+    - SWIFT_VERSION=3.1-DEVELOPMENT-SNAPSHOT-2017-03-27-a   
 addons:
   mariadb: '10.1'
 before_install:
