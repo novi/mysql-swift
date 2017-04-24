@@ -63,6 +63,7 @@ class ConnectionPoolTests: XCTestCase, MySQLTestType {
         XCTAssertEqual(pool.inUseConnections, pool.maxConnections)
         
         // this connection getting failure
+        pool.timeoutForGetConnection = 2
         XCTAssertThrowsError(try pool.getConnection())
         
         for c in connections {
@@ -107,7 +108,7 @@ class ConnectionPoolTests: XCTestCase, MySQLTestType {
                     do {
                         try self.pool.execute { conn in
                             _ = try conn.query("SELECT 1 + 2;")
-                            sleep(3)
+                            sleep(1)
                         }
                         print("done", Thread.current)
                     } catch {
