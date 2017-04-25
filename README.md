@@ -148,20 +148,7 @@ $ make genxcodeproj31
 ## Connection & Querying
 
 1. Create a pool with options (hostname, port, password,...).
-2. Get a connection from the pool.
-3. Execute query and fetch rows or status.
-4. Back the connection to the pool (call `release()`),
-
-```swift
-	let options = Options(host: "your.mysql.host"...)
-	let pool = ConnectionPool(options: options) // Create a pool with options
-	
-	let conn = try pool.getConnection() // Get free connection
-	conn.query("SELECT 1 + 2;")
-	conn.release() // Release and back connection to the pool
-```
-
-or You can just use `pool.execute()`. It automatically get and release a connection. 
+2. Use `pool.execute()`. It automatically get and release a connection. 
 
 ```swift
 	let rows: [User] = try pool.execute { conn in

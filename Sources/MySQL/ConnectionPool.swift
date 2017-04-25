@@ -6,6 +6,8 @@
 //  Copyright © 2015 Yusuke Ito. All rights reserved.
 //
 
+import Dispatch
+
 #if os(Linux)
     import Glibc
 #endif
@@ -51,14 +53,25 @@ final public class ConnectionPool: CustomStringConvertible {
         return newConn
     }
     
+    private let poolSemaphore = DispatchSemaphore(value: 1)
+    
+    private func getUsableConnection() -> Connection? {
+        for c in pool {
+            if c.isInUse == false && c.ping {
+                c.isInUse = true
+                return c
+            }
+        }
+        return nil
+    }
+    
+    public var timeoutForGetConnection: Int = 60
+    
     internal func getConnection() throws -> Connection {
-        let connection: Connection? =
+        var connection: Connection? =
         mutex.sync {
-            for c in pool {
-                if c.isInUse == false && c.ping {
-                    c.isInUse = true
-                    return c
-                }
+            if let conn = getUsableConnection() {
+                return conn
             }
             if pool.count < maxConnections {
                 let conn = preparedNewConnection()
@@ -67,6 +80,24 @@ final public class ConnectionPool: CustomStringConvertible {
             }
             return nil
         }
+        
+        if let conn = connection {
+            return conn
+        }
+        
+        let tickInMs = 50 // ms
+        var timeOutCount = (timeoutForGetConnection*1000)/tickInMs
+        while timeOutCount > 0 {
+            usleep(useconds_t(1000*tickInMs))
+            connection = mutex.sync {
+                getUsableConnection()
+            }
+            if connection != nil {
+                break
+            }
+            timeOutCount -= 1
+        }
+        
         guard let conn = connection else {
             throw Connection.Error.connectionPoolGetConnectionError
         }
@@ -76,6 +107,7 @@ final public class ConnectionPool: CustomStringConvertible {
     internal func releaseConnection(_ conn: Connection) {
         mutex.sync {
             conn.isInUse = false
+            //poolSemaphore.signal()
         }
     }
     

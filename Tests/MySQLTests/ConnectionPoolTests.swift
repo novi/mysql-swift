@@ -6,6 +6,8 @@
 //  Copyright © 2015 Yusuke Ito. All rights reserved.
 //
 
+import Foundation
+import Dispatch
 import XCTest
 @testable import MySQL
 
@@ -13,7 +15,8 @@ extension ConnectionPoolTests {
     static var allTests : [(String, (ConnectionPoolTests) -> () throws -> Void)] {
         return [
                    ("testGetConnection", testGetConnection),
-                   ("testExecutionBlock", testExecutionBlock)
+                   ("testExecutionBlock", testExecutionBlock),
+                   ("testThreadingConnectionPool", testThreadingConnectionPool)
         ]
     }
 }
@@ -60,6 +63,7 @@ class ConnectionPoolTests: XCTestCase, MySQLTestType {
         XCTAssertEqual(pool.inUseConnections, pool.maxConnections)
         
         // this connection getting failure
+        pool.timeoutForGetConnection = 2
         XCTAssertThrowsError(try pool.getConnection())
         
         for c in connections {
@@ -81,6 +85,58 @@ class ConnectionPoolTests: XCTestCase, MySQLTestType {
             _ = try conn.query("SELECT 1 + 2;")
         }
         XCTAssertEqual(thisConn.isInUse, false)
+    }
+
+    private var errors: [Error?] = []
+    private var errorSemaphore = DispatchSemaphore(value: 0)
+    
+    func testThreadingConnectionPool() throws {
+        
+        pool.maxConnections = 3
+        pool.initialConnections = 3
+        
+        if #available(OSX 10.12, *) {
+            
+            let THREAD_COUNT = 10
+            errors = [Error?](repeating: nil, count: THREAD_COUNT)
+            let semaphore = DispatchSemaphore(value: 0)
+            
+            
+            for i in 0..<THREAD_COUNT {
+                Thread.detachNewThread {
+                    print(Thread.current)
+                    do {
+                        try self.pool.execute { conn in
+                            _ = try conn.query("SELECT 1 + 2;")
+                            sleep(1)
+                        }
+                        print("done", Thread.current)
+                    } catch {
+                        print("error while executing", error)
+                        self.errors[i] = error
+                    }
+                    
+                    semaphore.signal()
+                }
+            }
+            
+            print("waiting until thread is done.")
+            
+            for _ in 0..<THREAD_COUNT {
+                semaphore.wait()
+            }
+            
+            print("thread done", errors)
+            
+            for i in 0..<THREAD_COUNT {
+                if let error = errors[i] {
+                    XCTFail("\(error)")
+                }
+            }
+            
+        } else {
+            fatalError()
+        }
     }
     
 }
