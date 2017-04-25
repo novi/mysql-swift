@@ -25,4 +25,3 @@ script:
   - make debug
   - make release
   - if [[ "$PERFORM_MAKE_TEST" == "1" ]]; then make test; fi
-  
