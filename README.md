@@ -151,6 +151,8 @@ $ make genxcodeproj31
 2. Use `pool.execute()`. It automatically get and release a connection. 
 
 ```swift
+	let options = Options(host: "your.mysql.host"...)
+	let pool = ConnectionPool(options: options) // Create pool with options
 	let rows: [User] = try pool.execute { conn in
 		// The connection is held in this block
 		try conn.query("SELECT * FROM users;") // And it returns result to outside execute block
@@ -159,10 +161,7 @@ $ make genxcodeproj31
 
 ## Transaction
 
-```swift
-	let options = Options(host: "your.mysql.host"...)
-	let pool = ConnectionPool(options: options) // Create pool with options
-	
+```swift	
 	let wholeStaus: QueryStatus = try pool.transaction { conn in
 		let status = try conn.query("INSERT INTO users SET ?;", [user]) as QueryStatus // Create a user
 		let userId = status.insertedId // the user's id
