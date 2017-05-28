@@ -22,7 +22,7 @@ extension DateTests {
 
 extension XCTestCase {
     var queryOption: QueryParameterOption {
-        return QueryParameterOption(timeZone: TimeZone(identifier: "UTC")!)
+        return QueryParameterOption(timeZone: TimeZone(abbreviation: "UTC")!)
     }
 }
 
@@ -30,7 +30,7 @@ class DateTests : XCTestCase {
     
     func testSQLDate() throws {
         
-        let gmt = QueryParameterOption(timeZone: TimeZone(identifier: "UTC")!)
+        let gmt = QueryParameterOption(timeZone: TimeZone(abbreviation: "UTC")!)
         let losAngeles = QueryParameterOption(timeZone: TimeZone(identifier: "America/Los_Angeles")!)
         
         let expected = "2003-01-02 03:04:05" // no timezone

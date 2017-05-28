@@ -42,7 +42,7 @@ public protocol ConnectionOption {
 public extension ConnectionOption {
     // Provide default options
     var timeZone: TimeZone {
-        return TimeZone(identifier: "UTC")!
+        return TimeZone(abbreviation: "UTC")!
     }
     var encoding: Connection.Encoding {
         return .UTF8

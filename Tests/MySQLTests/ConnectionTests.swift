@@ -13,7 +13,8 @@ extension ConnectionTests {
     static var allTests : [(String, (ConnectionTests) -> () throws -> Void)] {
         return [
                    ("testConnect", testConnect),
-                   ("testConnect2", testConnect2)
+                   ("testConnect2", testConnect2),
+                   ("testDefaultConnectionOption", testDefaultConnectionOption)
         ]
     }
 }
@@ -38,5 +39,20 @@ class ConnectionTests: XCTestCase, MySQLTestType {
         let conn = try pool.getConnection()
         _ = try conn.query("SELECT 1;" as String)
         XCTAssertTrue(conn.ping)
+    }
+    
+    struct Option: ConnectionOption {
+        let host: String = "dummy"
+        let port: Int = 3306
+        let user: String = "dummy"
+        let password: String = "dummy"
+        let database: String = "dummy"
+    }
+    
+    func testDefaultConnectionOption() {
+        
+        let option = Option()
+        
+        XCTAssertNotNil(option.timeZone)
     }
 }
