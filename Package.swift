@@ -1,11 +1,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "MySQL",
+    name: "MySQLSwift",
     targets: [
-        Target(name: "CMySQL"),
         Target(name: "SQLFormatter"),
-        Target(name: "MySQL", dependencies: ["CMySQL", "SQLFormatter"])
+        Target(name: "MySQL", dependencies: ["SQLFormatter"])
+    ],
+    dependencies: [
+        .Package(url: "https://github.com/vapor/cmysql.git", majorVersion: 2),
     ],
     exclude: [
         "Xcode"
