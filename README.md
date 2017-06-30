@@ -89,16 +89,11 @@ try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
 
 # Dependencies
 
-* MariaDB Connector/C (libmysqlclient) 2.2.3
+* MariaDB or MySQL Connector/C (libmysqlclient) 2.2.3
 
 ## macOS
 
-* Install `mariadb`(includes libmysqlclient).
-
-
-```sh
-$ brew install mariadb
-```
+This library uses Vapor's `cmysql` . Follow [the instruction](https://docs.vapor.codes/2.0/getting-started/install-on-macos/).
 
 ## Ubuntu Linux
 
@@ -123,24 +118,6 @@ let package = Package(
         .Package(url: "https://github.com/novi/mysql-swift.git", majorVersion: 0)
     ]
 )
-```
-
-_Note:_ You may need to specify library path for libmysqlclient to link with.
-
-```sh
-* Linux
-swift build -Xlinker -L/usr/lib -Xlinker -lmysqlclient
-* macOS 
-swift build -Xlinker -L/usr/local/opt/mariadb/lib -Xlinker -L/usr/local/opt/openssl/lib -Xcc -I/usr/local/opt/mariadb/include -Xlinker -lmysqlclient
-```
-
-## Generate Xcode project
-
-```
-* Swift 3.0.2
-$ make genxcodeproj
-* Swift 3.1
-$ make genxcodeproj31
 ```
 
 # Usage
