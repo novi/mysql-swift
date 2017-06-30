@@ -84,7 +84,7 @@ extension Connection {
         case date(Date)
         
         static func makeBinary(ptr: UnsafeMutablePointer<Int8>, length: UInt) -> FieldValue {
-            let data = Data(bytes: unsafeBitCast(ptr, to: UnsafeRawPointer.self), count: Int(length))
+            let data = Data(bytes: UnsafeRawPointer(ptr), count: Int(length))
             return FieldValue.binary(data)
         }
         

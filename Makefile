@@ -10,7 +10,7 @@ endif
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
 	SWIFTC=xcrun -sdk macosx swiftc
-	BUILD_OPTS=-Xlinker -L/usr/local/opt/mariadb/lib -Xlinker -L/usr/local/opt/openssl/lib -Xcc -I/usr/local/opt/mariadb/include -Xlinker -lmysqlclient
+	BUILD_OPTS=-Xlinker -L/usr/local/opt/mariadb/lib -Xlinker -L/usr/local/opt/openssl/lib -Xcc -I/usr/local/opt/mariadb/include -Xlinker -lmariadbclient -Xlinker -lssl -Xlinker -lcrypto -Xlinker -liconv -Xlinker -lz
 endif
 
 all: debug

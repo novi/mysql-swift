@@ -24,7 +24,7 @@ class SQLFormattingTests: XCTestCase {
     }
 }
 
-#if !os(OSX)
+#if !os(macOS)
     public func allTests() -> [XCTestCaseEntry] {
         return [
             testCase( SQLFormattingTests.allTests ),
