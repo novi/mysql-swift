@@ -39,10 +39,12 @@ public protocol ConnectionOption {
     var omitDetailsOnError: Bool { get }
 }
 
+fileprivate let defaultTimeZone = TimeZone(identifier: "UTC")!
+
 public extension ConnectionOption {
     // Provide default options
     var timeZone: TimeZone {
-        return TimeZone(abbreviation: "UTC")!
+        return defaultTimeZone
     }
     var encoding: Connection.Encoding {
         return .UTF8
