@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "CMySQL",
+        "repositoryURL": "https://github.com/vapor/cmysql.git",
+        "state": {
+          "branch": null,
+          "revision": "d931ed6ce52e772cd364fc0da59312440d6eee43",
+          "version": "2.0.2"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
