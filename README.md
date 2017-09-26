@@ -1,10 +1,8 @@
 mysql-swift
 ===========
 
-[![Swift 3.0](https://img.shields.io/badge/Swift-3.0-orange.svg)](https://swift.org)
-[![Swift 3.1](https://img.shields.io/badge/Swift-3.1-orange.svg)](https://swift.org)
+[![Swift 4.0](https://img.shields.io/badge/Swift-4.0-orange.svg)](https://swift.org)
 ![Platform Linux, macOS](https://img.shields.io/badge/Platforms-Linux%2C%20macOS-lightgray.svg)
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Build Status](https://travis-ci.org/novi/mysql-swift.svg?branch=master)](https://travis-ci.org/novi/mysql-swift)
 
 
@@ -85,7 +83,9 @@ try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
 
 # Requirements
 
-* Swift 3.0.2 or Swift 3.1
+* Swift 4.0
+
+(If you are using Swift 3.1, use `0.7.4` tagged version.)
 
 # Dependencies
 
@@ -111,11 +111,12 @@ $ sudo apt-get install libmariadbclient-dev
 * Add `mysql-swift` to `Package.swift` of your project.
 
 ```swift
+// swift-tools-version:4.0
 import PackageDescription
 
 let package = Package(
     dependencies: [
-        .Package(url: "https://github.com/novi/mysql-swift.git", majorVersion: 0)
+        .package(url: "https://github.com/novi/mysql-swift.git", .upToNextMinor(from: "0.8.0"))
     ]
 )
 ```
