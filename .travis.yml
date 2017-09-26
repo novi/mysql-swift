@@ -10,8 +10,7 @@ env:
     - PERFORM_MAKE_TEST=1
   matrix:
     - SWIFT_VERSION=4.0
-addons:
-  mariadb: '10.1'
+services: mysql
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew tap vapor/homebrew-tap && brew update; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install cmysql; fi
