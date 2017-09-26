@@ -40,7 +40,7 @@ internal extension String {
         guard let r = index(startIndex, offsetBy: max, limitedBy: endIndex) else {
             return self
         }
-        return self[startIndex..<r]
+        return String(self[startIndex..<r])
     }
 }
 
