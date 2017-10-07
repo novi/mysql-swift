@@ -115,8 +115,18 @@ $ sudo apt-get install libmariadbclient-dev
 import PackageDescription
 
 let package = Package(
+    ...,
     dependencies: [
         .package(url: "https://github.com/novi/mysql-swift.git", .upToNextMinor(from: "0.8.0"))
+    ],
+    targets: [
+        .target(
+            name: "YourAppOrLibrary",
+            dependencies: [
+                // add dependency
+                "MySQL", 
+            ]
+        )
     ]
 )
 ```
