@@ -44,6 +44,24 @@ extension Int32: SQLStringDecodable {
     }
 }
 
+extension Int16: SQLStringDecodable {
+    public static func fromSQL(string: String) throws -> Int16 {
+        guard let val = Int16(string) else {
+            throw QueryError.initializationError
+        }
+        return val
+    }
+}
+
+extension Int8: SQLStringDecodable {
+    public static func fromSQL(string: String) throws -> Int8 {
+        guard let val = Int8(string) else {
+            throw QueryError.initializationError
+        }
+        return val
+    }
+}
+
 extension UInt64: SQLStringDecodable {
     public static func fromSQL(string: String) throws -> UInt64 {
         guard let val = UInt64(string) else {
@@ -56,6 +74,24 @@ extension UInt64: SQLStringDecodable {
 extension UInt32: SQLStringDecodable {
     public static func fromSQL(string: String) throws -> UInt32 {
         guard let val = UInt32(string) else {
+            throw QueryError.initializationError
+        }
+        return val
+    }
+}
+
+extension UInt16: SQLStringDecodable {
+    public static func fromSQL(string: String) throws -> UInt16 {
+        guard let val = UInt16(string) else {
+            throw QueryError.initializationError
+        }
+        return val
+    }
+}
+
+extension UInt8: SQLStringDecodable {
+    public static func fromSQL(string: String) throws -> UInt8 {
+        guard let val = UInt8(string) else {
             throw QueryError.initializationError
         }
         return val
