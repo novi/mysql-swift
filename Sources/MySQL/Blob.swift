@@ -53,16 +53,16 @@ extension Data: SQLStringDecodable {
 
 extension Data: QueryParameterType {
     public func escaped() -> String {
-        var buffer: [Character] = ["x", "'"]
+        var buffer = "x'"
         for d in self {
             let str = String(d, radix: 16)
-            if str.characters.count == 1 {
+            if str.count == 1 {
                 buffer.append("0")
             }
-            buffer.append(contentsOf: str.characters)
+            buffer += str
         }
-        buffer.append("'")
-        return String(buffer)
+        buffer += "'"
+        return buffer
     }
 }
 

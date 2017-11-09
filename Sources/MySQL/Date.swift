@@ -41,7 +41,7 @@ extension Date {
             SQLDateCalendar.mutex.unlock()
         }
         
-        switch sqlDate.characters.count {
+        switch sqlDate.count {
         case 4:
             if let year = Int(sqlDate) {
                 var comp = DateComponents()
@@ -58,7 +58,7 @@ extension Date {
                 }
             }
         case 19:
-            let chars:[Character] = Array(sqlDate.characters)
+            let chars: [Character] = Array(sqlDate)
             if let year = Int(String(chars[0...3])),
                 let month = Int(String(chars[5...6])),
                 let day = Int(String(chars[8...9])),
@@ -96,7 +96,7 @@ extension Date {
         if num < 0 {
             return str
         }
-        while str.characters.count < digits {
+        while str.count < digits {
             str = "0" + str
         }
         return str
