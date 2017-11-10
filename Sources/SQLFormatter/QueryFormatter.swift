@@ -15,54 +15,54 @@ public protocol QueryParameterType {
 public struct SQLString {
     
     public static func escapeId(string str: String) -> String {
-        var step1: [Character] = []
-        for c in str.characters {
+        var step1 = ""
+        for c in str {
             switch c {
-                case "`":
-                step1.append(contentsOf: "``".characters)
+            case "`":
+                step1 += "``"
             default:
                 step1.append(c)
             }
         }
-        var out: [Character] = []
+        var out = ""
         for c in step1 {
             switch c {
-                case ".":
-                out.append(contentsOf: "`.`".characters)
-                default:
+            case ".":
+                out += "`.`"
+            default:
                 out.append(c)
             }
         }
-        return "`" + String(out) + "`"
+        return "`\(out)`"
     }
     
     public static func escape(string str: String) -> String {
-        var out: [Character] = []
+        var out = ""
         for c in str.unicodeScalars {
             switch c {
             case "\0":
-                out.append(contentsOf: "\\0".characters)
+                out += "\\0"
             case "\n":
-                out.append(contentsOf: "\\n".characters)
+                out += "\\n"
             case "\r":
-                out.append(contentsOf: "\\r".characters)
+                out += "\\r"
             case "\u{8}":
-                out.append(contentsOf: "\\b".characters)
+                out += "\\b"
             case "\t":
-                out.append(contentsOf: "\\t".characters)
+                out += "\\t"
             case "\\":
-                out.append(contentsOf: "\\\\".characters)
+                out += "\\\\"
             case "'":
-                out.append(contentsOf: "\\'".characters)
+                out += "\\'"
             case "\"":
-                out.append(contentsOf: "\\\"".characters)
+                out += "\\\""
             case "\u{1A}":
-                out.append(contentsOf: "\\Z".characters)
+                out += "\\Z"
             default:
                 out.append(Character(c))
             }
         }
-        return "'" + String(out) + "'"
+        return "'\(out)'"
     }
 }
 
@@ -120,7 +120,7 @@ public struct QueryFormatter {
         //print(formatted, valArgs)
         
         placeHolderCount = 0
-        var formattedChars = Array(formatted.characters)
+        var formattedChars = Array(formatted)
         var index = 0
         while index < formattedChars.count {
             if formattedChars[index] == "?" {
@@ -130,8 +130,8 @@ public struct QueryFormatter {
                 let val = valArgs[placeHolderCount]
                 formattedChars.remove(at: index)
                 let valStr = val.escaped()
-                formattedChars.insert(contentsOf: valStr.characters, at: index)
-                index += valStr.characters.count-1
+                formattedChars.insert(contentsOf: valStr, at: index)
+                index += valStr.count - 1
                 placeHolderCount += 1
             } else {
                 index += 1
