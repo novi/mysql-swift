@@ -14,7 +14,8 @@ extension QueryTests {
     static var allTests : [(String, (QueryTests) -> () throws -> Void)] {
         return [
                    ("testInsertRow", testInsertRow),
-                   ("testEmojiInserting", testEmojiInserting)
+                   ("testEmojiInserting", testEmojiInserting),
+                   ("testBulkInsert", testBulkInsert)
         ]
     }
 }
@@ -230,6 +231,36 @@ class QueryTests: XCTestCase, QueryTestType {
         let fetched = rows[0]
         XCTAssertEqual(fetched.name, "日本語123🍣あいう")
         XCTAssertEqual(fetched.age, 123)
+    }
+    
+    
+    func testBulkInsert() throws {
+        
+        let now = Date()
+        let users = (1...3).map({ row in
+            Row.SimpleUser(id: UInt(10+row), name: "name\(row)", age: row)
+        })
+    
+        let usersParam: [QueryArray] = users.map { user in
+            QueryArray([user.id, user.name, user.age])
+        }
+        
+        _ = try pool.execute { conn in
+            try conn.query("INSERT INTO ??(id,name,age) VALUES ? ", [constants.tableName, QueryArray(usersParam)])
+        }
+    
+        
+        let selectedUsers: [Row.SimpleUser] = try pool.execute { conn in
+            try conn.query("SELECT id,name,age FROM ?? ORDER BY id DESC", [constants.tableName])
+        }
+        XCTAssertEqual(selectedUsers.count, 3)
+    
+        for (index, row) in (1...3).reversed().enumerated() {
+            XCTAssertEqual(selectedUsers[index].id, UInt(10+row))
+            XCTAssertEqual(selectedUsers[index].name, "name\(row)")
+            XCTAssertEqual(selectedUsers[index].age, row)
+        }
+        
     }
     
 }
