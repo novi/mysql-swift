@@ -35,6 +35,28 @@ struct SomeStringID: IDType {
 
 struct Row {
     
+    struct SimpleUser: QueryRowResultType, QueryParameterDictionaryType {
+        let id: UInt
+        let name: String
+        let age: Int
+        
+        static func decodeRow(r: QueryRowResult) throws -> SimpleUser {
+            return try SimpleUser(
+                id: r <| "id",
+                name: r <| "name",
+                age: r <| "age"
+            )
+        }
+        
+        func queryParameter() throws -> QueryDictionary {
+            return QueryDictionary([
+                "id": id,
+                "name": name,
+                "age": age
+            ])
+        }
+    }
+    
     struct UserDecodeWithIndex: QueryRowResultType, QueryParameterDictionaryType {
         let id: AutoincrementID<UserID>
         
