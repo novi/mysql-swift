@@ -162,7 +162,6 @@ struct QueryRowResultDecoder : Decoder {
     }
 }
 
-// For Decodable pattern
 struct RowKeyedDecodingContainer<K : CodingKey> : KeyedDecodingContainerProtocol {
     typealias Key = K
     
@@ -237,7 +236,11 @@ struct RowKeyedDecodingContainer<K : CodingKey> : KeyedDecodingContainerProtocol
     }
     
     func decode<T>(_ type: T.Type, forKey key: K) throws -> T where T : Decodable {
-        throw QueryError.initializationError
+        if T.self is Data.Type {
+            // Bug: The compiler chooses NOT to use "decode() -> Data". We have to implement it in decode<T>()
+            return try decoder.row.getValue(forField: key.stringValue) as Data as! T
+        }
+        throw QueryError.castError(actualValue: "", expectedType: "Type \(T.self) not implemented" , field: key.stringValue)
     }
     
     func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: K) throws -> KeyedDecodingContainer<NestedKey> {
