@@ -104,6 +104,18 @@ extension Connection {
     }
     
     fileprivate func query<T: QueryRowResultType>(query formattedQuery: String) throws -> ([T], QueryStatus) {
+        let (rows, status) = try self.query(query: formattedQuery)
+        
+        return try (rows.map({ try T.decodeRow(r: $0) }), status)
+    }
+    
+    fileprivate func query<T: Decodable>(query formattedQuery: String) throws -> ([T], QueryStatus) {
+        let (rows, status) = try self.query(query: formattedQuery)
+        
+        return try (rows.map({ try T(from: QueryRowResultDecoder(row: $0))}), status)
+    }
+    
+    fileprivate func query(query formattedQuery: String) throws -> ([QueryRowResult], QueryStatus) {
         let mysql = try connectIfNeeded()
         
         func queryPrefix() -> String {
@@ -182,7 +194,7 @@ extension Connection {
             rows.append(QueryRowResult(fields: fields, cols: cols))
         }
         
-        return try (rows.map({ try T.decodeRow(r: $0) }), status)
+        return (rows, status)
     }
 }
 
@@ -211,6 +223,19 @@ extension Connection {
     }
     
     public func query<T: QueryRowResultType>(_ query: String, _ args: [QueryParameter] = []) throws -> [T] {
+        let (rows, _) = try self.query(query, args) as ([T], QueryStatus)
+        return rows
+    }
+    
+    public func query<T: Decodable>(_ query: String, _ args: [QueryParameter] = []) throws -> ([T], QueryStatus) {
+        let option = QueryParameterOption(
+            timeZone: options.timeZone
+        )
+        let queryString = try QueryFormatter.format(query: query, args: type(of: self).buildArgs(args, option: option))
+        return try self.query(query: queryString)
+    }
+    
+    public func query<T: Decodable>(_ query: String, _ args: [QueryParameter] = []) throws -> [T] {
         let (rows, _) = try self.query(query, args) as ([T], QueryStatus)
         return rows
     }
