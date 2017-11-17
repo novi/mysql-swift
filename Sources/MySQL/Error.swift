@@ -18,6 +18,7 @@ public enum QueryError: Error {
     case fieldIndexOutOfBounds(fieldCount: Int, attemped: Int, fieldName: String)
     case castError(actualValue: String, expectedType: String, field: String)
     case initializationError
+    case initializationErrorMessage(message: String)
     case enumDecodeError
     case SQLStringDecodeError(error: Error, actualValue: String, expectedType: String, field: String)
     case missingField(field: String)

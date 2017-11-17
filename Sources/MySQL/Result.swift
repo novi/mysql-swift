@@ -154,15 +154,15 @@ struct QueryRowResultDecoder : Decoder {
     }
     
     public func unkeyedContainer() throws -> UnkeyedDecodingContainer {
-        throw QueryError.initializationError
+        throw QueryError.initializationErrorMessage(message: "Decoder unkeyedContainer not implemented")
     }
     
     public func singleValueContainer() throws -> SingleValueDecodingContainer {
-        throw QueryError.initializationError
+        throw QueryError.initializationErrorMessage(message: "Decoder singleValueContainer not implemented")
     }
 }
 
-struct RowKeyedDecodingContainer<K : CodingKey> : KeyedDecodingContainerProtocol {
+fileprivate struct RowKeyedDecodingContainer<K : CodingKey> : KeyedDecodingContainerProtocol {
     typealias Key = K
     
     let decoder : QueryRowResultDecoder
@@ -176,7 +176,7 @@ struct RowKeyedDecodingContainer<K : CodingKey> : KeyedDecodingContainerProtocol
     }
     
     func contains(_ key: K) -> Bool {
-        return decoder.row.columnMap[key.stringValue] != nil
+        return decoder.row.columnMap[key.stringValue] != nil && !decoder.row.isNull(forField: key.stringValue)
     }
     
     func decode(_ type: Bool.Type, forKey key: K) throws -> Bool {
@@ -232,7 +232,7 @@ struct RowKeyedDecodingContainer<K : CodingKey> : KeyedDecodingContainerProtocol
     }
     
     func decode(_ type: String.Type, forKey key: K) throws -> String {
-        return try decoder.row.getValue(forField: key.stringValue)
+        return try decoder.row.getValue(forField: key.stringValue) as String
     }
     
     func decode<T>(_ type: T.Type, forKey key: K) throws -> T where T : Decodable {
@@ -240,22 +240,25 @@ struct RowKeyedDecodingContainer<K : CodingKey> : KeyedDecodingContainerProtocol
             // Bug: The compiler chooses NOT to use "decode() -> Data". We have to implement it in decode<T>()
             return try decoder.row.getValue(forField: key.stringValue) as Data as! T
         }
+        if T.self is Date.Type {
+            return try decoder.row.getValue(forField: key.stringValue) as Date as! T
+        }
         throw QueryError.castError(actualValue: "", expectedType: "Type \(T.self) not implemented" , field: key.stringValue)
     }
     
     func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: K) throws -> KeyedDecodingContainer<NestedKey> {
-        throw QueryError.initializationError
+        throw QueryError.initializationErrorMessage(message: "KeyedDecodingContainer nestedContainer not implemented")
     }
     
     func nestedUnkeyedContainer(forKey key: K) throws -> UnkeyedDecodingContainer {
-        throw QueryError.initializationError
+        throw QueryError.initializationErrorMessage(message: "KeyedDecodingContainer nestedContainer not implemented")
     }
     
     func superDecoder() throws -> Decoder {
-        throw QueryError.initializationError
+        throw QueryError.initializationErrorMessage(message: "KeyedDecodingContainer superDecoder not implemented")
     }
     
     func superDecoder(forKey key: K) throws -> Decoder {
-        throw QueryError.initializationError
+        throw QueryError.initializationErrorMessage(message: "KeyedDecodingContainer superDecoder(forKey) not implemented")
     }
 }

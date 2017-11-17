@@ -167,6 +167,7 @@ class QueryTests: XCTestCase, QueryTestType {
         
         // fetch inserted rows
         try selectingWithFieldKey()
+        try selectingWithFieldKeyDecoable()
     }
     
     func selectingWithFieldKey() throws {
@@ -196,6 +197,50 @@ class QueryTests: XCTestCase, QueryTestType {
         
         // second row
         XCTAssertEqual(rows[1].id.id, UserID(134))
+        XCTAssertEqual(rows[1].name, name)
+        XCTAssertEqual(rows[1].age, age)
+        XCTAssertEqual(rows[1].createdAt, someDate)
+        
+        XCTAssertNotNil(rows[1].nameOptional)
+        XCTAssertNotNil(rows[1].ageOptional)
+        XCTAssertNotNil(rows[1].createdAtOptional)
+        
+        XCTAssertEqual(rows[1].nameOptional, "fuga")
+        XCTAssertEqual(rows[1].ageOptional, 50)
+        XCTAssertEqual(rows[1].createdAtOptional, anotherDate)
+        
+        XCTAssertTrue(rows[1].done)
+        XCTAssertFalse(rows[1].doneOptional!)
+    }
+    
+    func selectingWithFieldKeyDecoable() throws {
+        
+        let name = "name 's"
+        let age = 25
+        
+        typealias User = RowCodeable.UserDecodeWithKey
+        let rows:[User] = try pool.execute { conn in
+            try conn.query("SELECT * FROM ?? LIMIT ?", [constants.tableName, 2])
+        }
+        
+        XCTAssertEqual(rows.count, 2)
+        
+        // first row
+        print(rows[0])
+        XCTAssertEqual(rows[0].id, 1)
+        XCTAssertEqual(rows[0].name, name)
+        XCTAssertEqual(rows[0].age, age)
+        XCTAssertEqual(rows[0].createdAt, someDate)
+        
+        XCTAssertNil(rows[0].nameOptional)
+        XCTAssertNil(rows[0].ageOptional)
+        XCTAssertNil(rows[0].createdAtOptional)
+        
+        XCTAssertFalse(rows[0].done)
+        XCTAssertNil(rows[0].doneOptional)
+        
+        // second row
+        XCTAssertEqual(rows[1].id, 134)
         XCTAssertEqual(rows[1].name, name)
         XCTAssertEqual(rows[1].age, age)
         XCTAssertEqual(rows[1].createdAt, someDate)
@@ -261,6 +306,17 @@ class QueryTests: XCTestCase, QueryTestType {
             XCTAssertEqual(selectedUsers[index].age, row)
         }
         
+        // Test with Decodeable pattern
+        let selectedUsersCodeable: [RowCodeable.SimpleUser] = try pool.execute { conn in
+            try conn.query("SELECT id,name,age FROM ?? ORDER BY id DESC", [constants.tableName])
+        }
+        XCTAssertEqual(selectedUsersCodeable.count, 3)
+        
+        for (index, row) in (1...3).reversed().enumerated() {
+            XCTAssertEqual(selectedUsersCodeable[index].id, UInt(10+row))
+            XCTAssertEqual(selectedUsersCodeable[index].name, "name\(row)")
+            XCTAssertEqual(selectedUsersCodeable[index].age, row)
+        }
     }
     
 }
