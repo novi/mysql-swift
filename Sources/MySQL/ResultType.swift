@@ -131,6 +131,14 @@ extension Bool: SQLStringDecodable {
     }
 }
 
+extension Decimal: SQLStringDecodable {
+    public static func fromSQL(string: String) throws -> Decimal {
+        guard let val = Decimal(string: string) else {
+            throw QueryError.initializationError
+        }
+        return val
+    }
+}
 
 extension Date: SQLStringDecodable {
     public static func fromSQL(string: String) throws -> Date {
