@@ -32,6 +32,40 @@ struct SomeStringID: IDType {
     }
 }
 
+struct RowCodeable {
+    struct SimpleUser: Codable {
+        let id: UInt
+        let name: String
+        let age: Int
+    }
+    
+    struct UserDecodeWithKey: Decodable {
+        let id: Int? // AutoincrementID for Decodeable not implemented
+        
+        let name: String
+        let age: Int
+        let createdAt: Date
+        
+        let nameOptional: String?
+        let ageOptional: Int?
+        let createdAtOptional: Date?
+        
+        let done: Bool
+        let doneOptional: Bool?
+        
+        enum CodingKeys: String, CodingKey {
+            case id
+            case name
+            case age
+            case createdAt = "created_at"
+            case nameOptional = "name_Optional"
+            case ageOptional = "age_Optional"
+            case createdAtOptional = "created_at_Optional"
+            case done
+            case doneOptional = "done_Optional"
+        }
+    }
+}
 
 struct Row {
     
