@@ -7,6 +7,7 @@
 //
 
 import SQLFormatter
+import Foundation
 
 public protocol QueryParameter {
     func queryParameter(option: QueryParameterOption) throws -> QueryParameterType
@@ -234,3 +235,10 @@ extension Bool: QueryParameter {
         return QueryParameterWrap( self ? "true" : "false" )
     }
 }
+
+extension Decimal: QueryParameter {
+    public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
+        return QueryParameterWrap( String(describing: self) )
+    }
+}
+
