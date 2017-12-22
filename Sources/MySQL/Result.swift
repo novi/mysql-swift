@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CMySQL
 
 precedencegroup DecodingPrecedence {
     associativity: left
@@ -242,6 +243,13 @@ fileprivate struct RowKeyedDecodingContainer<K : CodingKey> : KeyedDecodingConta
         }
         if T.self is Date.Type {
             return try decoder.row.getValue(forField: key.stringValue) as Date as! T
+        }
+        if let field = decoder.row.fields.first(where: { $0.name == key.stringValue }) {
+            if field.type == MYSQL_TYPE_JSON {
+                let json: Data = try decoder.row.getValue(forField: field.name)
+                let jsonDecoder = JSONDecoder()
+                return try jsonDecoder.decode(T.self, from: json)
+            }
         }
         throw QueryError.castError(actualValue: "", expectedType: "Type \(T.self) not implemented" , field: key.stringValue)
     }
