@@ -69,3 +69,14 @@ extension AutoincrementID: QueryParameter {
         }
     }
 }
+
+
+
+/// MARK: Codable support
+
+extension AutoincrementID: Decodable {
+    public init(from decoder: Decoder) throws {
+        self = .ID(try I.init(from: decoder))
+    }
+}
+

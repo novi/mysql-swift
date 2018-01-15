@@ -32,6 +32,7 @@ struct SomeStringID: IDType {
     }
 }
 
+
 struct RowCodeable {
     struct SimpleUser: Codable {
         let id: UInt
@@ -40,7 +41,7 @@ struct RowCodeable {
     }
     
     struct UserDecodeWithKey: Decodable {
-        let id: Int? // AutoincrementID for Decodeable not implemented
+        let id: AutoincrementID<UserID>
         
         let name: String
         let age: Int

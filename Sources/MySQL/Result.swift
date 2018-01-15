@@ -162,6 +162,93 @@ struct QueryRowResultDecoder : Decoder {
     }
 }
 
+fileprivate struct SQLStringDecoder: Decoder {
+    let codingPath =  [CodingKey]()
+    let userInfo = [CodingUserInfoKey : Any]()
+    let sqlString: String
+    
+    struct SingleValue: SingleValueDecodingContainer {
+        let codingPath =  [CodingKey]()
+        let sqlString: String
+        func decodeNil() -> Bool {
+            fatalError()
+        }
+        
+        func decode(_ type: Bool.Type) throws -> Bool {
+            fatalError()
+        }
+        
+        func decode(_ type: Int.Type) throws -> Int {
+            return try Int.fromSQL(string: sqlString)
+        }
+        
+        func decode(_ type: Int8.Type) throws -> Int8 {
+            return try Int8.fromSQL(string: sqlString)
+        }
+        
+        func decode(_ type: Int16.Type) throws -> Int16 {
+            return try Int16.fromSQL(string: sqlString)
+        }
+        
+        func decode(_ type: Int32.Type) throws -> Int32 {
+            return try Int32.fromSQL(string: sqlString)
+        }
+        
+        func decode(_ type: Int64.Type) throws -> Int64 {
+            return try Int64.fromSQL(string: sqlString)
+        }
+        
+        func decode(_ type: UInt.Type) throws -> UInt {
+            return try UInt.fromSQL(string: sqlString)
+        }
+        
+        func decode(_ type: UInt8.Type) throws -> UInt8 {
+            return try UInt8.fromSQL(string: sqlString)
+        }
+        
+        func decode(_ type: UInt16.Type) throws -> UInt16 {
+            return try UInt16.fromSQL(string: sqlString)
+        }
+        
+        func decode(_ type: UInt32.Type) throws -> UInt32 {
+            return try UInt32.fromSQL(string: sqlString)
+        }
+        
+        func decode(_ type: UInt64.Type) throws -> UInt64 {
+            return try UInt64.fromSQL(string: sqlString)
+        }
+        
+        func decode(_ type: Float.Type) throws -> Float {
+            fatalError()
+        }
+        
+        func decode(_ type: Double.Type) throws -> Double {
+            fatalError()
+        }
+        
+        func decode(_ type: String.Type) throws -> String {
+            return sqlString
+        }
+        
+        func decode<T>(_ type: T.Type) throws -> T where T : Decodable {
+            fatalError()
+        }
+        
+    }
+
+    func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
+        throw QueryError.initializationErrorMessage(message: "RawTypeDecoder container(keyedBy:) not implemented")
+    }
+    
+    func unkeyedContainer() throws -> UnkeyedDecodingContainer {
+        throw QueryError.initializationErrorMessage(message: "RawTypeDecoder unkeyedContainer not implemented")
+    }
+    
+    func singleValueContainer() throws -> SingleValueDecodingContainer {
+        return SingleValue(sqlString: sqlString)
+    }
+ }
+
 fileprivate struct RowKeyedDecodingContainer<K : CodingKey> : KeyedDecodingContainerProtocol {
     typealias Key = K
     
@@ -243,7 +330,11 @@ fileprivate struct RowKeyedDecodingContainer<K : CodingKey> : KeyedDecodingConta
         if T.self is Date.Type {
             return try decoder.row.getValue(forField: key.stringValue) as Date as! T
         }
-        throw QueryError.castError(actualValue: "", expectedType: "Type \(T.self) not implemented" , field: key.stringValue)
+        guard let columnValue = decoder.row.columnMap[key.stringValue] else {
+            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: [key], debugDescription: ""))
+        }
+        let d = SQLStringDecoder(sqlString: try columnValue.string())
+        return try T(from: d)
     }
     
     func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: K) throws -> KeyedDecodingContainer<NestedKey> {

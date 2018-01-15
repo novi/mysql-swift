@@ -227,7 +227,7 @@ class QueryTests: XCTestCase, QueryTestType {
         
         // first row
         print(rows[0])
-        XCTAssertEqual(rows[0].id, 1)
+        XCTAssertEqual(rows[0].id.id, UserID(1) )
         XCTAssertEqual(rows[0].name, name)
         XCTAssertEqual(rows[0].age, age)
         XCTAssertEqual(rows[0].createdAt, someDate)
@@ -240,7 +240,7 @@ class QueryTests: XCTestCase, QueryTestType {
         XCTAssertNil(rows[0].doneOptional)
         
         // second row
-        XCTAssertEqual(rows[1].id, 134)
+        XCTAssertEqual(rows[1].id.id, UserID(134) )
         XCTAssertEqual(rows[1].name, name)
         XCTAssertEqual(rows[1].age, age)
         XCTAssertEqual(rows[1].createdAt, someDate)
