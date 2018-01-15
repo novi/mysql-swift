@@ -8,7 +8,7 @@
 
 import SQLFormatter
 
-
+@available(*, deprecated)
 public protocol SQLEnumType: SQLStringDecodable, RawRepresentable, QueryParameter, Decodable {
     
 }
