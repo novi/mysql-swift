@@ -19,7 +19,7 @@ extension SQLTypeTests {
     }
 }
 
-class SQLTypeTests: XCTestCase {
+final class SQLTypeTests: XCTestCase {
     
     
     struct SomeID: IDType {

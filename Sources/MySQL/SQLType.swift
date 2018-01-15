@@ -9,7 +9,7 @@
 import SQLFormatter
 
 
-public protocol SQLEnumType: SQLStringDecodable, RawRepresentable, QueryParameter {
+public protocol SQLEnumType: SQLStringDecodable, RawRepresentable, QueryParameter, Decodable {
     
 }
 

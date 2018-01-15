@@ -40,6 +40,17 @@ struct RowCodeable {
         let age: Int
     }
     
+    struct UserForCheckDecodableConformance: Decodable {
+        enum UserType: String, SQLEnumType {
+            case user
+            case admin
+        }
+        let id: UserID
+        let idOptional: UserID?
+        let autoincrementID: AutoincrementID<UserID>
+        let userType: UserType
+    }
+    
     struct UserDecodeWithKey: Decodable {
         let id: AutoincrementID<UserID>
         
@@ -54,7 +65,7 @@ struct RowCodeable {
         let done: Bool
         let doneOptional: Bool?
         
-        enum CodingKeys: String, CodingKey {
+        private enum CodingKeys: String, CodingKey {
             case id
             case name
             case age
