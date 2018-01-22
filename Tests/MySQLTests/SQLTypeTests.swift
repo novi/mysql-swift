@@ -34,7 +34,7 @@ final class SQLTypeTests: XCTestCase {
         case second = "second' 2"
     }
     
-    enum SomeEnumDecodable: String, Decodable, QueryParameter {
+    enum SomeEnumDecodable: String, Codable, QueryParameter {
         case first = "first 1"
         case second = "second' 2"
     }
@@ -46,6 +46,7 @@ final class SQLTypeTests: XCTestCase {
         
         let id: SomeID = try SomeID.fromSQL(string: "5678")
         XCTAssertEqual(id.id, 5678)
+        
     }
     
     func testEnumType() throws {

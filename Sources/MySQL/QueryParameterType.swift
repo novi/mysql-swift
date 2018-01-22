@@ -242,3 +242,234 @@ extension Decimal: QueryParameter {
     }
 }
 
+/// MARK: Codable support
+
+fileprivate struct QueryParameterEncoder: Encoder {
+    let codingPath = [CodingKey]()
+    
+    let userInfo = [CodingUserInfoKey : Any]()
+    
+    final class Storage {
+        init() {
+            
+        }
+        var dict: [String: QueryParameter?] = [:]
+    }
+    let storage = Storage()
+    
+    func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
+        return KeyedEncodingContainer(QueryParameterKeyedEncodingContainer<Key>(encoder: self))
+    }
+    
+    func unkeyedContainer() -> UnkeyedEncodingContainer {
+        fatalError("not supported unkeyedContainer in QueryParameter")
+    }
+    
+    func singleValueContainer() -> SingleValueEncodingContainer {
+        fatalError("not supported singleValueContainer in QueryParameter")
+    }
+    
+}
+
+fileprivate final class QueryParameterSingleValueEncoder: Encoder {
+    let codingPath = [CodingKey]()
+    
+    let userInfo = [CodingUserInfoKey : Any]()
+    
+    var storage: QueryParameter? = nil
+    
+    func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
+        fatalError("not supported unkeyedContainer in QueryParameterSingleValueEncoder")
+    }
+    
+    func unkeyedContainer() -> UnkeyedEncodingContainer {
+        fatalError("not supported unkeyedContainer in QueryParameterSingleValueEncoder")
+    }
+    
+    func singleValueContainer() -> SingleValueEncodingContainer {
+        return QueryParameterSingleValueEncodingContainer(encoder: self)
+    }
+    
+}
+
+
+fileprivate struct QueryParameterSingleValueEncodingContainer: SingleValueEncodingContainer {
+    let codingPath = [CodingKey]()
+    
+    var encoder: QueryParameterSingleValueEncoder
+    
+    mutating func encodeNil() throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: Bool) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: Int) throws {
+        encoder.storage = value
+    }
+    
+    mutating func encode(_ value: Int8) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: Int16) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: Int32) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: Int64) throws {
+        encoder.storage = value
+    }
+    
+    mutating func encode(_ value: UInt) throws {
+        encoder.storage = value
+    }
+    
+    mutating func encode(_ value: UInt8) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: UInt16) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: UInt32) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: UInt64) throws {
+        encoder.storage = value
+    }
+    
+    mutating func encode(_ value: Float) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: Double) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: String) throws {
+        encoder.storage = value
+    }
+    
+    mutating func encode<T>(_ value: T) throws where T : Encodable {
+        fatalError()
+    }
+    
+    
+}
+
+fileprivate struct QueryParameterKeyedEncodingContainer<Key : CodingKey> : KeyedEncodingContainerProtocol {
+    let codingPath = [CodingKey]()
+    
+    let encoder: QueryParameterEncoder
+    
+    var storage: QueryParameterEncoder.Storage {
+        return encoder.storage
+    }
+    
+    mutating func encodeNil(forKey key: Key) throws {
+        storage.dict[key.stringValue] = nil
+    }
+    
+    mutating func encode(_ value: Bool, forKey key: Key) throws {
+        storage.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: Int, forKey key: Key) throws {
+        storage.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: Int8, forKey key: Key) throws {
+        storage.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: Int16, forKey key: Key) throws {
+        storage.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: Int32, forKey key: Key) throws {
+        storage.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: Int64, forKey key: Key) throws {
+        storage.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: UInt, forKey key: Key) throws {
+        storage.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: UInt8, forKey key: Key) throws {
+        storage.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: UInt16, forKey key: Key) throws {
+        storage.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: UInt32, forKey key: Key) throws {
+        storage.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: UInt64, forKey key: Key) throws {
+        storage.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: Float, forKey key: Key) throws {
+        storage.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: Double, forKey key: Key) throws {
+        storage.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: String, forKey key: Key) throws {
+        storage.dict[key.stringValue] = value
+    }
+    
+    mutating func encode<T>(_ value: T, forKey key: Key) throws where T : Encodable {
+        if value is Date {
+            storage.dict[key.stringValue] = value as! Date
+        } else if value is Data {
+            storage.dict[key.stringValue] = value as! Data
+        }
+        let singleValueEncoder = QueryParameterSingleValueEncoder()
+        try value.encode(to: singleValueEncoder)
+        storage.dict[key.stringValue] = singleValueEncoder.storage
+        
+        //fatalError("not supported type \(T.self)")
+    }
+    
+    mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
+        fatalError("nestedContainer in query parameter is not supported.")
+    }
+    
+    mutating func nestedUnkeyedContainer(forKey key: Key) -> UnkeyedEncodingContainer {
+        fatalError("nestedUnkeyedContainer in query parameter is not supported.")
+    }
+    
+    mutating func superEncoder() -> Encoder {
+        fatalError("superEncoder in query parameter is not supported.")
+    }
+    
+    mutating func superEncoder(forKey key: Key) -> Encoder {
+        fatalError("superEncoder(forKey:) in query parameter is not supported.")
+    }
+    
+    
+}
+
+extension Encodable where Self: QueryParameter {
+    public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
+        let encoder = QueryParameterEncoder()
+        try self.encode(to: encoder)
+        return try QueryDictionary(encoder.storage.dict).queryParameter(option: option)
+    }
+}

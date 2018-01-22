@@ -41,12 +41,12 @@ struct RowCodeable {
         let age: Int
     }
     
-    enum UserType: String, Decodable {
+    enum UserType: String, Codable {
         case user = "user"
         case admin = "admin"
     }
     
-    struct UserDecodeWithKey: Decodable {
+    struct UserDecodeWithKey: Codable {
         let id: AutoincrementID<UserID>
         
         let name: String

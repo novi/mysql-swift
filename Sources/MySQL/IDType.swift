@@ -8,8 +8,8 @@
 
 import SQLFormatter
 
-public protocol IDType: SQLStringDecodable, QueryParameter, Hashable, Decodable {
-    associatedtype T: SQLStringDecodable, QueryParameter, Hashable, Decodable
+public protocol IDType: SQLStringDecodable, QueryParameter, Hashable, Codable {
+    associatedtype T: SQLStringDecodable, QueryParameter, Hashable, Codable
     var id: T { get }
     init(_ id: T)
 }
@@ -31,11 +31,16 @@ public func ==<T: IDType>(lhs: T, rhs: T) -> Bool {
     return lhs.id == rhs.id
 }
 
-// MARK: Decodable type
+// MARK: Codable type
 
 extension IDType where T == Int {
     public init(from decoder: Decoder) throws {
         self.init(try decoder.singleValueContainer().decode(Int.self))
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(id)
     }
 }
 
@@ -43,16 +48,31 @@ extension IDType where T == Int64 {
     public init(from decoder: Decoder) throws {
         self.init(try decoder.singleValueContainer().decode(Int64.self))
     }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(id)
+    }
 }
 
 extension IDType where T == UInt {
     public init(from decoder: Decoder) throws {
         self.init(try decoder.singleValueContainer().decode(UInt.self))
     }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(id)
+    }
 }
 
 extension IDType where T == UInt64 {
     public init(from decoder: Decoder) throws {
         self.init(try decoder.singleValueContainer().decode(UInt64.self))
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(id)
     }
 }

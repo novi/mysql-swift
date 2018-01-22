@@ -28,8 +28,3 @@ extension SQLEnumType where RawValue == String {
     }
 }
 
-extension RawRepresentable where RawValue == String {
-    public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
-        return rawValue.queryParameter(option: option)
-    }
-}
