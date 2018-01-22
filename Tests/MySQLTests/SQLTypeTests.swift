@@ -19,7 +19,7 @@ extension SQLTypeTests {
     }
 }
 
-class SQLTypeTests: XCTestCase {
+final class SQLTypeTests: XCTestCase {
     
     
     struct SomeID: IDType {
@@ -30,6 +30,11 @@ class SQLTypeTests: XCTestCase {
     }
     
     enum SomeEnum: String, SQLEnumType {
+        case first = "first 1"
+        case second = "second' 2"
+    }
+    
+    enum SomeEnumDecodable: String, Decodable, QueryParameter {
         case first = "first 1"
         case second = "second' 2"
     }
@@ -45,15 +50,24 @@ class SQLTypeTests: XCTestCase {
     
     func testEnumType() throws {
         
-        let someVal: QueryParameter = SomeEnum.second
-        let escaped = "second' 2".escaped()
-        XCTAssertEqual(try someVal.queryParameter(option: queryOption).escaped() , escaped)
+        do {
+            let someVal: QueryParameter = SomeEnum.second
+            let escaped = "second' 2".escaped()
+            XCTAssertEqual(try someVal.queryParameter(option: queryOption).escaped() , escaped)
+            
+            let validVal: SomeEnum = try SomeEnum.fromSQL(string: "first 1")
+            
+            XCTAssertEqual(validVal, SomeEnum.first)
+            
+            XCTAssertThrowsError(try SomeEnum.fromSQL(string: "other foo"))
+        }
         
-        let validVal: SomeEnum = try SomeEnum.fromSQL(string: "first 1")
         
-        XCTAssertEqual(validVal, SomeEnum.first)
-        
-        XCTAssertThrowsError(try SomeEnum.fromSQL(string: "other foo"))
+        do {
+            let someVal: QueryParameter = SomeEnumDecodable.second
+            let escaped = "second' 2".escaped()
+            XCTAssertEqual(try someVal.queryParameter(option: queryOption).escaped() , escaped)
+        }
     }
     
     func testAutoincrementType() throws {

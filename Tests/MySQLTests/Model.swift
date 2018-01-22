@@ -34,10 +34,16 @@ struct SomeStringID: IDType {
 
 
 struct RowCodeable {
+    
     struct SimpleUser: Codable {
         let id: UInt
         let name: String
         let age: Int
+    }
+    
+    enum UserType: String, Decodable {
+        case user = "user"
+        case admin = "admin"
     }
     
     struct UserDecodeWithKey: Decodable {
@@ -54,7 +60,9 @@ struct RowCodeable {
         let done: Bool
         let doneOptional: Bool?
         
-        enum CodingKeys: String, CodingKey {
+        let userType: UserType
+        
+        private enum CodingKeys: String, CodingKey {
             case id
             case name
             case age
@@ -64,11 +72,17 @@ struct RowCodeable {
             case createdAtOptional = "created_at_Optional"
             case done
             case doneOptional = "done_Optional"
+            case userType = "user_type"
         }
     }
 }
 
 struct Row {
+    
+    enum UserType: String, SQLEnumType {
+        case user = "user"
+        case admin = "admin"
+    }
     
     struct SimpleUser: QueryRowResultType, QueryParameterDictionaryType {
         let id: UInt
@@ -106,6 +120,9 @@ struct Row {
         let done: Bool
         let doneOptional: Bool?
         
+        let userType: UserType // enum type
+        
+        
         static func decodeRow(r: QueryRowResult) throws -> UserDecodeWithIndex {
             return try UserDecodeWithIndex(
                 id: r <| 0,
@@ -119,7 +136,9 @@ struct Row {
                 createdAtOptional: r <|? 6,
                 
                 done: r <| 7,
-                doneOptional: r <|? 8
+                doneOptional: r <|? 8,
+                
+                userType: r <| 9
             )
         }
         
@@ -135,7 +154,9 @@ struct Row {
                 "created_at_Optional": createdAtOptional,
                 
                 "done": done,
-                "done_Optional": doneOptional
+                "done_Optional": doneOptional,
+                
+                "user_type": userType
                 ])
         }
     }
@@ -154,6 +175,8 @@ struct Row {
         let done: Bool
         let doneOptional: Bool?
         
+        let userType: UserType // enum type
+        
         static func decodeRow(r: QueryRowResult) throws -> UserDecodeWithKey {
             return try UserDecodeWithKey(
                 id: r <| "id",
@@ -167,7 +190,9 @@ struct Row {
                 createdAtOptional: r <|? "created_at_Optional",
                 
                 done: r <| "done",
-                doneOptional: r <|? "done_Optional"
+                doneOptional: r <|? "done_Optional",
+                
+                userType: r <| "user_type"
             )
         }
     }

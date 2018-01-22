@@ -8,8 +8,8 @@
 
 import SQLFormatter
 
-
-public protocol SQLEnumType: SQLStringDecodable, RawRepresentable, QueryParameter {
+@available(*, deprecated)
+public protocol SQLEnumType: SQLStringDecodable, RawRepresentable, QueryParameter, Decodable {
     
 }
 
@@ -23,6 +23,12 @@ extension SQLEnumType where RawValue == String {
 }
 
 extension SQLEnumType where RawValue == String {
+    public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
+        return rawValue.queryParameter(option: option)
+    }
+}
+
+extension RawRepresentable where RawValue == String {
     public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
         return rawValue.queryParameter(option: option)
     }
