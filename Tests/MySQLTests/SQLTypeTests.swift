@@ -34,7 +34,7 @@ final class SQLTypeTests: XCTestCase {
         case second = "second' 2"
     }
     
-    enum SomeEnumDecodable: String, Codable, QueryParameter {
+    enum SomeEnumCodable: String, Codable, QueryParameter {
         case first = "first 1"
         case second = "second' 2"
     }
@@ -65,7 +65,7 @@ final class SQLTypeTests: XCTestCase {
         
         
         do {
-            let someVal: QueryParameter = SomeEnumDecodable.second
+            let someVal: QueryParameter = SomeEnumCodable.second
             let escaped = "second' 2".escaped()
             XCTAssertEqual(try someVal.queryParameter(option: queryOption).escaped() , escaped)
         }

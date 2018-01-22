@@ -47,9 +47,9 @@ class EscapeTests: XCTestCase {
         let strValOptionalNone: String? = nil
         
         
-        XCTAssertEqual(try QueryOptional(strVal).queryParameter(option: queryOption).escaped(), "'Sup\\'er'")
-        XCTAssertEqual(try QueryOptional(strValOptional).queryParameter(option: queryOption).escaped(), "'Sup\\'er Super'")
-        XCTAssertEqual(try QueryOptional(strValOptionalNone).queryParameter(option: queryOption).escaped(), "NULL")
+        XCTAssertEqual(try QueryParameterOptional(strVal).queryParameter(option: queryOption).escaped(), "'Sup\\'er'")
+        XCTAssertEqual(try QueryParameterOptional(strValOptional).queryParameter(option: queryOption).escaped(), "'Sup\\'er Super'")
+        XCTAssertEqual(try QueryParameterOptional(strValOptionalNone).queryParameter(option: queryOption).escaped(), "NULL")
     }
     
     func testArrayType() throws {

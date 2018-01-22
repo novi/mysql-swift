@@ -47,6 +47,7 @@ public struct QueryParameterNull: QueryParameter, ExpressibleByNilLiteral {
     }
 }
 
+// TODO: rename to QueryParameterDictionary
 public struct QueryDictionary: QueryParameter {
     let dict: [String: QueryParameter?]
     public init(_ dict: [String: QueryParameter?]) {
@@ -56,7 +57,7 @@ public struct QueryDictionary: QueryParameter {
         var keyVals: [String] = []
         for (k, v) in dict {
             if v == nil || v?.omitOnQueryParameter == false {
-                keyVals.append("\(SQLString.escapeId(string: k)) = \(try QueryOptional(v).queryParameter(option: option).escaped())")
+                keyVals.append("\(SQLString.escapeId(string: k)) = \(try QueryParameterOptional(v).queryParameter(option: option).escaped())")
             }
         }
         return QueryParameterWrap( keyVals.joined(separator:  ", ") )
@@ -90,7 +91,7 @@ public struct QueryArray: QueryParameter, QueryArrayType {
             if let val = $0 as? QueryArrayType {
                 return "(" + (try val.queryParameter(option: option).escaped()) + ")"
             }
-            return try QueryOptional($0).queryParameter(option: option).escaped()
+            return try QueryParameterOptional($0).queryParameter(option: option).escaped()
         }).joined(separator: ", ") )
     }
 }
@@ -120,7 +121,7 @@ extension Optional: QueryParameter {
 }
 
 
-struct QueryOptional: QueryParameter {
+struct QueryParameterOptional: QueryParameter {
     let val: QueryParameter?
     init(_ val: QueryParameter?) {
         self.val = val
@@ -244,18 +245,18 @@ extension Decimal: QueryParameter {
 
 /// MARK: Codable support
 
-fileprivate struct QueryParameterEncoder: Encoder {
+fileprivate final class QueryParameterEncoder: Encoder {
     let codingPath = [CodingKey]()
     
     let userInfo = [CodingUserInfoKey : Any]()
     
-    final class Storage {
-        init() {
-            
-        }
-        var dict: [String: QueryParameter?] = [:]
+    var dict: [String: QueryParameter?] = [:]
+    var singleValue: QueryParameter? = nil
+    enum StorageType {
+        case single
+        case dictionary
     }
-    let storage = Storage()
+    var storageType: StorageType = .dictionary
     
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
         return KeyedEncodingContainer(QueryParameterKeyedEncodingContainer<Key>(encoder: self))
@@ -266,27 +267,7 @@ fileprivate struct QueryParameterEncoder: Encoder {
     }
     
     func singleValueContainer() -> SingleValueEncodingContainer {
-        fatalError("not supported singleValueContainer in QueryParameter")
-    }
-    
-}
-
-fileprivate final class QueryParameterSingleValueEncoder: Encoder {
-    let codingPath = [CodingKey]()
-    
-    let userInfo = [CodingUserInfoKey : Any]()
-    
-    var storage: QueryParameter? = nil
-    
-    func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
-        fatalError("not supported unkeyedContainer in QueryParameterSingleValueEncoder")
-    }
-    
-    func unkeyedContainer() -> UnkeyedEncodingContainer {
-        fatalError("not supported unkeyedContainer in QueryParameterSingleValueEncoder")
-    }
-    
-    func singleValueContainer() -> SingleValueEncodingContainer {
+        self.storageType = .single
         return QueryParameterSingleValueEncodingContainer(encoder: self)
     }
     
@@ -296,7 +277,7 @@ fileprivate final class QueryParameterSingleValueEncoder: Encoder {
 fileprivate struct QueryParameterSingleValueEncodingContainer: SingleValueEncodingContainer {
     let codingPath = [CodingKey]()
     
-    var encoder: QueryParameterSingleValueEncoder
+    var encoder: QueryParameterEncoder
     
     mutating func encodeNil() throws {
         fatalError()
@@ -307,7 +288,7 @@ fileprivate struct QueryParameterSingleValueEncodingContainer: SingleValueEncodi
     }
     
     mutating func encode(_ value: Int) throws {
-        encoder.storage = value
+        encoder.singleValue = value
     }
     
     mutating func encode(_ value: Int8) throws {
@@ -323,11 +304,11 @@ fileprivate struct QueryParameterSingleValueEncodingContainer: SingleValueEncodi
     }
     
     mutating func encode(_ value: Int64) throws {
-        encoder.storage = value
+        encoder.singleValue = value
     }
     
     mutating func encode(_ value: UInt) throws {
-        encoder.storage = value
+        encoder.singleValue = value
     }
     
     mutating func encode(_ value: UInt8) throws {
@@ -343,7 +324,7 @@ fileprivate struct QueryParameterSingleValueEncodingContainer: SingleValueEncodi
     }
     
     mutating func encode(_ value: UInt64) throws {
-        encoder.storage = value
+        encoder.singleValue = value
     }
     
     mutating func encode(_ value: Float) throws {
@@ -355,7 +336,7 @@ fileprivate struct QueryParameterSingleValueEncodingContainer: SingleValueEncodi
     }
     
     mutating func encode(_ value: String) throws {
-        encoder.storage = value
+        encoder.singleValue = value
     }
     
     mutating func encode<T>(_ value: T) throws where T : Encodable {
@@ -370,79 +351,76 @@ fileprivate struct QueryParameterKeyedEncodingContainer<Key : CodingKey> : Keyed
     
     let encoder: QueryParameterEncoder
     
-    var storage: QueryParameterEncoder.Storage {
-        return encoder.storage
-    }
-    
     mutating func encodeNil(forKey key: Key) throws {
-        storage.dict[key.stringValue] = nil
+        encoder.dict[key.stringValue] = nil
     }
     
     mutating func encode(_ value: Bool, forKey key: Key) throws {
-        storage.dict[key.stringValue] = value
+        encoder.dict[key.stringValue] = value
     }
     
     mutating func encode(_ value: Int, forKey key: Key) throws {
-        storage.dict[key.stringValue] = value
+        encoder.dict[key.stringValue] = value
     }
     
     mutating func encode(_ value: Int8, forKey key: Key) throws {
-        storage.dict[key.stringValue] = value
+        encoder.dict[key.stringValue] = value
     }
     
     mutating func encode(_ value: Int16, forKey key: Key) throws {
-        storage.dict[key.stringValue] = value
+        encoder.dict[key.stringValue] = value
     }
     
     mutating func encode(_ value: Int32, forKey key: Key) throws {
-        storage.dict[key.stringValue] = value
+        encoder.dict[key.stringValue] = value
     }
     
     mutating func encode(_ value: Int64, forKey key: Key) throws {
-        storage.dict[key.stringValue] = value
+        encoder.dict[key.stringValue] = value
     }
     
     mutating func encode(_ value: UInt, forKey key: Key) throws {
-        storage.dict[key.stringValue] = value
+        encoder.dict[key.stringValue] = value
     }
     
     mutating func encode(_ value: UInt8, forKey key: Key) throws {
-        storage.dict[key.stringValue] = value
+        encoder.dict[key.stringValue] = value
     }
     
     mutating func encode(_ value: UInt16, forKey key: Key) throws {
-        storage.dict[key.stringValue] = value
+        encoder.dict[key.stringValue] = value
     }
     
     mutating func encode(_ value: UInt32, forKey key: Key) throws {
-        storage.dict[key.stringValue] = value
+        encoder.dict[key.stringValue] = value
     }
     
     mutating func encode(_ value: UInt64, forKey key: Key) throws {
-        storage.dict[key.stringValue] = value
+        encoder.dict[key.stringValue] = value
     }
     
     mutating func encode(_ value: Float, forKey key: Key) throws {
-        storage.dict[key.stringValue] = value
+        encoder.dict[key.stringValue] = value
     }
     
     mutating func encode(_ value: Double, forKey key: Key) throws {
-        storage.dict[key.stringValue] = value
+        encoder.dict[key.stringValue] = value
     }
     
     mutating func encode(_ value: String, forKey key: Key) throws {
-        storage.dict[key.stringValue] = value
+        encoder.dict[key.stringValue] = value
     }
     
     mutating func encode<T>(_ value: T, forKey key: Key) throws where T : Encodable {
         if value is Date {
-            storage.dict[key.stringValue] = value as! Date
+            encoder.dict[key.stringValue] = value as! Date
         } else if value is Data {
-            storage.dict[key.stringValue] = value as! Data
+            encoder.dict[key.stringValue] = value as! Data
+        } else {
+            let singleValueEncoder = QueryParameterEncoder()
+            try value.encode(to: singleValueEncoder)
+            encoder.dict[key.stringValue] = singleValueEncoder.singleValue
         }
-        let singleValueEncoder = QueryParameterSingleValueEncoder()
-        try value.encode(to: singleValueEncoder)
-        storage.dict[key.stringValue] = singleValueEncoder.storage
         
         //fatalError("not supported type \(T.self)")
     }
@@ -470,6 +448,11 @@ extension Encodable where Self: QueryParameter {
     public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
         let encoder = QueryParameterEncoder()
         try self.encode(to: encoder)
-        return try QueryDictionary(encoder.storage.dict).queryParameter(option: option)
+        switch encoder.storageType {
+        case .dictionary:
+            return try QueryDictionary(encoder.dict).queryParameter(option: option)
+        case .single:
+            return try QueryParameterOptional(encoder.singleValue).queryParameter(option: option)
+        }
     }
 }

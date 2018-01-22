@@ -37,12 +37,23 @@ final class CodableTests: XCTestCase {
 
     func testCodableIDType() throws {
         
-        let parameter: QueryParameter = CodableModel(id: UserID(123),
-                                                     name: "test4456",
-                                                     userType: .user)
+        let result = "`id` = 123, `name` = 'test4456', `userType` = 'user'"
         
-        XCTAssertEqual(try parameter.queryParameter(option: queryOption).escaped(),
-                       "`id` = 123, `name` = 'test4456', `userType` = 'user'" )
+        do {
+            let parameter: QueryParameter = CodableModel(id: UserID(123),
+                                                         name: "test4456",
+                                                         userType: .user)
+            
+            XCTAssertEqual(try parameter.queryParameter(option: queryOption).escaped(), result)
+        }
+        
+        do {
+            let parameter: QueryParameter = CodableModelWithAutoincrement(id: AutoincrementID(UserID(123)),
+                                                         name: "test4456",
+                                                         userType: .user)
+            
+            XCTAssertEqual(try parameter.queryParameter(option: queryOption).escaped(), result)
+        }
         
     }
     
