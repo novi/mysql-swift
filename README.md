@@ -8,7 +8,7 @@ mysql-swift
 
 
 MySQL client library for Swift.
-This is inspired by Node.js' [mysql](https://github.com/felixge/node-mysql) and [Himotoki](https://github.com/ikesyo/Himotoki) as decoding results.
+This is inspired by Node.js' [mysql](https://github.com/felixge/node-mysql).
 
 * Based on libmysqlclient
 * Raw SQL query
@@ -20,39 +20,24 @@ _Note:_ No asynchronous support currently. It depends libmysqlclient.
 ```swift
 // Declare a model
 
-struct User: QueryRowResultType, QueryParameterDictionaryType {
+struct User: Codable, QueryParameter {
     let id: Int
     let userName: String
     let age: Int?
     let status: Status
     let createdAt: Date
     
-    enum Status: String, SQLEnumType {
+    enum Status: String, Codable {
         case created = "created"
         case verified = "verified"
     }
     
-    // Decode query results (selecting rows) to a model
-    static func decodeRow(r: QueryRowResult) throws -> User {
-        return try User(
-            id: r <| 0, // as index
-            userName: r <| "name", // as field name
-            age: r <|? 3, // nullable field,
-            status: r <| "status", // string enum type
-            createdAt: r <| "created_at"
-        )
-    }
-    
-    // Use this model as a query paramter
-    // See inserting example
-    func queryParameter() throws -> QueryDictionary {
-        return QueryDictionary([
-            //"id": // auto increment
-            "name": userName,
-            "age": age,
-            "status": status,
-            "created_at": createdAt
-        ])
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case userName = "user_name"
+        case age
+        case status = "status"
+        case createdAt = "created_at"
     }
 }
     
@@ -67,6 +52,8 @@ let params: (Int, Int?, String, QueryArray) = (
 	QueryArray(ids)
 )	
 let rows: [User] = try conn.query("SELECT id,name,created_at,age FROM users WHERE (age > ? OR age is ?) OR name = ? OR id IN (?)", build(params) ])
+// or...
+// try conn.query("SELECT id,name,created_at,age FROM users WHERE (age > ? OR age is ?) OR name = ? OR id IN (?)", [50, optional, nameParam, QueryArray(ids)] ])
 
 // Inserting
 let age: Int? = 26
@@ -93,7 +80,7 @@ try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
 
 ## macOS
 
-This library uses Vapor's `cmysql` . Follow [the instruction](https://docs.vapor.codes/2.0/getting-started/install-on-macos/).
+This library uses Vapor's `cmysql` . Follow [the instruction](https://docs.vapor.codes/2.0/getting-started/install-on-macos/) or install `vapor/tap/cmysql` manually.
 
 ## Ubuntu Linux
 
@@ -117,7 +104,7 @@ import PackageDescription
 let package = Package(
     ...,
     dependencies: [
-        .package(url: "https://github.com/novi/mysql-swift.git", .upToNextMinor(from: "0.8.0"))
+        .package(url: "https://github.com/novi/mysql-swift.git", .upToNextMinor(from: "0.9.0"))
     ],
     targets: [
         .target(
