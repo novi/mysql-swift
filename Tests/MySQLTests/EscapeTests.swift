@@ -24,7 +24,7 @@ extension EscapeTests {
     }
 }
 
-class EscapeTests: XCTestCase {
+final class EscapeTests: XCTestCase {
 
     // https://github.com/felixge/node-mysql/blob/master/test/unit/protocol/test-SqlString.js
     func testStringEscape() {

@@ -46,7 +46,7 @@ struct RowCodeable {
         case admin = "admin"
     }
     
-    struct UserDecodeWithKey: Codable {
+    struct User: Codable, QueryParameter {
         let id: AutoincrementID<UserID>
         
         let name: String

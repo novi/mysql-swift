@@ -21,7 +21,7 @@ extension BlobQueryTests {
 }
 
 
-class BlobQueryTests: XCTestCase, QueryTestType {
+final class BlobQueryTests: XCTestCase, QueryTestType {
     
     var constants: TestConstantsType!
     var pool: ConnectionPool!

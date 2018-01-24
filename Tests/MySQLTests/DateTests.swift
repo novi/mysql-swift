@@ -26,7 +26,7 @@ extension XCTestCase {
     }
 }
 
-class DateTests : XCTestCase {
+final class DateTests : XCTestCase {
     
     func testSQLDate() throws {
         
