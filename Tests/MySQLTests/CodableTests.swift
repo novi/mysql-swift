@@ -48,7 +48,7 @@ final class CodableTests: XCTestCase {
             
             let result = try parameter.queryParameter(option: queryOption).escaped()
             
-            XCTAssertEqual(Set(result.split(separator: ",").map({ $0.trimmingCharacters(in: .whitespaces) })), expectedResult)
+            XCTAssertEqual(Set(result.split(separator: ",").map(String.init).map({ $0.trimmingCharacters(in: .whitespaces) })), expectedResult)
         }
         
         do {
@@ -57,7 +57,7 @@ final class CodableTests: XCTestCase {
                                                          userType: .user)
             
             let result = try parameter.queryParameter(option: queryOption).escaped()
-            XCTAssertEqual(Set(result.split(separator: ",").map({ $0.trimmingCharacters(in: .whitespaces) })), expectedResult)
+            XCTAssertEqual(Set(result.split(separator: ",").map(String.init).map({ $0.trimmingCharacters(in: .whitespaces) })), expectedResult)
         }
         
     }
@@ -73,7 +73,7 @@ final class CodableTests: XCTestCase {
         
         let result = try parameter.queryParameter(option: queryOption).escaped()
         
-        XCTAssertEqual(Set(result.split(separator: ",").map({ $0.trimmingCharacters(in: .whitespaces) })), expectedResult)
+        XCTAssertEqual(Set(result.split(separator: ",").map(String.init).map({ $0.trimmingCharacters(in: .whitespaces) })), expectedResult)
         
     }
     

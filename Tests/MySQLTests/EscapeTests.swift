@@ -129,7 +129,7 @@ final class EscapeTests: XCTestCase {
         
         let expectedResult = Set(arrayLiteral: "`string` = 'Sup\\'er'", "`stringOptional` = 'Sup\\'er Super'", "`stringNone` = NULL")
         let escaped = try! dict.queryParameter(option: queryOption).escaped()
-        XCTAssertEqual(Set(escaped.split(separator: ",").map({ $0.trimmingCharacters(in: .whitespaces) })), expectedResult)
+        XCTAssertEqual(Set(escaped.split(separator: ",").map(String.init).map({ $0.trimmingCharacters(in: .whitespaces) })), expectedResult)
         
     }
     
