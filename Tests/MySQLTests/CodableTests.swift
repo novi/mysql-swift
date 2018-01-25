@@ -12,6 +12,7 @@ extension CodableTests {
     static var allTests : [(String, (CodableTests) -> () throws -> Void)] {
         return [
             ("testCodableIDType", testCodableIDType),
+            ("testCodableIDType_AutoincrementNoID", testCodableIDType_AutoincrementNoID)
         ]
     }
 }
@@ -37,14 +38,17 @@ final class CodableTests: XCTestCase {
 
     func testCodableIDType() throws {
         
-        let result = "`id` = 123, `name` = 'test4456', `userType` = 'user'"
+        
+        let expectedResult = Set(arrayLiteral: "`id` = 123", "`name` = 'test4456'", "`userType` = 'user'")
         
         do {
             let parameter: QueryParameter = CodableModel(id: UserID(123),
                                                          name: "test4456",
                                                          userType: .user)
             
-            XCTAssertEqual(try parameter.queryParameter(option: queryOption).escaped(), result)
+            let result = try parameter.queryParameter(option: queryOption).escaped()
+            
+            XCTAssertEqual(Set(result.split(separator: ",").map({ $0.trimmingCharacters(in: .whitespaces) })), expectedResult)
         }
         
         do {
@@ -52,8 +56,24 @@ final class CodableTests: XCTestCase {
                                                          name: "test4456",
                                                          userType: .user)
             
-            XCTAssertEqual(try parameter.queryParameter(option: queryOption).escaped(), result)
+            let result = try parameter.queryParameter(option: queryOption).escaped()
+            XCTAssertEqual(Set(result.split(separator: ",").map({ $0.trimmingCharacters(in: .whitespaces) })), expectedResult)
         }
+        
+    }
+    
+    func testCodableIDType_AutoincrementNoID() throws {
+        
+        
+        let expectedResult = Set(arrayLiteral: "`name` = 'test4456'", "`userType` = 'user'")
+        
+        let parameter: QueryParameter = CodableModelWithAutoincrement(id: .noID,
+                                                                      name: "test4456",
+                                                                      userType: .user)
+        
+        let result = try parameter.queryParameter(option: queryOption).escaped()
+        
+        XCTAssertEqual(Set(result.split(separator: ",").map({ $0.trimmingCharacters(in: .whitespaces) })), expectedResult)
         
     }
     

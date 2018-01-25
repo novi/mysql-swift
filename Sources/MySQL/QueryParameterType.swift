@@ -419,7 +419,13 @@ fileprivate struct QueryParameterKeyedEncodingContainer<Key : CodingKey> : Keyed
         } else {
             let singleValueEncoder = QueryParameterEncoder()
             try value.encode(to: singleValueEncoder)
-            encoder.dict[key.stringValue] = singleValueEncoder.singleValue
+            if let param = value as? QueryParameter {
+                if !param.omitOnQueryParameter {
+                    encoder.dict[key.stringValue] = singleValueEncoder.singleValue
+                }
+            } else {
+                encoder.dict[key.stringValue] = singleValueEncoder.singleValue
+            }
         }
         
         //fatalError("not supported type \(T.self)")

@@ -30,9 +30,6 @@ final class EscapeTests: XCTestCase {
     func testStringEscape() {
         XCTAssertEqual(SQLString.escape(string: "Sup'er"), "'Sup\\'er'")
         
-        
-        // TODO
-        
         XCTAssertEqual(SQLString.escape(string: "\u{00A5}"), "'¥'")
         XCTAssertEqual(SQLString.escape(string: "\\"), "'\\\\'")
         
@@ -130,9 +127,10 @@ final class EscapeTests: XCTestCase {
             "stringNone" : strValOptionalNone
             ])
         
-        // TODO:
-        // "`string` = 'Sup\\'er', `stringOptional` = 'Sup\\'er Super', `stringNone` = NULL"
-        // XCTAssertEqual(try! dict.escapedValue(), )
+        let expectedResult = Set(arrayLiteral: "`string` = 'Sup\\'er'", "`stringOptional` = 'Sup\\'er Super'", "`stringNone` = NULL")
+        let escaped = try! dict.queryParameter(option: queryOption).escaped()
+        XCTAssertEqual(Set(escaped.split(separator: ",").map({ $0.trimmingCharacters(in: .whitespaces) })), expectedResult)
+        
     }
     
 }
