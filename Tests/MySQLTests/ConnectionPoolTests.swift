@@ -21,7 +21,7 @@ extension ConnectionPoolTests {
     }
 }
 
-class ConnectionPoolTests: XCTestCase, MySQLTestType {
+final class ConnectionPoolTests: XCTestCase, MySQLTestType {
 
     
     var constants: TestConstantsType!

@@ -13,7 +13,7 @@
 #endif
 
 final class Mutex {
-    var mutex = pthread_mutex_t()
+    private var mutex = pthread_mutex_t()
     init() {
         pthread_mutex_init(&mutex, nil)
     }

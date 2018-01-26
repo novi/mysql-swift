@@ -47,6 +47,7 @@ public struct QueryParameterNull: QueryParameter, ExpressibleByNilLiteral {
     }
 }
 
+// TODO: rename to QueryParameterDictionary
 public struct QueryDictionary: QueryParameter {
     let dict: [String: QueryParameter?]
     public init(_ dict: [String: QueryParameter?]) {
@@ -56,7 +57,7 @@ public struct QueryDictionary: QueryParameter {
         var keyVals: [String] = []
         for (k, v) in dict {
             if v == nil || v?.omitOnQueryParameter == false {
-                keyVals.append("\(SQLString.escapeId(string: k)) = \(try QueryOptional(v).queryParameter(option: option).escaped())")
+                keyVals.append("\(SQLString.escapeId(string: k)) = \(try QueryParameterOptional(v).queryParameter(option: option).escaped())")
             }
         }
         return QueryParameterWrap( keyVals.joined(separator:  ", ") )
@@ -90,7 +91,7 @@ public struct QueryArray: QueryParameter, QueryArrayType {
             if let val = $0 as? QueryArrayType {
                 return "(" + (try val.queryParameter(option: option).escaped()) + ")"
             }
-            return try QueryOptional($0).queryParameter(option: option).escaped()
+            return try QueryParameterOptional($0).queryParameter(option: option).escaped()
         }).joined(separator: ", ") )
     }
 }
@@ -120,7 +121,7 @@ extension Optional: QueryParameter {
 }
 
 
-struct QueryOptional: QueryParameter {
+struct QueryParameterOptional: QueryParameter {
     let val: QueryParameter?
     init(_ val: QueryParameter?) {
         self.val = val
@@ -242,3 +243,222 @@ extension Decimal: QueryParameter {
     }
 }
 
+/// MARK: Codable support
+
+fileprivate final class QueryParameterEncoder: Encoder {
+    let codingPath = [CodingKey]()
+    
+    let userInfo = [CodingUserInfoKey : Any]()
+    
+    var dict: [String: QueryParameter?] = [:]
+    var singleValue: QueryParameter? = nil
+    enum StorageType {
+        case single
+        case dictionary
+    }
+    var storageType: StorageType = .dictionary
+    
+    func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
+        return KeyedEncodingContainer(QueryParameterKeyedEncodingContainer<Key>(encoder: self))
+    }
+    
+    func unkeyedContainer() -> UnkeyedEncodingContainer {
+        fatalError("not supported unkeyedContainer in QueryParameter")
+    }
+    
+    func singleValueContainer() -> SingleValueEncodingContainer {
+        self.storageType = .single
+        return QueryParameterSingleValueEncodingContainer(encoder: self)
+    }
+    
+}
+
+
+fileprivate struct QueryParameterSingleValueEncodingContainer: SingleValueEncodingContainer {
+    let codingPath = [CodingKey]()
+    
+    var encoder: QueryParameterEncoder
+    
+    mutating func encodeNil() throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: Bool) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: Int) throws {
+        encoder.singleValue = value
+    }
+    
+    mutating func encode(_ value: Int8) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: Int16) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: Int32) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: Int64) throws {
+        encoder.singleValue = value
+    }
+    
+    mutating func encode(_ value: UInt) throws {
+        encoder.singleValue = value
+    }
+    
+    mutating func encode(_ value: UInt8) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: UInt16) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: UInt32) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: UInt64) throws {
+        encoder.singleValue = value
+    }
+    
+    mutating func encode(_ value: Float) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: Double) throws {
+        fatalError()
+    }
+    
+    mutating func encode(_ value: String) throws {
+        encoder.singleValue = value
+    }
+    
+    mutating func encode<T>(_ value: T) throws where T : Encodable {
+        fatalError()
+    }
+    
+    
+}
+
+fileprivate struct QueryParameterKeyedEncodingContainer<Key : CodingKey> : KeyedEncodingContainerProtocol {
+    let codingPath = [CodingKey]()
+    
+    let encoder: QueryParameterEncoder
+    
+    mutating func encodeNil(forKey key: Key) throws {
+        encoder.dict[key.stringValue] = nil
+    }
+    
+    mutating func encode(_ value: Bool, forKey key: Key) throws {
+        encoder.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: Int, forKey key: Key) throws {
+        encoder.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: Int8, forKey key: Key) throws {
+        encoder.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: Int16, forKey key: Key) throws {
+        encoder.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: Int32, forKey key: Key) throws {
+        encoder.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: Int64, forKey key: Key) throws {
+        encoder.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: UInt, forKey key: Key) throws {
+        encoder.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: UInt8, forKey key: Key) throws {
+        encoder.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: UInt16, forKey key: Key) throws {
+        encoder.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: UInt32, forKey key: Key) throws {
+        encoder.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: UInt64, forKey key: Key) throws {
+        encoder.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: Float, forKey key: Key) throws {
+        encoder.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: Double, forKey key: Key) throws {
+        encoder.dict[key.stringValue] = value
+    }
+    
+    mutating func encode(_ value: String, forKey key: Key) throws {
+        encoder.dict[key.stringValue] = value
+    }
+    
+    mutating func encode<T>(_ value: T, forKey key: Key) throws where T : Encodable {
+        if value is Date {
+            encoder.dict[key.stringValue] = value as! Date
+        } else if value is Data {
+            encoder.dict[key.stringValue] = value as! Data
+        } else {
+            let singleValueEncoder = QueryParameterEncoder()
+            try value.encode(to: singleValueEncoder)
+            if let param = value as? QueryParameter {
+                if !param.omitOnQueryParameter {
+                    encoder.dict[key.stringValue] = singleValueEncoder.singleValue
+                }
+            } else {
+                encoder.dict[key.stringValue] = singleValueEncoder.singleValue
+            }
+        }
+        
+        //fatalError("not supported type \(T.self)")
+    }
+    
+    mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
+        fatalError("nestedContainer in query parameter is not supported.")
+    }
+    
+    mutating func nestedUnkeyedContainer(forKey key: Key) -> UnkeyedEncodingContainer {
+        fatalError("nestedUnkeyedContainer in query parameter is not supported.")
+    }
+    
+    mutating func superEncoder() -> Encoder {
+        fatalError("superEncoder in query parameter is not supported.")
+    }
+    
+    mutating func superEncoder(forKey key: Key) -> Encoder {
+        fatalError("superEncoder(forKey:) in query parameter is not supported.")
+    }
+    
+    
+}
+
+extension Encodable where Self: QueryParameter {
+    public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
+        let encoder = QueryParameterEncoder()
+        try self.encode(to: encoder)
+        switch encoder.storageType {
+        case .dictionary:
+            return try QueryDictionary(encoder.dict).queryParameter(option: option)
+        case .single:
+            return try QueryParameterOptional(encoder.singleValue).queryParameter(option: option)
+        }
+    }
+}

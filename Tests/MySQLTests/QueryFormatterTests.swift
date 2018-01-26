@@ -21,7 +21,7 @@ extension QueryFormatterTests {
 }
 
 
-class QueryFormatterTests: XCTestCase {
+final class QueryFormatterTests: XCTestCase {
     
     func testBasicFormatting() throws {
         

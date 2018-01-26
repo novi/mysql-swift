@@ -24,14 +24,11 @@ extension EscapeTests {
     }
 }
 
-class EscapeTests: XCTestCase {
+final class EscapeTests: XCTestCase {
 
     // https://github.com/felixge/node-mysql/blob/master/test/unit/protocol/test-SqlString.js
     func testStringEscape() {
         XCTAssertEqual(SQLString.escape(string: "Sup'er"), "'Sup\\'er'")
-        
-        
-        // TODO
         
         XCTAssertEqual(SQLString.escape(string: "\u{00A5}"), "'¥'")
         XCTAssertEqual(SQLString.escape(string: "\\"), "'\\\\'")
@@ -47,9 +44,9 @@ class EscapeTests: XCTestCase {
         let strValOptionalNone: String? = nil
         
         
-        XCTAssertEqual(try QueryOptional(strVal).queryParameter(option: queryOption).escaped(), "'Sup\\'er'")
-        XCTAssertEqual(try QueryOptional(strValOptional).queryParameter(option: queryOption).escaped(), "'Sup\\'er Super'")
-        XCTAssertEqual(try QueryOptional(strValOptionalNone).queryParameter(option: queryOption).escaped(), "NULL")
+        XCTAssertEqual(try QueryParameterOptional(strVal).queryParameter(option: queryOption).escaped(), "'Sup\\'er'")
+        XCTAssertEqual(try QueryParameterOptional(strValOptional).queryParameter(option: queryOption).escaped(), "'Sup\\'er Super'")
+        XCTAssertEqual(try QueryParameterOptional(strValOptionalNone).queryParameter(option: queryOption).escaped(), "NULL")
     }
     
     func testArrayType() throws {
@@ -130,9 +127,10 @@ class EscapeTests: XCTestCase {
             "stringNone" : strValOptionalNone
             ])
         
-        // TODO:
-        // "`string` = 'Sup\\'er', `stringOptional` = 'Sup\\'er Super', `stringNone` = NULL"
-        // XCTAssertEqual(try! dict.escapedValue(), )
+        let expectedResult = Set(arrayLiteral: "`string` = 'Sup\\'er'", "`stringOptional` = 'Sup\\'er Super'", "`stringNone` = NULL")
+        let escaped = try! dict.queryParameter(option: queryOption).escaped()
+        XCTAssertEqual(Set(escaped.split(separator: ",").map(String.init).map({ $0.trimmingCharacters(in: .whitespaces) })), expectedResult)
+        
     }
     
 }
