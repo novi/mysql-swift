@@ -8,41 +8,11 @@
 
 import Foundation
 
-precedencegroup DecodingPrecedence {
-    associativity: left
-    higherThan: AssignmentPrecedence
-}
-
-infix operator <| : DecodingPrecedence
-infix operator <|? : DecodingPrecedence
-
-
-@available(*, deprecated)
-public protocol QueryRowResultType {
-    static func decodeRow(r: QueryRowResult) throws -> Self
-}
-
-public func <| <T: SQLStringDecodable>(r: QueryRowResult, field: String) throws -> T {
-    return try r.getValue(forField: field)
-}
-
-public func <| <T: SQLStringDecodable>(r: QueryRowResult, index: Int) throws -> T {
-    return try r.getValue(at: index)
-}
-
-public func <|? <T: SQLStringDecodable>(r: QueryRowResult, field: String) throws -> T? {
-    return try r.getValueNullable(forField: field)
-}
-
-public func <|? <T: SQLStringDecodable>(r: QueryRowResult, index: Int) throws -> T? {
-    return try r.getValueNullable(at: index)
-}
-
 public protocol SQLStringDecodable {
     static func fromSQL(string: String) throws -> Self
 }
 
-public struct QueryRowResult {
+struct QueryRowResult {
     
     let fields: [Connection.Field]
     let cols: [Connection.FieldValue]

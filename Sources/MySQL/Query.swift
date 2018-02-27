@@ -44,7 +44,7 @@ extension Connection {
         static let null = NullValue()
     }
     
-    internal struct EmptyRowResult: QueryRowResultType {
+    internal struct EmptyRowResult: Decodable {
         static func decodeRow(r: QueryRowResult) throws -> EmptyRowResult {
             return EmptyRowResult()
         }
@@ -95,12 +95,6 @@ extension Connection {
                 return string
             }
         }
-    }
-    
-    fileprivate func query<T: QueryRowResultType>(query formattedQuery: String) throws -> ([T], QueryStatus) {
-        let (rows, status) = try self.query(query: formattedQuery)
-        
-        return try (rows.map({ try T.decodeRow(r: $0) }), status)
     }
     
     fileprivate func query<T: Decodable>(query formattedQuery: String) throws -> ([T], QueryStatus) {
@@ -206,19 +200,6 @@ extension Connection {
             }
             return try arg.queryParameter(option: option)
         }
-    }
-    
-    public func query<T: QueryRowResultType>(_ query: String, _ args: [QueryParameter] = []) throws -> ([T], QueryStatus) {
-        let option = QueryParameterOption(
-            timeZone: options.timeZone
-        )
-        let queryString = try QueryFormatter.format(query: query, args: type(of: self).buildArgs(args, option: option))
-        return try self.query(query: queryString)
-    }
-    
-    public func query<T: QueryRowResultType>(_ query: String, _ args: [QueryParameter] = []) throws -> [T] {
-        let (rows, _) = try self.query(query, args) as ([T], QueryStatus)
-        return rows
     }
     
     public func query<T: Decodable>(_ query: String, _ args: [QueryParameter] = []) throws -> ([T], QueryStatus) {
