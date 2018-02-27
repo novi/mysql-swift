@@ -9,7 +9,7 @@
 import Foundation
 
 @available(*, renamed: "SQLStringDecodable")
-public protocol SQLRawStringDecodable {
+internal protocol SQLRawStringDecodable {
     static func fromSQLValue(string: String) throws -> Self
 }
 
@@ -45,7 +45,7 @@ internal struct QueryRowResult {
         do {
             return try T.fromSQLValue(string: obj)
         } catch {
-            throw QueryError.SQLStringDecodeError(error: error, actualValue: obj, expectedType: "\(T.self)", forField: field)
+            throw QueryError.SQLRawStringDecodeError(error: error, actualValue: obj, expectedType: "\(T.self)", forField: field)
         }
     }
     
@@ -69,7 +69,7 @@ internal struct QueryRowResult {
     
     func getValue<T: SQLRawStringDecodable>(forField field: String) throws -> T {
         guard let val = columnMap[field] else {
-            throw QueryError.missingField(field: field)
+            throw QueryError.missingField(field)
         }
         return try getValue(val: val, field: field)
     }    
@@ -85,11 +85,11 @@ internal struct QueryRowResultDecoder : Decoder {
     }
     
     public func unkeyedContainer() throws -> UnkeyedDecodingContainer {
-        throw QueryError.initializationErrorMessage(message: "Decoder unkeyedContainer not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "Decoder unkeyedContainer not implemented")
     }
     
     public func singleValueContainer() throws -> SingleValueDecodingContainer {
-        throw QueryError.initializationErrorMessage(message: "Decoder singleValueContainer not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "Decoder singleValueContainer not implemented")
     }
 }
 
@@ -168,11 +168,11 @@ fileprivate struct SQLStringDecoder: Decoder {
     }
 
     func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
-        throw QueryError.initializationErrorMessage(message: "RawTypeDecoder container(keyedBy:) not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "RawTypeDecoder container(keyedBy:) not implemented")
     }
     
     func unkeyedContainer() throws -> UnkeyedDecodingContainer {
-        throw QueryError.initializationErrorMessage(message: "RawTypeDecoder unkeyedContainer not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "RawTypeDecoder unkeyedContainer not implemented")
     }
     
     func singleValueContainer() throws -> SingleValueDecodingContainer {
@@ -269,18 +269,18 @@ fileprivate struct RowKeyedDecodingContainer<K : CodingKey> : KeyedDecodingConta
     }
     
     func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: K) throws -> KeyedDecodingContainer<NestedKey> {
-        throw QueryError.initializationErrorMessage(message: "KeyedDecodingContainer nestedContainer not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "KeyedDecodingContainer nestedContainer not implemented")
     }
     
     func nestedUnkeyedContainer(forKey key: K) throws -> UnkeyedDecodingContainer {
-        throw QueryError.initializationErrorMessage(message: "KeyedDecodingContainer nestedContainer not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "KeyedDecodingContainer nestedContainer not implemented")
     }
     
     func superDecoder() throws -> Decoder {
-        throw QueryError.initializationErrorMessage(message: "KeyedDecodingContainer superDecoder not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "KeyedDecodingContainer superDecoder not implemented")
     }
     
     func superDecoder(forKey key: K) throws -> Decoder {
-        throw QueryError.initializationErrorMessage(message: "KeyedDecodingContainer superDecoder(forKey) not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "KeyedDecodingContainer superDecoder(forKey) not implemented")
     }
 }

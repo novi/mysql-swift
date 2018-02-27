@@ -44,8 +44,8 @@ final class SQLTypeTests: XCTestCase {
         let someID: QueryParameter = SomeID(1234)
         XCTAssertEqual(try someID.queryParameter(option: queryOption).escaped(), "1234")
         
-        let id: SomeID = try SomeID.fromSQLValue(string: "5678")
-        XCTAssertEqual(id.id, 5678)
+        //let id: SomeID = try SomeID.fromSQLValue(string: "5678")
+        //XCTAssertEqual(id.id, 5678)
         
     }
     

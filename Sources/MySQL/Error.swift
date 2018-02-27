@@ -18,11 +18,11 @@ public enum QueryError: Error {
     case resultParseError(message: String, result: String)
     
     case resultCastError(actualValue: String, expectedType: String, forField: String)
-    case initializationError(rawSQLValue: String, forType: Any)
-    case initializationErrorMessage(message: String)
+    case resultDecodeError(rawSQLValue: String, forType: Any)
+    case resultDecodeErrorMessage(message: String)
+    case SQLDateStringError(String)
+    case SQLRawStringDecodeError(error: Error, actualValue: String, expectedType: String, forField: String)
     
-    case SQLStringDecodeError(error: Error, actualValue: String, expectedType: String, forField: String)
-    case missingField(field: String)
+    case missingField(String)
     
-    case invalidSQLDate(String)
 }

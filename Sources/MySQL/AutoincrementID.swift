@@ -45,13 +45,15 @@ extension AutoincrementID: CustomStringConvertible {
     }
 }
 
-
-extension AutoincrementID: SQLRawStringDecodable {
-    public static func fromSQLValue(string: String) throws -> AutoincrementID<I> {
-        return AutoincrementID(try I.fromSQLValue(string: string))
-    }
+extension AutoincrementID {
     public init(_ id: I) {
         self = .ID(id)
+    }
+}
+
+extension AutoincrementID where I: SQLRawStringDecodable {
+    static func fromSQLValue(string: String) throws -> AutoincrementID<I> {
+        return AutoincrementID(try I.fromSQLValue(string: string))
     }
 }
 

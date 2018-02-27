@@ -81,7 +81,7 @@ extension Date {
         default: break
         }
         
-        throw QueryError.invalidSQLDate(sqlDate)
+        throw QueryError.SQLDateStringError(sqlDate)
     }
     
     fileprivate func pad(num: Int32, digits: Int = 2) -> String {
