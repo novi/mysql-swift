@@ -21,7 +21,7 @@ public extension QueryParameter {
 }
 
 public protocol QueryParameterDictionaryType: QueryParameter {
-    func queryParameter() throws -> QueryDictionary
+    func queryParameter() throws -> QueryParameterDictionary
 }
 
 public extension QueryParameterDictionaryType {
@@ -47,9 +47,9 @@ public struct QueryParameterNull: QueryParameter, ExpressibleByNilLiteral {
     }
 }
 
-// TODO: rename to QueryParameterDictionary
-public struct QueryDictionary: QueryParameter {
-    let dict: [String: QueryParameter?]
+@available(*, renamed: "QueryDictionary")
+public struct QueryParameterDictionary: QueryParameter {
+    private let dict: [String: QueryParameter?]
     public init(_ dict: [String: QueryParameter?]) {
         self.dict = dict
     }
@@ -69,12 +69,13 @@ public struct QueryDictionary: QueryParameter {
 // extension Array:QueryParameter where Element: QueryParameter { }
 
 
-protocol QueryArrayType: QueryParameter {
+protocol QueryParameterArrayType: QueryParameter {
     
 }
 
-public struct QueryArray: QueryParameter, QueryArrayType {
-    let arr: [QueryParameter?]
+@available(*, renamed: "QueryArray")
+public struct QueryParameterArray: QueryParameter, QueryParameterArrayType {
+    private let arr: [QueryParameter?]
     public init(_ arr: [QueryParameter?]) {
         self.arr = arr
     }
@@ -88,7 +89,7 @@ public struct QueryArray: QueryParameter, QueryArrayType {
             }
             return true
         }).map({
-            if let val = $0 as? QueryArrayType {
+            if let val = $0 as? QueryParameterArrayType {
                 return "(" + (try val.queryParameter(option: option).escaped()) + ")"
             }
             return try QueryParameterOptional($0).queryParameter(option: option).escaped()
@@ -122,7 +123,7 @@ extension Optional: QueryParameter {
 
 
 struct QueryParameterOptional: QueryParameter {
-    let val: QueryParameter?
+    private let val: QueryParameter?
     init(_ val: QueryParameter?) {
         self.val = val
     }
@@ -355,9 +356,9 @@ fileprivate struct QueryParameterSingleValueEncodingContainer: SingleValueEncodi
 }
 
 fileprivate struct QueryParameterKeyedEncodingContainer<Key : CodingKey> : KeyedEncodingContainerProtocol {
-    let codingPath = [CodingKey]()
+    fileprivate let codingPath = [CodingKey]()
     
-    let encoder: QueryParameterEncoder
+    fileprivate let encoder: QueryParameterEncoder
     
     mutating func encodeNil(forKey key: Key) throws {
         encoder.dict[key.stringValue] = nil
@@ -464,7 +465,7 @@ extension Encodable where Self: QueryParameter {
         try self.encode(to: encoder)
         switch encoder.storageType {
         case .dictionary:
-            return try QueryDictionary(encoder.dict).queryParameter(option: option)
+            return try QueryParameterDictionary(encoder.dict).queryParameter(option: option)
         case .single:
             return try QueryParameterOptional(encoder.singleValue).queryParameter(option: option)
         }

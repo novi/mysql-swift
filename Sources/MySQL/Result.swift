@@ -15,10 +15,9 @@ public protocol SQLRawStringDecodable {
 
 internal struct QueryRowResult {
     
-    let fields: [Connection.Field]
-    let cols: [Connection.FieldValue]
-    let columnMap: [String: Connection.FieldValue] // the key is field name
-    
+    private let fields: [Connection.Field]
+    private let cols: [Connection.FieldValue]
+    internal let columnMap: [String: Connection.FieldValue] // the key is field name
     init(fields: [Connection.Field], cols: [Connection.FieldValue]) {
         self.fields = fields
         self.cols = cols
@@ -41,7 +40,7 @@ internal struct QueryRowResult {
         }
     }
     
-    func castOrFail<T: SQLRawStringDecodable>(_ obj: String, field: String) throws -> T {
+    private func castOrFail<T: SQLRawStringDecodable>(_ obj: String, field: String) throws -> T {
         //print("casting val \(obj) to \(T.self)")
         do {
             return try T.fromSQLValue(string: obj)
@@ -50,14 +49,7 @@ internal struct QueryRowResult {
         }
     }
     
-    func getValueNullable<T: SQLRawStringDecodable>(forField field: String) throws -> T? {
-        if isNull(forField: field) {
-            return nil
-        }
-        return try self.getValue(forField: field) as T
-    }
-    
-    func getValue<T: SQLRawStringDecodable>(val: Connection.FieldValue, field: String) throws -> T {
+    private func getValue<T: SQLRawStringDecodable>(val: Connection.FieldValue, field: String) throws -> T {
         switch val {
         case .null:
             throw QueryError.resultCastError(actualValue: "NULL", expectedType: "\(T.self)", forField: field)
@@ -83,7 +75,6 @@ internal struct QueryRowResult {
     }    
 }
 
-// For Decodable pattern
 internal struct QueryRowResultDecoder : Decoder {
     let codingPath = [CodingKey]()
     let userInfo = [CodingUserInfoKey : Any]()

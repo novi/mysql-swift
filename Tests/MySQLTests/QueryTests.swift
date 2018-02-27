@@ -192,12 +192,12 @@ final class QueryTests: XCTestCase, QueryTestType {
             Row.SimpleUser(id: UInt(10+row), name: "name\(row)", age: row)
         })
     
-        let usersParam: [QueryArray] = users.map { user in
-            QueryArray([user.id, user.name, user.age])
+        let usersParam: [QueryParameterArray] = users.map { user in
+            QueryParameterArray([user.id, user.name, user.age])
         }
         
         _ = try pool.execute { conn in
-            try conn.query("INSERT INTO ??(id,name,age) VALUES ? ", [constants.tableName, QueryArray(usersParam)])
+            try conn.query("INSERT INTO ??(id,name,age) VALUES ? ", [constants.tableName, QueryParameterArray(usersParam)])
         }
         
         let selectedUsersCodeable: [Row.SimpleUser] = try pool.execute { conn in
