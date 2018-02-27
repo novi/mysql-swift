@@ -17,6 +17,7 @@ infix operator <| : DecodingPrecedence
 infix operator <|? : DecodingPrecedence
 
 
+@available(*, deprecated)
 public protocol QueryRowResultType {
     static func decodeRow(r: QueryRowResult) throws -> Self
 }
