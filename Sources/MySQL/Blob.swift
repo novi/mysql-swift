@@ -11,7 +11,7 @@ import SQLFormatter
 
 extension Data: SQLRawStringDecodable {
     public static func fromSQLValue(string: String) throws -> Data {
-        fatalError("construct via init(:)")
+        fatalError("logic error, construct via init(:)")
     }
 }
 
