@@ -142,7 +142,7 @@ public final class Connection {
         return mysql_
     }
     
-    internal var ping: Bool {
+    internal func ping() -> Bool {
         _ = try? connectIfNeeded()
         guard let mysql = mysql else {
             return false

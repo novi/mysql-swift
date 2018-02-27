@@ -22,9 +22,19 @@ extension SQLEnumType where RawValue == String {
     }
 }
 
+
 extension SQLEnumType where RawValue == String {
     public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
         return rawValue.queryParameter(option: option)
     }
 }
 
+public protocol QueryEnumParameter: RawRepresentable, QueryParameter {
+    
+}
+
+extension QueryEnumParameter where Self.RawValue: QueryParameter {
+    public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
+        return try rawValue.queryParameter(option: option)
+    }
+}

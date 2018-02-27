@@ -23,10 +23,15 @@ extension QueryFormatterTests {
 
 final class QueryFormatterTests: XCTestCase {
     
+    fileprivate enum TableName: String, QueryEnumParameter {
+        case user = "user"
+    }
+    
     func testBasicFormatting() throws {
         
-        let params: (String, String, Int, String, Int?) = (
+        let params: (String, TableName, String, Int, String, Int?) = (
             "i.d",
+            TableName.user,
             "id",
             1,
             "user's",
@@ -34,8 +39,8 @@ final class QueryFormatterTests: XCTestCase {
         )
         let args = build(params)
         
-        let formatted = try QueryFormatter.format(query: "SELECT name,??,id FROM users WHERE ?? = ? OR name = ? OR age is ?;", args: Connection.buildArgs(args, option: queryOption) )
-        XCTAssertEqual(formatted, "SELECT name,`i`.`d`,id FROM users WHERE `id` = 1 OR name = 'user\\'s' OR age is NULL;")
+        let formatted = try QueryFormatter.format(query: "SELECT name,??,id FROM ?? WHERE ?? = ? OR name = ? OR age is ?;", args: Connection.buildArgs(args, option: queryOption) )
+        XCTAssertEqual(formatted, "SELECT name,`i`.`d`,id FROM `user` WHERE `id` = 1 OR name = 'user\\'s' OR age is NULL;")
     }
     
     func testPlaceholder() throws {

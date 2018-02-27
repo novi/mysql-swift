@@ -32,13 +32,13 @@ final class ConnectionTests: XCTestCase, MySQLTestType {
     
     func testConnect() throws {
         let conn = try pool.getConnection()
-        XCTAssertTrue(conn.ping)
+        XCTAssertTrue(conn.ping())
     }
     
     func testConnect2() throws {
         let conn = try pool.getConnection()
         _ = try conn.query("SELECT 1;" as String)
-        XCTAssertTrue(conn.ping)
+        XCTAssertTrue(conn.ping())
     }
     
     struct Option: ConnectionOption {

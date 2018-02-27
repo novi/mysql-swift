@@ -64,6 +64,9 @@ extension Data: QueryParameterType {
         buffer += "'"
         return buffer
     }
+    public func escapedForID() -> String? {
+        return nil
+    }
 }
 
 extension Data: QueryParameter {

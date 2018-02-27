@@ -10,11 +10,12 @@ import Foundation
 
 public protocol QueryParameterType {
     func escaped() -> String
+    func escapedForID() -> String? // returns nil, if not supported for query id parameter
 }
 
 public struct SQLString {
     
-    public static func escapeId(string str: String) -> String {
+    public static func escapeForID(string str: String) -> String {
         var step1 = ""
         for c in str {
             switch c {
@@ -96,10 +97,10 @@ public struct QueryFormatter {
                 if placeHolderCount >= args.count {
                     throw QueryFormatError.queryParameterCountMismatch(query: query)
                 }
-                guard let val = args[placeHolderCount] as? String else {
-                    throw QueryFormatError.queryParameterIdTypeError(query: query)
+                guard let escapedVal = args[placeHolderCount].escapedForID() else {
+                    throw QueryFormatError.queryParameterIDTypeError(given: "\(args[placeHolderCount])", query: query)
                 }
-                formatted.replaceSubrange(r, with: SQLString.escapeId(string: val))
+                formatted.replaceSubrange(r, with: escapedVal)
                 scanRange = r.upperBound..<formatted.endIndex
             case "?":
                 if placeHolderCount >= args.count {
