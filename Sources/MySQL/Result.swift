@@ -8,11 +8,12 @@
 
 import Foundation
 
-public protocol SQLStringDecodable {
-    static func fromSQL(string: String) throws -> Self
+@available(*, renamed: "SQLStringDecodable")
+public protocol SQLRawStringDecodable {
+    static func fromSQLValue(string: String) throws -> Self
 }
 
-struct QueryRowResult {
+internal struct QueryRowResult {
     
     let fields: [Connection.Field]
     let cols: [Connection.FieldValue]
@@ -40,55 +41,29 @@ struct QueryRowResult {
         }
     }
     
-    func isNull(at index: Int) throws -> Bool {
-        try checkFieldBounds(at: index)
-        
-        switch cols[index] {
-        case .null:
-            return true
-        case .binary, .date:
-            return false
-        }
-    }
-    
-    func checkFieldBounds(at index: Int) throws {
-        guard cols.count > index else {
-            throw QueryError.fieldIndexOutOfBounds(fieldCount: cols.count, attemped: index, fieldName: fields[index].name)
-        }
-    }
-    
-    func castOrFail<T: SQLStringDecodable>(_ obj: String, field: String) throws -> T {
+    func castOrFail<T: SQLRawStringDecodable>(_ obj: String, field: String) throws -> T {
         //print("casting val \(obj) to \(T.self)")
         do {
-            return try T.fromSQL(string: obj)
+            return try T.fromSQLValue(string: obj)
         } catch {
-            throw QueryError.SQLStringDecodeError(error: error, actualValue: obj, expectedType: "\(T.self)", field: field)
+            throw QueryError.SQLStringDecodeError(error: error, actualValue: obj, expectedType: "\(T.self)", forField: field)
         }
     }
     
-    public func getValueNullable<T: SQLStringDecodable>(at index: Int) throws -> T? {
-        try checkFieldBounds(at: index)
-        
-        if try isNull(at: index) {
-            return nil
-        }
-        return try self.getValue(at: index) as T
-    }
-    
-    public func getValueNullable<T: SQLStringDecodable>(forField field: String) throws -> T? {
+    func getValueNullable<T: SQLRawStringDecodable>(forField field: String) throws -> T? {
         if isNull(forField: field) {
             return nil
         }
         return try self.getValue(forField: field) as T
     }
     
-    func getValue<T: SQLStringDecodable>(val: Connection.FieldValue, field: String) throws -> T {
+    func getValue<T: SQLRawStringDecodable>(val: Connection.FieldValue, field: String) throws -> T {
         switch val {
         case .null:
-            throw QueryError.castError(actualValue: "NULL", expectedType: "\(T.self)", field: field)
+            throw QueryError.resultCastError(actualValue: "NULL", expectedType: "\(T.self)", forField: field)
         case .date(let date):
             guard let val = date as? T else {
-                throw QueryError.castError(actualValue: "\(date)", expectedType: "\(T.self)", field: field)
+                throw QueryError.resultCastError(actualValue: "\(date)", expectedType: "\(T.self)", forField: field)
             }
             return val
         case .binary(let data):
@@ -100,13 +75,7 @@ struct QueryRowResult {
         }
     }
     
-    public func getValue<T: SQLStringDecodable>(at index: Int) throws -> T {
-        try checkFieldBounds(at: index)
-        
-        return try getValue(val: cols[index], field: "\(index)")
-    }
-    
-    public func getValue<T: SQLStringDecodable>(forField field: String) throws -> T {
+    func getValue<T: SQLRawStringDecodable>(forField field: String) throws -> T {
         guard let val = columnMap[field] else {
             throw QueryError.missingField(field: field)
         }
@@ -115,7 +84,7 @@ struct QueryRowResult {
 }
 
 // For Decodable pattern
-struct QueryRowResultDecoder : Decoder {
+internal struct QueryRowResultDecoder : Decoder {
     let codingPath = [CodingKey]()
     let userInfo = [CodingUserInfoKey : Any]()
     let row: QueryRowResult
@@ -150,43 +119,43 @@ fileprivate struct SQLStringDecoder: Decoder {
         }
         
         func decode(_ type: Int.Type) throws -> Int {
-            return try Int.fromSQL(string: sqlString)
+            return try Int.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: Int8.Type) throws -> Int8 {
-            return try Int8.fromSQL(string: sqlString)
+            return try Int8.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: Int16.Type) throws -> Int16 {
-            return try Int16.fromSQL(string: sqlString)
+            return try Int16.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: Int32.Type) throws -> Int32 {
-            return try Int32.fromSQL(string: sqlString)
+            return try Int32.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: Int64.Type) throws -> Int64 {
-            return try Int64.fromSQL(string: sqlString)
+            return try Int64.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: UInt.Type) throws -> UInt {
-            return try UInt.fromSQL(string: sqlString)
+            return try UInt.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: UInt8.Type) throws -> UInt8 {
-            return try UInt8.fromSQL(string: sqlString)
+            return try UInt8.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: UInt16.Type) throws -> UInt16 {
-            return try UInt16.fromSQL(string: sqlString)
+            return try UInt16.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: UInt32.Type) throws -> UInt32 {
-            return try UInt32.fromSQL(string: sqlString)
+            return try UInt32.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: UInt64.Type) throws -> UInt64 {
-            return try UInt64.fromSQL(string: sqlString)
+            return try UInt64.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: Float.Type) throws -> Float {

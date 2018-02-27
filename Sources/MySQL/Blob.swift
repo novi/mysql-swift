@@ -9,8 +9,8 @@
 import Foundation
 import SQLFormatter
 
-extension Data: SQLStringDecodable {
-    public static func fromSQL(string: String) throws -> Data {
+extension Data: SQLRawStringDecodable {
+    public static func fromSQLValue(string: String) throws -> Data {
         fatalError("construct via init(:)")
     }
 }

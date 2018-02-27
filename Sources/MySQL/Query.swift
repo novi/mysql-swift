@@ -132,7 +132,7 @@ extension Connection {
         
         let fieldCount = Int(mysql_num_fields(res))
         guard fieldCount > 0 else {
-            throw QueryError.resultNoField(query: queryPrefix())
+            throw QueryError.resultNoFieldError(query: queryPrefix())
         }
         
         // fetch field info

@@ -105,7 +105,7 @@ extension Optional: QueryParameter {
             return QueryParameterNull().queryParameter(option: option)
         }
         guard let val = value as? QueryParameter else {
-            throw QueryFormatError.castError(actual: "\(value.self)", expected: "QueryParameter", key: "")
+            throw QueryError.parameterCastError(actualValue: "\(value.self)", expectedType: QueryParameter.self, forKey: "", query: "")
         }
         return try val.queryParameter(option: option)
     }

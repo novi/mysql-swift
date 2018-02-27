@@ -8,15 +8,16 @@
 
 import SQLFormatter
 
-public protocol IDType: SQLStringDecodable, QueryParameter, Hashable, Codable {
-    associatedtype T: SQLStringDecodable, QueryParameter, Hashable, Codable
+public protocol IDType: SQLRawStringDecodable, QueryParameter, Hashable, Codable {
+    associatedtype T: SQLRawStringDecodable, QueryParameter, Hashable, Codable
     var id: T { get }
     init(_ id: T)
 }
 
 public extension IDType {
-    static func fromSQL(string: String) throws -> Self {
-        return Self(try T.fromSQL(string: string))
+    
+    static func fromSQLValue(string: String) throws -> Self {
+        return Self(try T.fromSQLValue(string: string))
     }
     
     func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
