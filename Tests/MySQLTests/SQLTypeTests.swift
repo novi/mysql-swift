@@ -29,11 +29,6 @@ final class SQLTypeTests: XCTestCase {
         }
     }
     
-    enum SomeEnum: String, SQLEnumType {
-        case first = "first 1"
-        case second = "second' 2"
-    }
-    
     enum SomeEnumParameter: String, QueryEnumParameter {
         case first = "first 1"
         case second = "second' 2"
@@ -57,17 +52,10 @@ final class SQLTypeTests: XCTestCase {
     func testEnumType() throws {
         
         do {
-            let someVal: QueryParameter = SomeEnum.second
+            let someVal: QueryParameter = SomeEnumParameter.second
             let escaped = "second' 2".escaped()
             XCTAssertEqual(try someVal.queryParameter(option: queryOption).escaped() , escaped)
-            
-            let validVal: SomeEnum = try SomeEnum.fromSQL(string: "first 1")
-            
-            XCTAssertEqual(validVal, SomeEnum.first)
-            
-            XCTAssertThrowsError(try SomeEnum.fromSQL(string: "other foo"))
         }
-        
         
         do {
             let someVal: QueryParameter = SomeEnumCodable.second

@@ -79,11 +79,6 @@ struct RowCodeable {
 
 struct Row {
     
-    enum UserType: String, SQLEnumType {
-        case user = "user"
-        case admin = "admin"
-    }
-    
     struct SimpleUser: QueryRowResultType, QueryParameterDictionaryType {
         let id: UInt
         let name: String
@@ -120,7 +115,7 @@ struct Row {
         let done: Bool
         let doneOptional: Bool?
         
-        let userType: UserType // enum type
+        let userType: String
         
         
         static func decodeRow(r: QueryRowResult) throws -> UserDecodeWithIndex {
@@ -175,7 +170,7 @@ struct Row {
         let done: Bool
         let doneOptional: Bool?
         
-        let userType: UserType // enum type
+        let userType: String
         
         static func decodeRow(r: QueryRowResult) throws -> UserDecodeWithKey {
             return try UserDecodeWithKey(

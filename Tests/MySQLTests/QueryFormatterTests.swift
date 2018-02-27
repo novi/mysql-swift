@@ -37,7 +37,14 @@ final class QueryFormatterTests: XCTestCase {
             "user's",
             nil
         )
-        let args = build(params)
+        let args: [QueryParameter] = [
+            params.0,
+            params.1,
+            params.2,
+            params.3,
+            params.4,
+            params.5,
+        ]
         
         let formatted = try QueryFormatter.format(query: "SELECT name,??,id FROM ?? WHERE ?? = ? OR name = ? OR age is ?;", args: Connection.buildArgs(args, option: queryOption) )
         XCTAssertEqual(formatted, "SELECT name,`i`.`d`,id FROM `user` WHERE `id` = 1 OR name = 'user\\'s' OR age is NULL;")

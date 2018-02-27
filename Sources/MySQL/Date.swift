@@ -114,18 +114,3 @@ extension Date: QueryParameter {
         return EscapedQueryParameter( "'\(pad(num: comp.year ?? 0, digits: 4))-\(pad(num: comp.month ?? 0))-\(pad(num: comp.day ?? 0)) \(pad(num: comp.hour ?? 0)):\(pad(num: comp.minute ?? 0)):\(pad(num: comp.second ?? 0))'" )
     }
 }
-
-@available(*, deprecated)
-public struct SQLDate {
-    
-    fileprivate let nsDate: Date
-    
-    public init(_ date: Date) {
-        self.nsDate = date
-    }
-    
-    public init(_ timeIntervalSince1970: TimeInterval) {
-        self.nsDate = Date(timeIntervalSince1970: timeIntervalSince1970)
-    }
-}
-

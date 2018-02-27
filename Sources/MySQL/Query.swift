@@ -12,13 +12,7 @@ import Foundation
 
 public struct QueryStatus: CustomStringConvertible {
     public let affectedRows: UInt64
-    
     public let insertedID: UInt64
-    
-    @available(*, deprecated)
-    public var insertedId: Int {
-        return Int(insertedID)
-    }
     
     init(mysql: UnsafeMutablePointer<MYSQL>) {
         self.insertedID = mysql_insert_id(mysql)
