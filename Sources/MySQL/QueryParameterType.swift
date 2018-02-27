@@ -43,7 +43,7 @@ public struct QueryParameterNull: QueryParameter, ExpressibleByNilLiteral {
         
     }
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return QueryParameterWrap( "NULL" )
+        return EscapedQueryParameter( "NULL" )
     }
 }
 
@@ -57,10 +57,10 @@ public struct QueryDictionary: QueryParameter {
         var keyVals: [String] = []
         for (k, v) in dict {
             if v == nil || v?.omitOnQueryParameter == false {
-                keyVals.append("\(SQLString.escapeId(string: k)) = \(try QueryParameterOptional(v).queryParameter(option: option).escaped())")
+                keyVals.append("\(SQLString.escapeForID(string: k)) = \(try QueryParameterOptional(v).queryParameter(option: option).escaped())")
             }
         }
-        return QueryParameterWrap( keyVals.joined(separator:  ", ") )
+        return EscapedQueryParameter( keyVals.joined(separator:  ", ") )
     }
 }
 
@@ -82,7 +82,7 @@ public struct QueryArray: QueryParameter, QueryArrayType {
         self.arr = arr.map { Optional($0) }
     }
     public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
-        return QueryParameterWrap( try arr.filter({ val in
+        return EscapedQueryParameter( try arr.filter({ val in
             if let valid = val {
                 return valid.omitOnQueryParameter == false
             }
@@ -137,13 +137,18 @@ struct QueryParameterOptional: QueryParameter {
     }
 }
 
-struct QueryParameterWrap: QueryParameterType {
-    let val: String
-    init(_ val: String) {
-        self.val = val
+struct EscapedQueryParameter: QueryParameterType {
+    private let value: String
+    private let idParameter: String?
+    init(_ val: String, idParameter: String? = nil) {
+        self.value = val
+        self.idParameter = idParameter
     }
     func escaped() -> String {
-        return val
+        return value
+    }
+    func escapedForID() -> String? {
+        return idParameter
     }
 }
 
@@ -151,95 +156,98 @@ extension String: QueryParameterType {
     public func escaped() -> String {
         return SQLString.escape(string: self)
     }
+    public func escapedForID() -> String? {
+        return SQLString.escapeForID(string: self)
+    }
 }
 
 extension String: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return QueryParameterWrap( SQLString.escape(string: self) )
+        return self
     }
 }
 
 extension Int: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return QueryParameterWrap( String(self) )
+        return EscapedQueryParameter( String(self) )
     }
 }
 
 extension UInt: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return QueryParameterWrap( String(self) )
+        return EscapedQueryParameter( String(self) )
     }
 }
 
 extension Int64: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return QueryParameterWrap( String(self) )
+        return EscapedQueryParameter( String(self) )
     }
 }
 
 extension Int32: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return QueryParameterWrap( String(self) )
+        return EscapedQueryParameter( String(self) )
     }
 }
 
 extension Int16: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return QueryParameterWrap( String(self) )
+        return EscapedQueryParameter( String(self) )
     }
 }
 
 extension Int8: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return QueryParameterWrap( String(self) )
+        return EscapedQueryParameter( String(self) )
     }
 }
 
 extension UInt64: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return QueryParameterWrap( String(self) )
+        return EscapedQueryParameter( String(self) )
     }
 }
 
 extension UInt32: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return QueryParameterWrap( String(self) )
+        return EscapedQueryParameter( String(self) )
     }
 }
 
 extension UInt16: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return QueryParameterWrap( String(self) )
+        return EscapedQueryParameter( String(self) )
     }
 }
 
 extension UInt8: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return QueryParameterWrap( String(self) )
+        return EscapedQueryParameter( String(self) )
     }
 }
 
 extension Double: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return QueryParameterWrap( String(self) )
+        return EscapedQueryParameter( String(self) )
     }
 }
 
 extension Float: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return QueryParameterWrap( String(self) )
+        return EscapedQueryParameter( String(self) )
     }
 }
 
 extension Bool: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return QueryParameterWrap( self ? "true" : "false" )
+        return EscapedQueryParameter( self ? "true" : "false" )
     }
 }
 
 extension Decimal: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        return QueryParameterWrap( String(describing: self) )
+        return EscapedQueryParameter( String(describing: self) )
     }
 }
 

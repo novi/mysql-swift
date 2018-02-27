@@ -34,6 +34,11 @@ final class SQLTypeTests: XCTestCase {
         case second = "second' 2"
     }
     
+    enum SomeEnumParameter: String, QueryEnumParameter {
+        case first = "first 1"
+        case second = "second' 2"
+    }
+    
     enum SomeEnumCodable: String, Codable, QueryParameter {
         case first = "first 1"
         case second = "second' 2"

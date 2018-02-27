@@ -57,7 +57,7 @@ final public class ConnectionPool: CustomStringConvertible {
     
     private func getUsableConnection() -> Connection? {
         for c in pool {
-            if c.isInUse == false && c.ping {
+            if c.isInUse == false && c.ping() {
                 c.isInUse = true
                 return c
             }
