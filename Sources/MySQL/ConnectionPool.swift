@@ -7,11 +7,9 @@
 //
 
 import Dispatch
-
 #if os(Linux)
     import Glibc
 #endif
-
 import CMySQL
 
 final public class ConnectionPool: CustomStringConvertible {
@@ -24,9 +22,10 @@ final public class ConnectionPool: CustomStringConvertible {
             }
         }
     }
+    
     public var maxConnections: Int = 10
     
-    internal var pool: [Connection] = []
+    internal private(set) var pool: [Connection] = []
     private var mutex = Mutex()
     
     private static var libraryInitialized: Bool = false
@@ -124,7 +123,7 @@ final public class ConnectionPool: CustomStringConvertible {
     }
     
     public var description: String {
-        return "initial: \(initialConnections), max: \(maxConnections), in use: \(inUseConnections)"
+        return "initial connection: \(initialConnections), max: \(maxConnections), in use: \(inUseConnections)"
     }
 }
 

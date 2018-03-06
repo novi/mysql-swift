@@ -9,45 +9,9 @@
 import Foundation
 import SQLFormatter
 
-@available(*, deprecated)
-public struct SQLBinary {
-    let buffer: [Int8]
-    let length: Int
-    public var data: [Int8] {
-        if buffer.count == length {
-            return buffer
-        }
-        return Array(buffer[0..<length])
-    }
-    public init(_ data: [Int8] = []) {
-        self.buffer = data
-        self.length = data.count
-    }
-    public init(_ data: [UInt8]) {
-        self.buffer = unsafeBitCast(data, to: [Int8].self)
-        self.length = data.count
-    }
-    
-    init(buffer: [Int8], length: Int) {
-        self.buffer = buffer
-        self.length = length
-    }
-    
-    init(_ data: Data) {
-        self.init(Array(data))
-    }
-    
-    fileprivate var nsData: Data {
-        return Data(bytes: unsafeBitCast(buffer, to: [UInt8].self))
-    }
-}
-
-// for (NS)Data
-
-
-extension Data: SQLStringDecodable {
-    public static func fromSQL(string: String) throws -> Data {
-        fatalError("construct via init(:)")
+extension Data: SQLRawStringDecodable {
+    public static func fromSQLValue(string: String) throws -> Data {
+        fatalError("logic error, construct via init(:)")
     }
 }
 

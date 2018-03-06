@@ -8,46 +8,16 @@
 
 import Foundation
 
-precedencegroup DecodingPrecedence {
-    associativity: left
-    higherThan: AssignmentPrecedence
+@available(*, renamed: "SQLStringDecodable")
+internal protocol SQLRawStringDecodable {
+    static func fromSQLValue(string: String) throws -> Self
 }
 
-infix operator <| : DecodingPrecedence
-infix operator <|? : DecodingPrecedence
-
-
-@available(*, deprecated)
-public protocol QueryRowResultType {
-    static func decodeRow(r: QueryRowResult) throws -> Self
-}
-
-public func <| <T: SQLStringDecodable>(r: QueryRowResult, field: String) throws -> T {
-    return try r.getValue(forField: field)
-}
-
-public func <| <T: SQLStringDecodable>(r: QueryRowResult, index: Int) throws -> T {
-    return try r.getValue(at: index)
-}
-
-public func <|? <T: SQLStringDecodable>(r: QueryRowResult, field: String) throws -> T? {
-    return try r.getValueNullable(forField: field)
-}
-
-public func <|? <T: SQLStringDecodable>(r: QueryRowResult, index: Int) throws -> T? {
-    return try r.getValueNullable(at: index)
-}
-
-public protocol SQLStringDecodable {
-    static func fromSQL(string: String) throws -> Self
-}
-
-public struct QueryRowResult {
+internal struct QueryRowResult {
     
-    let fields: [Connection.Field]
-    let cols: [Connection.FieldValue]
-    let columnMap: [String: Connection.FieldValue] // the key is field name
-    
+    private let fields: [Connection.Field]
+    private let cols: [Connection.FieldValue]
+    internal let columnMap: [String: Connection.FieldValue] // the key is field name
     init(fields: [Connection.Field], cols: [Connection.FieldValue]) {
         self.fields = fields
         self.cols = cols
@@ -70,55 +40,22 @@ public struct QueryRowResult {
         }
     }
     
-    func isNull(at index: Int) throws -> Bool {
-        try checkFieldBounds(at: index)
-        
-        switch cols[index] {
-        case .null:
-            return true
-        case .binary, .date:
-            return false
-        }
-    }
-    
-    func checkFieldBounds(at index: Int) throws {
-        guard cols.count > index else {
-            throw QueryError.fieldIndexOutOfBounds(fieldCount: cols.count, attemped: index, fieldName: fields[index].name)
-        }
-    }
-    
-    func castOrFail<T: SQLStringDecodable>(_ obj: String, field: String) throws -> T {
+    private func castOrFail<T: SQLRawStringDecodable>(_ obj: String, field: String) throws -> T {
         //print("casting val \(obj) to \(T.self)")
         do {
-            return try T.fromSQL(string: obj)
+            return try T.fromSQLValue(string: obj)
         } catch {
-            throw QueryError.SQLStringDecodeError(error: error, actualValue: obj, expectedType: "\(T.self)", field: field)
+            throw QueryError.SQLRawStringDecodeError(error: error, actualValue: obj, expectedType: "\(T.self)", forField: field)
         }
     }
     
-    public func getValueNullable<T: SQLStringDecodable>(at index: Int) throws -> T? {
-        try checkFieldBounds(at: index)
-        
-        if try isNull(at: index) {
-            return nil
-        }
-        return try self.getValue(at: index) as T
-    }
-    
-    public func getValueNullable<T: SQLStringDecodable>(forField field: String) throws -> T? {
-        if isNull(forField: field) {
-            return nil
-        }
-        return try self.getValue(forField: field) as T
-    }
-    
-    func getValue<T: SQLStringDecodable>(val: Connection.FieldValue, field: String) throws -> T {
+    private func getValue<T: SQLRawStringDecodable>(val: Connection.FieldValue, field: String) throws -> T {
         switch val {
         case .null:
-            throw QueryError.castError(actualValue: "NULL", expectedType: "\(T.self)", field: field)
+            throw QueryError.resultCastError(actualValue: "NULL", expectedType: "\(T.self)", forField: field)
         case .date(let date):
             guard let val = date as? T else {
-                throw QueryError.castError(actualValue: "\(date)", expectedType: "\(T.self)", field: field)
+                throw QueryError.resultCastError(actualValue: "\(date)", expectedType: "\(T.self)", forField: field)
             }
             return val
         case .binary(let data):
@@ -130,22 +67,15 @@ public struct QueryRowResult {
         }
     }
     
-    public func getValue<T: SQLStringDecodable>(at index: Int) throws -> T {
-        try checkFieldBounds(at: index)
-        
-        return try getValue(val: cols[index], field: "\(index)")
-    }
-    
-    public func getValue<T: SQLStringDecodable>(forField field: String) throws -> T {
+    func getValue<T: SQLRawStringDecodable>(forField field: String) throws -> T {
         guard let val = columnMap[field] else {
-            throw QueryError.missingField(field: field)
+            throw QueryError.missingField(field)
         }
         return try getValue(val: val, field: field)
     }    
 }
 
-// For Decodable pattern
-struct QueryRowResultDecoder : Decoder {
+internal struct QueryRowResultDecoder : Decoder {
     let codingPath = [CodingKey]()
     let userInfo = [CodingUserInfoKey : Any]()
     let row: QueryRowResult
@@ -155,11 +85,11 @@ struct QueryRowResultDecoder : Decoder {
     }
     
     public func unkeyedContainer() throws -> UnkeyedDecodingContainer {
-        throw QueryError.initializationErrorMessage(message: "Decoder unkeyedContainer not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "Decoder unkeyedContainer not implemented")
     }
     
     public func singleValueContainer() throws -> SingleValueDecodingContainer {
-        throw QueryError.initializationErrorMessage(message: "Decoder singleValueContainer not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "Decoder singleValueContainer not implemented")
     }
 }
 
@@ -180,43 +110,43 @@ fileprivate struct SQLStringDecoder: Decoder {
         }
         
         func decode(_ type: Int.Type) throws -> Int {
-            return try Int.fromSQL(string: sqlString)
+            return try Int.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: Int8.Type) throws -> Int8 {
-            return try Int8.fromSQL(string: sqlString)
+            return try Int8.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: Int16.Type) throws -> Int16 {
-            return try Int16.fromSQL(string: sqlString)
+            return try Int16.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: Int32.Type) throws -> Int32 {
-            return try Int32.fromSQL(string: sqlString)
+            return try Int32.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: Int64.Type) throws -> Int64 {
-            return try Int64.fromSQL(string: sqlString)
+            return try Int64.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: UInt.Type) throws -> UInt {
-            return try UInt.fromSQL(string: sqlString)
+            return try UInt.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: UInt8.Type) throws -> UInt8 {
-            return try UInt8.fromSQL(string: sqlString)
+            return try UInt8.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: UInt16.Type) throws -> UInt16 {
-            return try UInt16.fromSQL(string: sqlString)
+            return try UInt16.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: UInt32.Type) throws -> UInt32 {
-            return try UInt32.fromSQL(string: sqlString)
+            return try UInt32.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: UInt64.Type) throws -> UInt64 {
-            return try UInt64.fromSQL(string: sqlString)
+            return try UInt64.fromSQLValue(string: sqlString)
         }
         
         func decode(_ type: Float.Type) throws -> Float {
@@ -238,11 +168,11 @@ fileprivate struct SQLStringDecoder: Decoder {
     }
 
     func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
-        throw QueryError.initializationErrorMessage(message: "RawTypeDecoder container(keyedBy:) not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "RawTypeDecoder container(keyedBy:) not implemented")
     }
     
     func unkeyedContainer() throws -> UnkeyedDecodingContainer {
-        throw QueryError.initializationErrorMessage(message: "RawTypeDecoder unkeyedContainer not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "RawTypeDecoder unkeyedContainer not implemented")
     }
     
     func singleValueContainer() throws -> SingleValueDecodingContainer {
@@ -339,18 +269,18 @@ fileprivate struct RowKeyedDecodingContainer<K : CodingKey> : KeyedDecodingConta
     }
     
     func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: K) throws -> KeyedDecodingContainer<NestedKey> {
-        throw QueryError.initializationErrorMessage(message: "KeyedDecodingContainer nestedContainer not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "KeyedDecodingContainer nestedContainer not implemented")
     }
     
     func nestedUnkeyedContainer(forKey key: K) throws -> UnkeyedDecodingContainer {
-        throw QueryError.initializationErrorMessage(message: "KeyedDecodingContainer nestedContainer not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "KeyedDecodingContainer nestedContainer not implemented")
     }
     
     func superDecoder() throws -> Decoder {
-        throw QueryError.initializationErrorMessage(message: "KeyedDecodingContainer superDecoder not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "KeyedDecodingContainer superDecoder not implemented")
     }
     
     func superDecoder(forKey key: K) throws -> Decoder {
-        throw QueryError.initializationErrorMessage(message: "KeyedDecodingContainer superDecoder(forKey) not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "KeyedDecodingContainer superDecoder(forKey) not implemented")
     }
 }

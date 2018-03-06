@@ -8,20 +8,21 @@
 
 public enum QueryError: Error {
     
+    case parameterCastError(actualValue: String, expectedType: Any, forKey: String, query: String)
+    
     case queryExecutionError(message: String, query: String)
     case resultFetchError(message: String, query: String)
-    case resultNoField(query: String)
+    case resultNoFieldError(query: String)
     case resultRowFetchError(query: String)
     case resultFieldFetchError(query: String)
     case resultParseError(message: String, result: String)
     
-    case fieldIndexOutOfBounds(fieldCount: Int, attemped: Int, fieldName: String)
-    case castError(actualValue: String, expectedType: String, field: String)
-    case initializationError
-    case initializationErrorMessage(message: String)
-    case enumDecodeError
-    case SQLStringDecodeError(error: Error, actualValue: String, expectedType: String, field: String)
-    case missingField(field: String)
+    case resultCastError(actualValue: String, expectedType: String, forField: String)
+    case resultDecodeError(rawSQLValue: String, forType: Any)
+    case resultDecodeErrorMessage(message: String)
+    case SQLDateStringError(String)
+    case SQLRawStringDecodeError(error: Error, actualValue: String, expectedType: String, forField: String)
     
-    case invalidSQLDate(String)
+    case missingField(String)
+    
 }

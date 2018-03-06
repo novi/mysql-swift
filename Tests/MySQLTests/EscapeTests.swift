@@ -57,24 +57,24 @@ final class EscapeTests: XCTestCase {
         
         let strs: [QueryParameter] = [strVal, strVal]
         
-        XCTAssertEqual(try QueryArray(strs).queryParameter(option: queryOption).escaped(), "'Sup\\'er', 'Sup\\'er'")
+        XCTAssertEqual(try QueryParameterArray(strs).queryParameter(option: queryOption).escaped(), "'Sup\\'er', 'Sup\\'er'")
         
         let strsOptional1: [QueryParameter?] = [strVal, strValOptional]
-        XCTAssertEqual(try QueryArray(strsOptional1).queryParameter(option: queryOption).escaped(), "'Sup\\'er', 'Sup\\'er Super'")
+        XCTAssertEqual(try QueryParameterArray(strsOptional1).queryParameter(option: queryOption).escaped(), "'Sup\\'er', 'Sup\\'er Super'")
         
         let strsOptional2: [QueryParameter?] = [strVal, strValOptionalNone]
-        XCTAssertEqual(try QueryArray(strsOptional2).queryParameter(option: queryOption).escaped(), "'Sup\\'er', NULL")
+        XCTAssertEqual(try QueryParameterArray(strsOptional2).queryParameter(option: queryOption).escaped(), "'Sup\\'er', NULL")
         
         
-        let arr = QueryArray(strs)
-        let arrayOfArr = QueryArray( [arr] )
+        let arr = QueryParameterArray(strs)
+        let arrayOfArr = QueryParameterArray( [arr] )
         XCTAssertEqual(try arrayOfArr.queryParameter(option: queryOption).escaped(), "('Sup\\'er', 'Sup\\'er')")
         
         let strInt:[QueryParameter] = [strVal, 271]
-        XCTAssertEqual(try QueryArray(strInt).queryParameter(option: queryOption).escaped(), "'Sup\\'er', 271")
+        XCTAssertEqual(try QueryParameterArray(strInt).queryParameter(option: queryOption).escaped(), "'Sup\\'er', 271")
         
         let strOptionalAndInt:[QueryParameter] = [strValOptional, 3.14]
-        XCTAssertEqual(try QueryArray(strOptionalAndInt).queryParameter(option: queryOption).escaped(), "'Sup\\'er Super', 3.14")
+        XCTAssertEqual(try QueryParameterArray(strOptionalAndInt).queryParameter(option: queryOption).escaped(), "'Sup\\'er Super', 3.14")
     }
     
     func testNestedArray() throws {
@@ -82,9 +82,9 @@ final class EscapeTests: XCTestCase {
         let strVal: String = "Sup'er"
         let strValOptionalNone: String? = nil
         let child: [QueryParameter] = [strVal, strValOptionalNone]
-        let strs: [QueryParameter] = [strVal, strValOptionalNone, QueryArray(child)]
+        let strs: [QueryParameter] = [strVal, strValOptionalNone, QueryParameterArray(child)]
         
-        XCTAssertEqual(try QueryArray(strs).queryParameter(option: queryOption).escaped(), "\'Sup\\\'er\', NULL, (\'Sup\\\'er\', NULL)")
+        XCTAssertEqual(try QueryParameterArray(strs).queryParameter(option: queryOption).escaped(), "\'Sup\\\'er\', NULL, (\'Sup\\\'er\', NULL)")
         
     }
     
@@ -95,14 +95,14 @@ final class EscapeTests: XCTestCase {
             let userID: AutoincrementID<UserID> = .ID(UserID(333))
             XCTAssertEqual(try userID.queryParameter(option: queryOption).escaped(), "333")
             let arr: [QueryParameter] = [strVal, userID]
-            XCTAssertEqual(try QueryArray(arr).queryParameter(option: queryOption).escaped(), "\'Sup\\\'er\', 333")
+            XCTAssertEqual(try QueryParameterArray(arr).queryParameter(option: queryOption).escaped(), "\'Sup\\\'er\', 333")
         }
         
         do {
             let stringID: AutoincrementID<SomeStringID> = .ID(SomeStringID("id-555@"))
             XCTAssertEqual(try stringID.queryParameter(option: queryOption).escaped(), "\'id-555@\'")
             let arr: [QueryParameter] = [strVal, stringID]
-            XCTAssertEqual(try QueryArray(arr).queryParameter(option: queryOption).escaped(), "\'Sup\\\'er\', \'id-555@\'")
+            XCTAssertEqual(try QueryParameterArray(arr).queryParameter(option: queryOption).escaped(), "\'Sup\\\'er\', \'id-555@\'")
         }
         
         do {
@@ -110,7 +110,7 @@ final class EscapeTests: XCTestCase {
             XCTAssertEqual(try noID.queryParameter(option: queryOption).escaped(), "\'\'")
             
             let arr: [QueryParameter] = [strVal, noID]
-            XCTAssertEqual(try QueryArray(arr).queryParameter(option: queryOption).escaped(), "\'Sup\\\'er\'")
+            XCTAssertEqual(try QueryParameterArray(arr).queryParameter(option: queryOption).escaped(), "\'Sup\\\'er\'")
         }
     }
     
@@ -121,7 +121,7 @@ final class EscapeTests: XCTestCase {
         let strValOptional: String? = "Sup'er Super"
         let strValOptionalNone: String? = nil
         
-        let dict = QueryDictionary([
+        let dict = QueryParameterDictionary([
             "string": strVal,
             "stringOptional": strValOptional,
             "stringNone" : strValOptionalNone
