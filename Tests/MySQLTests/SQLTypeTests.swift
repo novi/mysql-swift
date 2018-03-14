@@ -13,6 +13,7 @@ extension SQLTypeTests {
     static var allTests : [(String, (SQLTypeTests) -> () throws -> Void)] {
         return [
                    ("testIDType", testIDType),
+                   ("testIDTypeInContainer", testIDTypeInContainer),
                     ("testEnumType", testEnumType),
                     ("testAutoincrementType", testAutoincrementType)
         ]
