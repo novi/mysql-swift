@@ -47,16 +47,16 @@ public extension ConnectionOption {
         return defaultTimeZone
     }
     var encoding: Connection.Encoding {
-        return .UTF8
+        return .UTF8MB4
     }
     var timeout: Int {
         return 10
     }
     var reconnect: Bool {
-        return false
+        return true
     }
     var omitDetailsOnError: Bool {
-        return false
+        return true
     }
 }
 
