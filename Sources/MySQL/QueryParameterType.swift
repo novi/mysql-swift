@@ -47,7 +47,9 @@ public struct QueryParameterNull: QueryParameter, ExpressibleByNilLiteral {
     }
 }
 
-@available(*, renamed: "QueryDictionary")
+@available(*, renamed: "QueryParameterDictionary")
+typealias QueryDictionary = QueryParameterDictionary
+
 public struct QueryParameterDictionary: QueryParameter {
     private let dict: [String: QueryParameter?]
     public init(_ dict: [String: QueryParameter?]) {
@@ -73,7 +75,9 @@ protocol QueryParameterArrayType: QueryParameter {
     
 }
 
-@available(*, renamed: "QueryArray")
+@available(*, renamed: "QueryParameterArray")
+typealias QueryArray = QueryParameterArray
+
 public struct QueryParameterArray: QueryParameter, QueryParameterArrayType {
     private let arr: [QueryParameter?]
     public init(_ arr: [QueryParameter?]) {
