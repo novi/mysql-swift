@@ -47,7 +47,9 @@ public struct QueryParameterNull: QueryParameter, ExpressibleByNilLiteral {
     }
 }
 
-@available(*, renamed: "QueryDictionary")
+@available(*, renamed: "QueryParameterDictionary")
+typealias QueryDictionary = QueryParameterDictionary
+
 public struct QueryParameterDictionary: QueryParameter {
     private let dict: [String: QueryParameter?]
     public init(_ dict: [String: QueryParameter?]) {
@@ -73,7 +75,9 @@ protocol QueryParameterArrayType: QueryParameter {
     
 }
 
-@available(*, renamed: "QueryArray")
+@available(*, renamed: "QueryParameterArray")
+typealias QueryArray = QueryParameterArray
+
 public struct QueryParameterArray: QueryParameter, QueryParameterArrayType {
     private let arr: [QueryParameter?]
     public init(_ arr: [QueryParameter?]) {
@@ -289,11 +293,11 @@ fileprivate struct QueryParameterSingleValueEncodingContainer: SingleValueEncodi
     var encoder: QueryParameterEncoder
     
     mutating func encodeNil() throws {
-        fatalError()
+        encoder.singleValue = nil
     }
     
     mutating func encode(_ value: Bool) throws {
-        fatalError()
+        encoder.singleValue = value
     }
     
     mutating func encode(_ value: Int) throws {
@@ -301,15 +305,15 @@ fileprivate struct QueryParameterSingleValueEncodingContainer: SingleValueEncodi
     }
     
     mutating func encode(_ value: Int8) throws {
-        fatalError()
+        encoder.singleValue = value
     }
     
     mutating func encode(_ value: Int16) throws {
-        fatalError()
+        encoder.singleValue = value
     }
     
     mutating func encode(_ value: Int32) throws {
-        fatalError()
+        encoder.singleValue = value
     }
     
     mutating func encode(_ value: Int64) throws {
@@ -321,15 +325,15 @@ fileprivate struct QueryParameterSingleValueEncodingContainer: SingleValueEncodi
     }
     
     mutating func encode(_ value: UInt8) throws {
-        fatalError()
+        encoder.singleValue = value
     }
     
     mutating func encode(_ value: UInt16) throws {
-        fatalError()
+        encoder.singleValue = value
     }
     
     mutating func encode(_ value: UInt32) throws {
-        fatalError()
+        encoder.singleValue = value
     }
     
     mutating func encode(_ value: UInt64) throws {
@@ -337,11 +341,11 @@ fileprivate struct QueryParameterSingleValueEncodingContainer: SingleValueEncodi
     }
     
     mutating func encode(_ value: Float) throws {
-        fatalError()
+        encoder.singleValue = value
     }
     
     mutating func encode(_ value: Double) throws {
-        fatalError()
+        encoder.singleValue = value
     }
     
     mutating func encode(_ value: String) throws {

@@ -36,6 +36,17 @@ public func ==<T: IDType>(lhs: T, rhs: T) -> Bool {
 
 // MARK: Codable type
 
+extension IDType {
+    
+    public init(from decoder: Decoder) throws {
+        fatalError("`init(from:)` of \(Self.self) is not implemented")
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        fatalError("`encode(to:)` of \(Self.self) is not implemented")
+    }
+}
+
 extension IDType where T == Int {
     public init(from decoder: Decoder) throws {
         self.init(try decoder.singleValueContainer().decode(Int.self))
@@ -72,6 +83,17 @@ extension IDType where T == UInt {
 extension IDType where T == UInt64 {
     public init(from decoder: Decoder) throws {
         self.init(try decoder.singleValueContainer().decode(UInt64.self))
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(id)
+    }
+}
+
+extension IDType where T == String {
+    public init(from decoder: Decoder) throws {
+        self.init(try decoder.singleValueContainer().decode(String.self))
     }
     
     public func encode(to encoder: Encoder) throws {

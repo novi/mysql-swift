@@ -8,7 +8,9 @@
 
 import Foundation
 
-@available(*, renamed: "SQLStringDecodable")
+@available(*, renamed: "SQLRawStringDecodable")
+typealias SQLStringDecodable = SQLRawStringDecodable
+
 internal protocol SQLRawStringDecodable {
     static func fromSQLValue(string: String) throws -> Self
 }

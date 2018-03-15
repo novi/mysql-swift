@@ -13,6 +13,7 @@ extension SQLTypeTests {
     static var allTests : [(String, (SQLTypeTests) -> () throws -> Void)] {
         return [
                    ("testIDType", testIDType),
+                   ("testIDTypeInContainer", testIDTypeInContainer),
                     ("testEnumType", testEnumType),
                     ("testAutoincrementType", testAutoincrementType)
         ]
@@ -22,11 +23,26 @@ extension SQLTypeTests {
 final class SQLTypeTests: XCTestCase {
     
     
-    struct SomeID: IDType {
+    struct IDInt: IDType {
         let id: Int
         init(_ id: Int) {
             self.id = id
         }
+    }
+    
+    struct IDString: IDType {
+        let id: String
+        init(_ id: String) {
+            self.id = id
+        }
+    }
+    
+    struct ModelWithIDType_StringAutoincrement: Encodable, QueryParameter {
+        let idStringAutoincrement: AutoincrementID<IDString>
+    }
+    
+    struct ModelWithIDType_IntAutoincrement: Encodable, QueryParameter {
+        let idIntAutoincrement: AutoincrementID<IDInt>
     }
     
     enum SomeEnumParameter: String, QueryEnumParameter {
@@ -41,11 +57,34 @@ final class SQLTypeTests: XCTestCase {
 
     func testIDType() throws {
         
-        let someID: QueryParameter = SomeID(1234)
-        XCTAssertEqual(try someID.queryParameter(option: queryOption).escaped(), "1234")
+        let idInt: QueryParameter = IDInt(1234)
+        XCTAssertEqual(try idInt.queryParameter(option: queryOption).escaped(), "1234")
         
         //let id: SomeID = try SomeID.fromSQLValue(string: "5678")
         //XCTAssertEqual(id.id, 5678)
+        
+        let idString: QueryParameter = IDString("123abc")
+        XCTAssertEqual(try idString.queryParameter(option: queryOption).escaped(), "'123abc'")
+        
+        
+        let idIntAutoincrement: QueryParameter = AutoincrementID(IDInt(1234))
+        XCTAssertEqual(try idIntAutoincrement.queryParameter(option: queryOption).escaped(), "1234")
+        
+        let idStringAutoincrement: QueryParameter = AutoincrementID(IDString("123abc"))
+        XCTAssertEqual(try idStringAutoincrement.queryParameter(option: queryOption).escaped(), "'123abc'")
+        
+    }
+    
+    func testIDTypeInContainer() throws {
+        
+        do {
+            let param: QueryParameter = ModelWithIDType_IntAutoincrement(idIntAutoincrement: .ID(IDInt(1234)))
+            XCTAssertEqual(try param.queryParameter(option: queryOption).escaped(), "`idIntAutoincrement` = 1234")
+        }
+        do {
+            let param: QueryParameter = ModelWithIDType_StringAutoincrement(idStringAutoincrement: .ID(IDString("123abc")))
+            XCTAssertEqual(try param.queryParameter(option: queryOption).escaped(), "`idStringAutoincrement` = '123abc'")
+        }
         
     }
     
