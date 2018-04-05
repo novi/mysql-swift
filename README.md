@@ -42,30 +42,21 @@ struct User: Codable, QueryParameter {
 }
     
 // Selecting
-let nameParam: String = "some one"
+let nameParam = "some one"
 let ids: [QueryParameter] = [1, 2, 3, 4, 5, 6]
-let optional:Int? = nil
-let params: (Int, Int?, String, QueryArray) = (
-	50,
-	optional,
-	nameParam,
-	QueryArray(ids)
-)	
-let rows: [User] = try conn.query("SELECT id,name,created_at,age FROM users WHERE (age > ? OR age is ?) OR name = ? OR id IN (?)", build(params) ])
-// or...
-// try conn.query("SELECT id,name,created_at,age FROM users WHERE (age > ? OR age is ?) OR name = ? OR id IN (?)", [50, optional, nameParam, QueryArray(ids)] ])
+let optionalInt: Int? = nil
+let rows: [User] = try conn.query("SELECT id,user_name,status,status,created_at FROM `user` WHERE (age > ? OR age is ?) OR name = ? OR id IN (?)", [50, optionalInt, nameParam, QueryArray(ids)] ])
 
 // Inserting
 let age: Int? = 26
-let user = User(id: 0, userName: "novi", age: age, createdAt: Date())
-let status = try conn.query("INSERT INTO users SET ?", [user]) as QueryStatus
+let user = User(id: 0, userName: "novi", age: age, status: .created, createdAt: Date())
+let status = try conn.query("INSERT INTO `user` SET ?", [user]) as QueryStatus
 let newId = status.insertedId
-        
+
 // Updating
 let defaultAge = 30
-try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
-            
-        
+try conn.query("UPDATE `user` SET age = ? WHERE age is NULL;", [defaultAge])
+
 ``` 
 
 # Requirements
