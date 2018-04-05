@@ -70,9 +70,7 @@ try conn.query("UPDATE users SET age = ? WHERE age is NULL;", [defaultAge])
 
 # Requirements
 
-* Swift 4.0
-
-(If you are using Swift 3.1, use `0.7.4` tagged version.)
+* Swift 4.0.3 or later
 
 # Dependencies
 
