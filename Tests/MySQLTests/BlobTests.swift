@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import MySQL
+@testable import MySQL
 import Foundation
 
 extension BlobQueryTests {
@@ -31,6 +31,34 @@ final class BlobQueryTests: XCTestCase, QueryTestType {
         
         prepare()
         try! createBlobTable()
+    }
+    
+    func createBinaryBlobTable() throws {
+        try dropTestTable()
+        
+        let conn = try pool.getConnection()
+        let query = "CREATE TABLE `\(constants.tableName)` (" +
+            "`id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
+            "`text1` mediumtext NOT NULL," +
+            "`binary1` mediumblob NOT NULL," +
+            "PRIMARY KEY (`id`)" +
+        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;"
+        
+        _ = try conn.query(query)
+    }
+    
+    func createBlobTable() throws {
+        try dropTestTable()
+        
+        let conn = try pool.getConnection()
+        let query = "CREATE TABLE `\(constants.tableName)` (" +
+            "`id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
+            "`text1` mediumtext NOT NULL," +
+            "`binary1` mediumblob NOT NULL," +
+            "PRIMARY KEY (`id`)" +
+        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
+        
+        _ = try conn.query(query)
     }
     
     func testInsertForCombinedUnicodeCharacter() throws {
@@ -68,8 +96,6 @@ final class BlobQueryTests: XCTestCase, QueryTestType {
     }
     
     func testEscapeBlob() throws {
-        
-    
         
         do {
             let str = try Data(testBinary).queryParameter(option: queryOption).escaped()

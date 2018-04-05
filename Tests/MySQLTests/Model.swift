@@ -82,4 +82,18 @@ struct Row {
         let text1: String
         let binary1: Data
     }
+    
+    struct URLRow: Codable, QueryParameter, Equatable {
+        static func ==(lhs: Row.URLRow, rhs: Row.URLRow) -> Bool {
+            // TODO: remove in Swift 4.1
+            return lhs.url == rhs.url && lhs.urlOptional == rhs.urlOptional
+        }
+        
+        let url: URL
+        let urlOptional: URL?
+        private enum CodingKeys: String, CodingKey {
+            case url = "url"
+            case urlOptional = "url_Optional"
+        }
+    }
 }
