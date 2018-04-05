@@ -425,10 +425,14 @@ fileprivate struct QueryParameterKeyedEncodingContainer<Key : CodingKey> : Keyed
     }
     
     mutating func encode<T>(_ value: T, forKey key: Key) throws where T : Encodable {
-        if value is Date {
+        if T.self == Date.self {
             encoder.dict[key.stringValue] = value as! Date
-        } else if value is Data {
+        } else if T.self == Data.self {
             encoder.dict[key.stringValue] = value as! Data
+        } else if T.self == URL.self {
+            // encode absoluteString same as JSONEncoder
+            // https://github.com/apple/swift/blob/master/stdlib/public/SDK/Foundation/JSONEncoder.swift
+            encoder.dict[key.stringValue] = (value as! URL).absoluteString
         } else {
             let singleValueEncoder = QueryParameterEncoder()
             try value.encode(to: singleValueEncoder)

@@ -13,20 +13,47 @@ import Foundation
 extension QueryTests {
     static var allTests : [(String, (QueryTests) -> () throws -> Void)] {
         return [
-                   ("testInsertRowCodable", testInsertRowCodable),
-                   ("testEmojiInserting", testEmojiInserting),
-                   ("testBulkInsert", testBulkInsert)
+            ("testInsertRowCodable", testInsertRowCodable),
+            ("testEmojiInserting", testEmojiInserting),
+            ("testBulkInsert", testBulkInsert)
+        ]
+    }
+}
+
+extension QueryURLTypeTests {
+    static var allTests : [(String, (QueryURLTypeTests) -> () throws -> Void)] {
+        return [
+            ("testURLType", testURLType),
+            ("testURLInvalid", testURLInvalid)
         ]
     }
 }
 
 
 protocol QueryTestType: MySQLTestType {
-    func createTestTable() throws
     func dropTestTable() throws
 }
 
 extension QueryTestType {
+    func dropTestTable() throws {
+        let conn = try pool.getConnection()
+        _ = try conn.query("DROP TABLE IF EXISTS \(constants.tableName)")
+    }
+}
+
+
+final class QueryTests: XCTestCase, QueryTestType {
+    
+    var constants: TestConstantsType!
+    var pool: ConnectionPool!
+    
+    override func setUp() {
+        super.setUp()
+        
+        prepare()
+        try! createTestTable()
+    }
+    
     func createTestTable() throws {
         try dropTestTable()
         
@@ -46,53 +73,6 @@ extension QueryTestType {
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
         
         _ = try conn.query(query)
-    }
-    
-    func createBlobTable() throws {
-        try dropTestTable()
-        
-        let conn = try pool.getConnection()
-        let query = "CREATE TABLE `\(constants.tableName)` (" +
-            "`id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
-            "`text1` mediumtext NOT NULL," +
-            "`binary1` mediumblob NOT NULL," +
-            "PRIMARY KEY (`id`)" +
-        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
-        
-        _ = try conn.query(query)
-    }
-    
-    func createBinaryBlobTable() throws {
-        try dropTestTable()
-        
-        let conn = try pool.getConnection()
-        let query = "CREATE TABLE `\(constants.tableName)` (" +
-            "`id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
-            "`text1` mediumtext NOT NULL," +
-            "`binary1` mediumblob NOT NULL," +
-            "PRIMARY KEY (`id`)" +
-        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;"
-        
-        _ = try conn.query(query)
-    }
-    
-    func dropTestTable() throws {
-        let conn = try pool.getConnection()
-        _ = try conn.query("DROP TABLE IF EXISTS \(constants.tableName)")
-    }
-}
-
-
-final class QueryTests: XCTestCase, QueryTestType {
-    
-    var constants: TestConstantsType!
-    var pool: ConnectionPool!
-    
-    override func setUp() {
-        super.setUp()
-        
-        prepare()
-        try! createTestTable()
     }
     
     private var someDate: Date {
@@ -209,6 +189,79 @@ final class QueryTests: XCTestCase, QueryTestType {
             XCTAssertEqual(selectedUsersCodeable[index].id, UInt(10+row))
             XCTAssertEqual(selectedUsersCodeable[index].name, "name\(row)")
             XCTAssertEqual(selectedUsersCodeable[index].age, row)
+        }
+    }
+    
+}
+
+
+final class QueryURLTypeTests: XCTestCase, QueryTestType {
+    var constants: TestConstantsType!
+    var pool: ConnectionPool!
+    
+    override func setUp() {
+        super.setUp()
+        
+        prepare()
+        try! createURLTestTable()
+    }
+
+    func createURLTestTable() throws {
+        try dropTestTable()
+        
+        let conn = try pool.getConnection()
+        let query = """
+        CREATE TABLE `\(constants.tableName)` (
+        `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+        `url` mediumtext NOT NULL,
+        `url_Optional` mediumtext,
+        PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        """
+        
+        _ = try conn.query(query)
+    }
+    
+    
+    
+    func testURLType() throws {
+        
+        let urlRow1 = Row.URLRow(url: URL(string: "https://apple.com/iphone")!, urlOptional: nil)
+        let urlRow2 = Row.URLRow(url: URL(string: "https://apple.com/iphone")!, urlOptional: URL(string: "https://apple.com/ipad")!)
+        
+        try pool.execute { conn in
+            _ = try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, urlRow1])
+            _ = try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, urlRow2])
+        }
+        
+        let rows: [Row.URLRow] = try pool.execute {
+            try $0.query("SELECT * FROM ?? ORDER BY id ASC", [constants.tableName])
+        }
+        
+        XCTAssertEqual(rows[0], urlRow1)
+        XCTAssertEqual(rows[1], urlRow2)
+    }
+    
+    func testURLInvalid() throws {
+        
+        try pool.execute { conn in
+            _ = try conn.query("INSERT INTO ?? SET `url` = ''", [constants.tableName])
+        }
+        
+        do {
+            let _: [Row.URLRow] = try pool.execute {
+                try $0.query("SELECT * FROM ?? ORDER BY id ASC", [constants.tableName])
+            }
+        } catch let error as DecodingError {
+            switch error {
+            case .dataCorrupted(let context):
+                print(context)
+                // expected error
+            default:
+                XCTFail("unexpected error \(error)")
+            }
+        } catch {
+            XCTFail("unexpected error \(error)")
         }
     }
     

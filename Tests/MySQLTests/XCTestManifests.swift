@@ -17,6 +17,7 @@ import XCTest
             testCase( ConnectionPoolTests.allTests ),
             testCase( ConnectionTests.allTests ),
             testCase( QueryTests.allTests ),
+            testCase( QueryURLTypeTests.allTests ),
             testCase( BlobQueryTests.allTests ),
             testCase( SQLTypeTests.allTests ),
             testCase( CodableTests.allTests )

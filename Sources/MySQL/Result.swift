@@ -256,13 +256,23 @@ fileprivate struct RowKeyedDecodingContainer<K : CodingKey> : KeyedDecodingConta
     }
     
     func decode<T>(_ type: T.Type, forKey key: K) throws -> T where T : Decodable {
-        if T.self is Data.Type {
+        if type == Data.self {
             // Bug: The compiler chooses NOT to use "decode() -> Data". We have to implement it in decode<T>()
             return try decoder.row.getValue(forField: key.stringValue) as Data as! T
         }
-        if T.self is Date.Type {
+        if type == Date.self {
             return try decoder.row.getValue(forField: key.stringValue) as Date as! T
         }
+        
+        if type == URL.self {
+            let urlString = try decoder.row.getValue(forField: key.stringValue) as String
+            guard let url = URL(string: urlString) else {
+                throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath,
+                                                                        debugDescription: "Invalid URL string."))
+            }
+            return url as! T
+        }
+        
         guard let columnValue = decoder.row.columnMap[key.stringValue] else {
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: [key], debugDescription: ""))
         }
