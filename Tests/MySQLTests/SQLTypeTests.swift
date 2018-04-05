@@ -15,7 +15,8 @@ extension SQLTypeTests {
                    ("testIDType", testIDType),
                    ("testIDTypeInContainer", testIDTypeInContainer),
                     ("testEnumType", testEnumType),
-                    ("testAutoincrementType", testAutoincrementType)
+                    ("testAutoincrementType", testAutoincrementType),
+                ("testDataAndURLType", testDataAndURLType)
         ]
     }
 }
@@ -53,6 +54,18 @@ final class SQLTypeTests: XCTestCase {
     enum SomeEnumCodable: String, Codable, QueryParameter {
         case first = "first 1"
         case second = "second' 2"
+    }
+    
+    struct ModelWithData: Encodable, QueryParameter {
+        let data: Data
+    }
+    
+    struct ModelWithDate: Encodable, QueryParameter {
+        let date: Date
+    }
+    
+    struct ModelWithURL: Encodable, QueryParameter {
+        let url: URL
     }
 
     func testIDType() throws {
@@ -113,6 +126,23 @@ final class SQLTypeTests: XCTestCase {
         
         let noID: AutoincrementID<UserID> = .noID
         XCTAssertEqual(noID, AutoincrementID.noID)
+    }
+    
+    func testDataAndURLType() throws {
+        
+        do {
+            let dataModel = ModelWithData(data: Data([0x12, 0x34, 0x56, 0xff, 0x00]))
+            let queryString = try dataModel.queryParameter(option: queryOption).escaped()
+            XCTAssertEqual(queryString,
+                           "`data` = x'123456ff00'")
+        }
+        
+        do {
+            let urlModel = ModelWithURL(url: URL(string: "https://apple.com/iphone")!)
+            let queryString = try urlModel.queryParameter(option: queryOption).escaped()
+            XCTAssertEqual(queryString,
+                           "`url` = 'https://apple.com/iphone'")
+        }
     }
 
 }
