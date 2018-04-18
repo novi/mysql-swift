@@ -2,6 +2,7 @@ version: 2
 jobs:
   linux-swift4.0:
     docker:
+      - image: docker:17.05.0-ce-git
       - image: yusukeito/swift-basic:swift4
       - image: mariadb:10.3
         environment:
@@ -17,6 +18,7 @@ jobs:
       - run: swift test
   linux-swift4.1:
     docker:
+      - image: docker:17.05.0-ce-git
       - image: yusukeito/swift-basic:swift4.1
       - image: mariadb:10.3
         environment:
