@@ -4,10 +4,10 @@ jobs:
     docker:
       - image: yusukeito/swift-basic:swift4
       - image: mariadb:10.3
-          environment:
-            MYSQL_ALLOW_EMPTY_PASSWORD: yes
-            MYSQL_ROOT_HOST: %
-            DATABASE_HOST: %
+        environment:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_ROOT_HOST: %
+          DATABASE_HOST: %
     steps:
       - checkout
       - run: mysql -u root -e "create database IF NOT EXISTS test
@@ -17,10 +17,10 @@ jobs:
     docker:
       - image: yusukeito/swift-basic:swift4.1
       - image: mariadb:10.3
-          environment:
-            MYSQL_ALLOW_EMPTY_PASSWORD: yes
-            MYSQL_ROOT_HOST: %
-            DATABASE_HOST: %
+        environment:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_ROOT_HOST: %
+          DATABASE_HOST: %
     steps:
       - checkout
       - run: mysql -u root -e "create database IF NOT EXISTS test
