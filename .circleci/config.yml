@@ -10,7 +10,7 @@ jobs:
           DATABASE_HOST: "%"
     steps:
       - checkout
-      - run: mysql -u root -e "create database IF NOT EXISTS test
+      - run: mysql -u root -e "create database IF NOT EXISTS test"
       - run: swift build
       - run: swift test
   linux-swift4.1:
@@ -23,7 +23,7 @@ jobs:
           DATABASE_HOST: "%"
     steps:
       - checkout
-      - run: mysql -u root -e "create database IF NOT EXISTS test
+      - run: mysql -u root -e "create database IF NOT EXISTS test"
       - run: swift build
       - run: swift test
 
