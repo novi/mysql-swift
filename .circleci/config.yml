@@ -1,0 +1,23 @@
+version: 2
+jobs:
+  linux-swift4.0:
+    docker:
+      - image: yusukeito/swift-basic:swift4
+    steps:
+      - checkout
+      - run: swift build
+      - run: swift test
+  linux-swift4.1:
+    docker:
+      - image: yusukeito/swift-basic:swift4.1
+    steps:
+      - checkout
+      - run: swift build
+      - run: swift test
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - linux-swift4.0
+      - linux-swift4.1
