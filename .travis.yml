@@ -1,6 +1,6 @@
 language: generic
 sudo: required
-dist: xenial
+dist: trusty
 matrix:
   include:
     - os: linux
