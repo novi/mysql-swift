@@ -3,15 +3,27 @@ jobs:
   linux-swift4.0:
     docker:
       - image: yusukeito/swift-basic:swift4
+      - image: mariadb:10.3
+          environment:
+            MYSQL_ALLOW_EMPTY_PASSWORD: yes
+            MYSQL_ROOT_HOST: %
+            DATABASE_HOST: %
     steps:
       - checkout
+      - run: mysql -u root -e "create database IF NOT EXISTS test
       - run: swift build
       - run: swift test
   linux-swift4.1:
     docker:
       - image: yusukeito/swift-basic:swift4.1
+      - image: mariadb:10.3
+          environment:
+            MYSQL_ALLOW_EMPTY_PASSWORD: yes
+            MYSQL_ROOT_HOST: %
+            DATABASE_HOST: %
     steps:
       - checkout
+      - run: mysql -u root -e "create database IF NOT EXISTS test
       - run: swift build
       - run: swift test
 
