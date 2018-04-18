@@ -104,14 +104,22 @@ public final class Connection {
             let timeoutPtr = UnsafeMutablePointer<Int>.allocate(capacity: 1)
             timeoutPtr.pointee = options.timeout
             mysql_options(mysql, MYSQL_OPT_CONNECT_TIMEOUT, timeoutPtr)
-            timeoutPtr.deallocate(capacity: 1)
+            #if swift(>=4.1)
+                timeoutPtr.deallocate()
+            #else
+                timeoutPtr.deallocate(capacity: 1)
+            #endif
         }
         
         do {
             let reconnectPtr = UnsafeMutablePointer<my_bool>.allocate(capacity: 1)
             reconnectPtr.pointee = options.reconnect == false ? 0 : 1
             mysql_options(mysql, MYSQL_OPT_RECONNECT, reconnectPtr)
-            reconnectPtr.deallocate(capacity: 1)
+            #if swift(>=4.1)
+                reconnectPtr.deallocate()
+            #else
+                reconnectPtr.deallocate(capacity: 1)
+            #endif
         }
         
         if mysql_real_connect(mysql,
