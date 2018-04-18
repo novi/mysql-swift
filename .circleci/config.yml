@@ -6,8 +6,8 @@ jobs:
       - image: mariadb:10.3
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          MYSQL_ROOT_HOST: %
-          DATABASE_HOST: %
+          MYSQL_ROOT_HOST: "%"
+          DATABASE_HOST: "%"
     steps:
       - checkout
       - run: mysql -u root -e "create database IF NOT EXISTS test
@@ -19,8 +19,8 @@ jobs:
       - image: mariadb:10.3
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          MYSQL_ROOT_HOST: %
-          DATABASE_HOST: %
+          MYSQL_ROOT_HOST: "%"
+          DATABASE_HOST: "%"
     steps:
       - checkout
       - run: mysql -u root -e "create database IF NOT EXISTS test
