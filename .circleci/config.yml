@@ -2,7 +2,7 @@ version: 2
 jobs:
   mac-swift4.1:
     macos:
-      xcode: "9.3"
+      xcode: "9.3.0"
     steps:
       - checkout
       - run: brew update && brew tap vapor/homebrew-tap && brew update
