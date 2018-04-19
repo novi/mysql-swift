@@ -1,5 +1,16 @@
 version: 2
 jobs:
+  mac-swift4.1:
+    macos:
+      xcode: "9.3"
+    steps:
+      - checkout
+      - run: brew update && brew tap vapor/homebrew-tap && brew update
+      - run: brew install cmysql
+      - run: mysql.server start
+      - run: mysql -u root -e "create database IF NOT EXISTS test;"
+      - run: swift build
+      - run: swift test
   linux-swift4.0:
     docker:
       - image: yusukeito/swift-basic:swift4
@@ -33,5 +44,6 @@ workflows:
   version: 2
   build_and_test:
     jobs:
+      - mac-swift4.1
       - linux-swift4.0
       - linux-swift4.1
