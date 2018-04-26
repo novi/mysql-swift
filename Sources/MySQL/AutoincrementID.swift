@@ -76,7 +76,7 @@ extension AutoincrementID: QueryParameter {
 
 /// MARK: Codable support
 
-extension AutoincrementID: Codable {
+extension AutoincrementID: Codable where I: Codable {
     
     public func encode(to encoder: Encoder) throws {
         switch self {
@@ -88,7 +88,7 @@ extension AutoincrementID: Codable {
     }
     
     public init(from decoder: Decoder) throws {
-        self = .ID(try I.init(from: decoder))
+        self = .ID(try I(from: decoder))
     }
 }
 
