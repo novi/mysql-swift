@@ -463,9 +463,8 @@ fileprivate struct QueryParameterKeyedEncodingContainer<Key : CodingKey> : Keyed
     mutating func superEncoder(forKey key: Key) -> Encoder {
         fatalError("superEncoder(forKey:) in query parameter is not supported.")
     }
-    
-    
 }
+
 
 extension Encodable where Self: QueryParameter {
     public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {

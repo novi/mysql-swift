@@ -28,8 +28,9 @@ extension Data: QueryParameterType {
         buffer += "'"
         return buffer
     }
+    
     public func escapedForID() -> String? {
-        return nil
+        return nil // Data can not be used for ID(?? placeholder).
     }
 }
 

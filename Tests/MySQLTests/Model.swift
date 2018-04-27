@@ -9,8 +9,6 @@
 import MySQL
 import Foundation
 
-
-
 struct UserID: IDType {
     let id: Int
     init(_ id: Int) {
@@ -84,11 +82,6 @@ struct Row {
     }
     
     struct URLRow: Codable, QueryParameter, Equatable {
-        static func ==(lhs: Row.URLRow, rhs: Row.URLRow) -> Bool {
-            // TODO: remove in Swift 4.1
-            return lhs.url == rhs.url && lhs.urlOptional == rhs.urlOptional
-        }
-        
         let url: URL
         let urlOptional: URL?
         private enum CodingKeys: String, CodingKey {

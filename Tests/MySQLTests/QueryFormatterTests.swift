@@ -23,7 +23,7 @@ extension QueryFormatterTests {
 
 final class QueryFormatterTests: XCTestCase {
     
-    fileprivate enum TableName: String, QueryEnumParameter {
+    fileprivate enum TableName: String, QueryParameter {
         case user = "user"
     }
     

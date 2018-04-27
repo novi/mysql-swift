@@ -46,7 +46,7 @@ final class SQLTypeTests: XCTestCase {
         let idIntAutoincrement: AutoincrementID<IDInt>
     }
     
-    enum SomeEnumParameter: String, QueryEnumParameter {
+    enum SomeEnumParameter: String, QueryParameter {
         case first = "first 1"
         case second = "second' 2"
     }
@@ -54,6 +54,19 @@ final class SQLTypeTests: XCTestCase {
     enum SomeEnumCodable: String, Codable, QueryParameter {
         case first = "first 1"
         case second = "second' 2"
+    }
+    
+    // https://developer.apple.com/documentation/swift/optionset
+    struct ShippingOptions: OptionSet, QueryParameter {
+        let rawValue: Int
+        
+        static let nextDay    = ShippingOptions(rawValue: 1 << 0)
+        static let secondDay  = ShippingOptions(rawValue: 1 << 1)
+        static let priority   = ShippingOptions(rawValue: 1 << 2)
+        static let standard   = ShippingOptions(rawValue: 1 << 3)
+        
+        static let express: ShippingOptions = [.nextDay, .secondDay]
+        static let all: ShippingOptions = [.express, .priority, .standard]
     }
     
     struct ModelWithData: Encodable, QueryParameter {
@@ -113,6 +126,11 @@ final class SQLTypeTests: XCTestCase {
             let someVal: QueryParameter = SomeEnumCodable.second
             let escaped = "second' 2".escaped()
             XCTAssertEqual(try someVal.queryParameter(option: queryOption).escaped() , escaped)
+        }
+        
+        do {
+            let someOption: QueryParameter = ShippingOptions.all
+            XCTAssertEqual(try someOption.queryParameter(option: queryOption).escaped() , "\(ShippingOptions.all.rawValue)")
         }
     }
     

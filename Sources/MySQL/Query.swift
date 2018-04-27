@@ -187,7 +187,7 @@ extension Connection {
 }
 
 public struct QueryParameterOption: QueryParameterOptionType {
-    let timeZone: TimeZone
+    var timeZone: TimeZone
 }
 
 
