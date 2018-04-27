@@ -46,7 +46,7 @@ final class SQLTypeTests: XCTestCase {
         let idIntAutoincrement: AutoincrementID<IDInt>
     }
     
-    enum SomeEnumParameter: String, QueryParameter {
+    enum SomeEnumParameter: String, QueryRawRepresentableParameter {
         case first = "first 1"
         case second = "second' 2"
     }
@@ -57,7 +57,7 @@ final class SQLTypeTests: XCTestCase {
     }
     
     // https://developer.apple.com/documentation/swift/optionset
-    struct ShippingOptions: OptionSet, QueryParameter {
+    struct ShippingOptions: OptionSet, QueryRawRepresentableParameter {
         let rawValue: Int
         
         static let nextDay    = ShippingOptions(rawValue: 1 << 0)
