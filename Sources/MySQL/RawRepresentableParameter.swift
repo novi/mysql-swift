@@ -7,7 +7,7 @@
 //
 
 import SQLFormatter
-
+import Foundation
 
 
 public protocol QueryRawRepresentableParameter: RawRepresentable, QueryParameter {
@@ -27,3 +27,4 @@ extension RawRepresentable where RawValue: QueryParameter {
         return try rawValue.queryParameter(option: option)
     }
 }*/
+

@@ -150,7 +150,7 @@ final class QueryTests: XCTestCase, QueryTestType {
         
         
         let now = Date()
-        let user = User(id: .noID, name: "日本語123🍣あいう", age: 123, createdAt: now, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user)
+        let user = User(id: .noID, name: "日本語123🍣🍺あいう", age: 123, createdAt: now, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user)
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, user])
         }
@@ -160,7 +160,7 @@ final class QueryTests: XCTestCase, QueryTestType {
         }
         XCTAssertEqual(rows.count, 1)
         let fetched = rows[0]
-        XCTAssertEqual(fetched.name, "日本語123🍣あいう")
+        XCTAssertEqual(fetched.name, "日本語123🍣🍺あいう")
         XCTAssertEqual(fetched.age, 123)
     }
     

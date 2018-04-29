@@ -433,6 +433,14 @@ fileprivate struct QueryParameterKeyedEncodingContainer<Key : CodingKey> : Keyed
             // encode absoluteString same as JSONEncoder
             // https://github.com/apple/swift/blob/master/stdlib/public/SDK/Foundation/JSONEncoder.swift
             encoder.dict[key.stringValue] = (value as! URL).absoluteString
+        } else if let custom = value as? QueryCustomDataParameter {
+            if let param = value as? QueryParameter {
+                if !param.omitOnQueryParameter {
+                    encoder.dict[key.stringValue] = try custom.encodeForQueryParameter()
+                }
+            } else {
+                encoder.dict[key.stringValue] = try custom.encodeForQueryParameter()
+            }
         } else {
             let singleValueEncoder = QueryParameterEncoder()
             try value.encode(to: singleValueEncoder)

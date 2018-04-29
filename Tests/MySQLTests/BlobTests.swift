@@ -15,11 +15,35 @@ extension BlobQueryTests {
         return [
                    ("testInsertForCombinedUnicodeCharacter", testInsertForCombinedUnicodeCharacter),
                     ("testBlobAndTextOnBinCollation", testBlobAndTextOnBinCollation),
-                    ("testEscapeBlob", testEscapeBlob)
+                    ("testEscapeBlob", testEscapeBlob),
+                    ("testJSONColumnValue", testJSONColumnValue)
         ]
     }
 }
 
+
+extension Row {
+    
+    struct JSONDataUser: Codable, Equatable, QueryCustomDataParameter, QueryRowResultCustomData {
+        func encodeForQueryParameter() throws -> Data {
+            let encoder = JSONEncoder()
+            return try encoder.encode(self)
+        }
+        
+        static func decode(fromRowData data: Data) throws -> Row.JSONDataUser {
+            let decoder = JSONDecoder()
+            return try decoder.decode(self, from: data)
+        }
+        
+        // this type decoded from and encoded to Data, like JSON, Protobuf...
+        let name: String
+    }
+    
+    struct JSONColumnUser: Codable, QueryParameter, Equatable {
+        let userName: String
+        let jsonValue: JSONDataUser
+    }
+}
 
 final class BlobQueryTests: XCTestCase, QueryTestType {
     
@@ -101,7 +125,41 @@ final class BlobQueryTests: XCTestCase, QueryTestType {
             let str = try Data(testBinary).queryParameter(option: queryOption).escaped()
             XCTAssertEqual(str, "x'000109101f99ff000a'")
         }
+    }
+    
+    
+    private func createJSONValueTable() throws {
+        try dropTestTable()
         
+        let conn = try pool.getConnection()
+        let query = """
+        CREATE TABLE `\(constants.tableName)` (
+        `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+        `userName` mediumtext NOT NULL,
+        `jsonValue` mediumblob NOT NULL,
+        PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        """
+        
+        _ = try conn.query(query)
+    }
+    
+    func testJSONColumnValue() throws {
+        
+        try createJSONValueTable()
+        
+        let jsonValue = Row.JSONDataUser(name: "name in json value")
+        let user = Row.JSONColumnUser(userName: "john", jsonValue: jsonValue)
+        let status: QueryStatus = try pool.execute { conn in
+            try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, user])
+        }
+        XCTAssertEqual(status.insertedID, 1)
+        
+        let rows: [Row.JSONColumnUser] = try pool.execute{ conn in
+            try conn.query("SELECT * FROM ??", [constants.tableName])
+        }
+        XCTAssertEqual(rows.count, 1)
+        XCTAssertEqual(rows[0], user)
     }
     
 }
