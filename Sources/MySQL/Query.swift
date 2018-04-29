@@ -193,30 +193,30 @@ public struct QueryParameterOption: QueryParameterOptionType {
 
 extension Connection {
     
-    internal static func buildArgs(_ args: [QueryParameter], option: QueryParameterOption) throws -> [QueryParameterType] {
-        return try args.map { arg in
-            if let val = arg as? String {
+    internal static func buildParameters(_ params: [QueryParameter], option: QueryParameterOption) throws -> [QueryParameterType] {
+        return try params.map { param in
+            if let val = param as? String {
                 return val
             }
-            return try arg.queryParameter(option: option)
+            return try param.queryParameter(option: option)
         }
     }
     
-    public func query<T: Decodable>(_ query: String, _ args: [QueryParameter] = []) throws -> ([T], QueryStatus) {
+    public func query<R: Decodable>(_ query: String, _ params: [QueryParameter] = []) throws -> ([R], QueryStatus) {
         let option = QueryParameterOption(
             timeZone: options.timeZone
         )
-        let queryString = try QueryFormatter.format(query: query, args: type(of: self).buildArgs(args, option: option))
+        let queryString = try QueryFormatter.format(query: query, parameters: type(of: self).buildParameters(params, option: option))
         return try self.query(query: queryString)
     }
     
-    public func query<T: Decodable>(_ query: String, _ args: [QueryParameter] = []) throws -> [T] {
-        let (rows, _) = try self.query(query, args) as ([T], QueryStatus)
+    public func query<R: Decodable>(_ query: String, _ params: [QueryParameter] = []) throws -> [R] {
+        let (rows, _) = try self.query(query, params) as ([R], QueryStatus)
         return rows
     }
     
-    public func query(_ query: String, _ args: [QueryParameter] = []) throws -> QueryStatus {
-        let (_, status) = try self.query(query, args) as ([EmptyRowResult], QueryStatus)
+    public func query(_ query: String, _ params: [QueryParameter] = []) throws -> QueryStatus {
+        let (_, status) = try self.query(query, params) as ([EmptyRowResult], QueryStatus)
         return status
     }
 }
