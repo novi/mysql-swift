@@ -41,7 +41,8 @@ extension Row {
     
     struct JSONColumnUser: Codable, QueryParameter, Equatable {
         let userName: String
-        let jsonValue: JSONDataUser
+        let jsonValue_blob: JSONDataUser
+        let jsonValue_json: JSONDataUser
     }
 }
 
@@ -136,7 +137,8 @@ final class BlobQueryTests: XCTestCase, QueryTestType {
         CREATE TABLE `\(constants.tableName)` (
         `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
         `userName` mediumtext NOT NULL,
-        `jsonValue` mediumblob NOT NULL,
+        `jsonValue_blob` mediumblob NOT NULL,
+        `jsonValue_json` json NOT NULL,
         PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         """
@@ -149,7 +151,7 @@ final class BlobQueryTests: XCTestCase, QueryTestType {
         try createJSONValueTable()
         
         let jsonValue = Row.JSONDataUser(name: "name in json value")
-        let user = Row.JSONColumnUser(userName: "john", jsonValue: jsonValue)
+        let user = Row.JSONColumnUser(userName: "john", jsonValue_blob: jsonValue, jsonValue_json: jsonValue)
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, user])
         }
