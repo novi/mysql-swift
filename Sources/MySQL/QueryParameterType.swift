@@ -34,15 +34,9 @@ public protocol QueryParameterOption {
     var timeZone: TimeZone { get }
 }
 
-
-struct QueryParameterNull: QueryParameter, ExpressibleByNilLiteral {
+internal struct QueryParameterNull: QueryParameter {
     
     private init() {
-        
-    }
-    
-    init(nilLiteral: ()) {
-        
     }
     
     static let null = QueryParameterNull()
@@ -71,12 +65,7 @@ public struct QueryParameterDictionary: QueryParameter {
     }
 }
 
-//extension Dictionary: where Value: QueryParameter, Key: StringLiteralConvertible { }
-// not yet supported
-// extension Array:QueryParameter where Element: QueryParameter { }
-
-
-protocol QueryParameterArrayType: QueryParameter {
+fileprivate protocol QueryParameterArrayType: QueryParameter {
     
 }
 
@@ -125,24 +114,7 @@ extension Optional: QueryParameter where Wrapped: QueryParameter {
     }
 }
 
-/*
-struct QueryParameterOptional: QueryParameter {
-    private let val: QueryParameter?
-    init(_ val: QueryParameter?) {
-        self.val = val
-    }
-    func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
-        guard let val = self.val else {
-            return QueryParameterNull.null.queryParameter(option: option)
-        }
-        return try val.queryParameter(option: option)
-    }
-    var omitOnQueryParameter: Bool {
-        return val?.omitOnQueryParameter ?? false
-    }
-}*/
-
-struct EscapedQueryParameter: QueryParameterType {
+internal struct EscapedQueryParameter: QueryParameterType {
     private let value: String
     private let idParameter: String?
     init(_ val: String, idParameter: String? = nil) {
@@ -269,6 +241,7 @@ fileprivate final class QueryParameterEncoder: Encoder {
         case single
         case dictionary
     }
+    
     var storageType: StorageType = .dictionary
     
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
