@@ -35,15 +35,19 @@ public protocol QueryParameterOption {
 }
 
 
-public struct QueryParameterNull: QueryParameter, ExpressibleByNilLiteral {
+struct QueryParameterNull: QueryParameter, ExpressibleByNilLiteral {
     
-    public init() {
+    private init() {
         
     }
-    public init(nilLiteral: ()) {
+    
+    init(nilLiteral: ()) {
         
     }
-    public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
+    
+    static let null = QueryParameterNull()
+    
+    func queryParameter(option: QueryParameterOption) -> QueryParameterType {
         return EscapedQueryParameter( "NULL" )
     }
 }
@@ -60,7 +64,7 @@ public struct QueryParameterDictionary: QueryParameter {
         var keyVals: [String] = []
         for (k, v) in dict {
             if v == nil || v?.omitOnQueryParameter == false {
-                keyVals.append("\(SQLString.escapeForID(string: k)) = \(try QueryParameterOptional(v).queryParameter(option: option).escaped())")
+                keyVals.append("\(SQLString.escapeForID(string: k)) = \(try (v ?? QueryParameterNull.null).queryParameter(option: option).escaped())")
             }
         }
         return EscapedQueryParameter( keyVals.joined(separator:  ", ") )
@@ -97,36 +101,31 @@ public struct QueryParameterArray: QueryParameter, QueryParameterArrayType {
             if let val = $0 as? QueryParameterArrayType {
                 return "(" + (try val.queryParameter(option: option).escaped()) + ")"
             }
-            return try QueryParameterOptional($0).queryParameter(option: option).escaped()
+            return try ($0 ?? QueryParameterNull.null).queryParameter(option: option).escaped()
         }).joined(separator: ", ") )
     }
 }
 
-
-
-extension Optional: QueryParameter {
-    
+extension Optional: QueryParameter where Wrapped: QueryParameter {
     public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
-        guard let value = self else {
-            return QueryParameterNull().queryParameter(option: option)
+        switch self {
+        case .none:
+            return QueryParameterNull.null.queryParameter(option: option)
+        case .some(let value):
+            return try value.queryParameter(option: option)
         }
-        guard let val = value as? QueryParameter else {
-            throw QueryError.parameterCastError(actualValue: "\(value.self)", expectedType: QueryParameter.self, forKey: "", query: "")
-        }
-        return try val.queryParameter(option: option)
     }
     public var omitOnQueryParameter: Bool {
-        guard let value = self else {
+        switch self {
+        case .none:
             return false
+        case .some(let value):
+            return value.omitOnQueryParameter
         }
-        guard let val = value as? QueryParameter else {
-            return false
-        }
-        return val.omitOnQueryParameter
     }
 }
 
-
+/*
 struct QueryParameterOptional: QueryParameter {
     private let val: QueryParameter?
     init(_ val: QueryParameter?) {
@@ -134,14 +133,14 @@ struct QueryParameterOptional: QueryParameter {
     }
     func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
         guard let val = self.val else {
-            return QueryParameterNull().queryParameter(option: option)
+            return QueryParameterNull.null.queryParameter(option: option)
         }
         return try val.queryParameter(option: option)
     }
     var omitOnQueryParameter: Bool {
         return val?.omitOnQueryParameter ?? false
     }
-}
+}*/
 
 struct EscapedQueryParameter: QueryParameterType {
     private let value: String
@@ -477,6 +476,7 @@ fileprivate struct QueryParameterKeyedEncodingContainer<Key : CodingKey> : Keyed
 }
 
 
+
 extension Encodable where Self: QueryParameter {
     public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
         let encoder = QueryParameterEncoder()
@@ -485,7 +485,7 @@ extension Encodable where Self: QueryParameter {
         case .dictionary:
             return try QueryParameterDictionary(encoder.dict).queryParameter(option: option)
         case .single:
-            return try QueryParameterOptional(encoder.singleValue).queryParameter(option: option)
+            return try (encoder.singleValue ?? QueryParameterNull.null).queryParameter(option: option)
         }
     }
 }
