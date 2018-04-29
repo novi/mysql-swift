@@ -30,7 +30,8 @@ public extension QueryParameterDictionaryType {
     }
 }
 
-public protocol QueryParameterOptionType {
+public protocol QueryParameterOption {
+    var timeZone: TimeZone { get }
 }
 
 

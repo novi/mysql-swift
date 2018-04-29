@@ -186,8 +186,8 @@ extension Connection {
     }
 }
 
-public struct QueryParameterOption: QueryParameterOptionType {
-    var timeZone: TimeZone
+fileprivate struct QueryParameterDefaultOption: QueryParameterOption {
+    let timeZone: TimeZone
 }
 
 
@@ -203,9 +203,14 @@ extension Connection {
     }
     
     public func query<R: Decodable>(_ query: String, _ params: [QueryParameter] = []) throws -> ([R], QueryStatus) {
-        let option = QueryParameterOption(
+        let option = QueryParameterDefaultOption(
             timeZone: options.timeZone
         )
+        let queryString = try QueryFormatter.format(query: query, parameters: type(of: self).buildParameters(params, option: option))
+        return try self.query(query: queryString)
+    }
+    
+    public func query<R: Decodable>(_ query: String, _ params: [QueryParameter] = [], option: QueryParameterOption) throws -> ([R], QueryStatus) {
         let queryString = try QueryFormatter.format(query: query, parameters: type(of: self).buildParameters(params, option: option))
         return try self.query(query: queryString)
     }
@@ -215,8 +220,18 @@ extension Connection {
         return rows
     }
     
+    public func query<R: Decodable>(_ query: String, _ params: [QueryParameter] = [], option: QueryParameterOption) throws -> [R] {
+        let (rows, _) = try self.query(query, params, option: option) as ([R], QueryStatus)
+        return rows
+    }
+    
     public func query(_ query: String, _ params: [QueryParameter] = []) throws -> QueryStatus {
         let (_, status) = try self.query(query, params) as ([EmptyRowResult], QueryStatus)
+        return status
+    }
+    
+    public func query(_ query: String, _ params: [QueryParameter] = [], option: QueryParameterOption) throws -> QueryStatus {
+        let (_, status) = try self.query(query, params, option: option) as ([EmptyRowResult], QueryStatus)
         return status
     }
 }
