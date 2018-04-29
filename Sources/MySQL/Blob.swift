@@ -40,3 +40,25 @@ extension Data: QueryParameter {
     }
 }
 
+internal struct Blob: QueryParameter {
+    let data: Data
+    let dataType: QueryCustomDataParameterDataType
+    public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
+        return self
+    }
+}
+
+extension Blob: QueryParameterType {
+    public func escaped() -> String {
+        switch dataType {
+        case .blob: return data.escaped()
+        case .json:
+            return "CONVERT(" + data.escaped() + " using utf8mb4)"
+        }
+    }
+    
+    public func escapedForID() -> String? {
+        return nil // Data can not be used for ID(?? placeholder).
+    }
+}
+

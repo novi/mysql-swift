@@ -30,6 +30,10 @@ extension Row {
             return try encoder.encode(self)
         }
         
+        var queryParameterDataType: QueryCustomDataParameterDataType {
+            return .json
+        }
+        
         static func decode(fromRowData data: Data) throws -> Row.JSONDataUser {
             let decoder = JSONDecoder()
             return try decoder.decode(self, from: data)

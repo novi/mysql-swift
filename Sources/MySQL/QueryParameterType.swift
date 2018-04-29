@@ -436,10 +436,12 @@ fileprivate struct QueryParameterKeyedEncodingContainer<Key : CodingKey> : Keyed
         } else if let custom = value as? QueryCustomDataParameter {
             if let param = value as? QueryParameter {
                 if !param.omitOnQueryParameter {
-                    encoder.dict[key.stringValue] = try custom.encodeForQueryParameter()
+                    let data = try custom.encodeForQueryParameter()
+                    encoder.dict[key.stringValue] = Blob(data: data, dataType: custom.queryParameterDataType)
                 }
             } else {
-                encoder.dict[key.stringValue] = try custom.encodeForQueryParameter()
+                let data = try custom.encodeForQueryParameter()
+                encoder.dict[key.stringValue] = Blob(data: data, dataType: custom.queryParameterDataType)
             }
         } else {
             let singleValueEncoder = QueryParameterEncoder()
