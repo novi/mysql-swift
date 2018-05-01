@@ -19,7 +19,7 @@ internal final class SQLDateCalendar {
         if let cal = cals[timeZone] {
             return cal
         }
-        var newCal = Calendar(identifier: Calendar.Identifier.gregorian)
+        var newCal = Calendar(identifier: .gregorian)
         newCal.timeZone = timeZone
         self.save(calendar: newCal, forTimeZone: timeZone)
         return newCal

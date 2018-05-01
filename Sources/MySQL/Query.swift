@@ -97,13 +97,13 @@ extension Connection {
         }
     }
     
-    fileprivate func query<T: Decodable>(query formattedQuery: String) throws -> ([T], QueryStatus) {
-        let (rows, status) = try self.query(query: formattedQuery)
+    fileprivate func query<T: Decodable>(query formattedQuery: String, option: QueryParameterOption) throws -> ([T], QueryStatus) {
+        let (rows, status) = try self.query(query: formattedQuery, option: option)
         
         return try (rows.map({ try T(from: QueryRowResultDecoder(row: $0))}), status)
     }
     
-    fileprivate func query(query formattedQuery: String) throws -> ([QueryRowResult], QueryStatus) {
+    fileprivate func query(query formattedQuery: String, option: QueryParameterOption) throws -> ([QueryRowResult], QueryStatus) {
         let mysql = try connectIfNeeded()
         
         func queryPrefix() -> String {
@@ -166,7 +166,7 @@ extension Connection {
                 if let valf = row[i], row[i] != nil {
                     let binary = FieldValue.makeBinary(ptr: valf, length: lengths[i])
                     if field.isDate {
-                        cols.append(FieldValue.date(try Date(sqlDate: binary.string(), timeZone: options.timeZone)))
+                        cols.append(FieldValue.date(try Date(sqlDate: binary.string(), timeZone: option.timeZone)))
                     } else {
                         cols.append(binary)
                     }                    
@@ -186,37 +186,52 @@ extension Connection {
     }
 }
 
-public struct QueryParameterOption: QueryParameterOptionType {
-    var timeZone: TimeZone
+fileprivate struct QueryParameterDefaultOption: QueryParameterOption {
+    let timeZone: TimeZone
 }
 
 
 extension Connection {
     
-    internal static func buildArgs(_ args: [QueryParameter], option: QueryParameterOption) throws -> [QueryParameterType] {
-        return try args.map { arg in
-            if let val = arg as? String {
+    internal static func buildParameters(_ params: [QueryParameter], option: QueryParameterOption) throws -> [QueryParameterType] {
+        return try params.map { param in
+            if let val = param as? String {
                 return val
             }
-            return try arg.queryParameter(option: option)
+            return try param.queryParameter(option: option)
         }
     }
     
-    public func query<T: Decodable>(_ query: String, _ args: [QueryParameter] = []) throws -> ([T], QueryStatus) {
-        let option = QueryParameterOption(
+    public func query<R: Decodable>(_ query: String, _ params: [QueryParameter] = []) throws -> ([R], QueryStatus) {
+        let option = QueryParameterDefaultOption(
             timeZone: options.timeZone
         )
-        let queryString = try QueryFormatter.format(query: query, args: type(of: self).buildArgs(args, option: option))
-        return try self.query(query: queryString)
+        let queryString = try QueryFormatter.format(query: query, parameters: type(of: self).buildParameters(params, option: option))
+        return try self.query(query: queryString, option: option)
     }
     
-    public func query<T: Decodable>(_ query: String, _ args: [QueryParameter] = []) throws -> [T] {
-        let (rows, _) = try self.query(query, args) as ([T], QueryStatus)
+    public func query<R: Decodable>(_ query: String, _ params: [QueryParameter] = [], option: QueryParameterOption) throws -> ([R], QueryStatus) {
+        let queryString = try QueryFormatter.format(query: query, parameters: type(of: self).buildParameters(params, option: option))
+        return try self.query(query: queryString, option: option)
+    }
+    
+    public func query<R: Decodable>(_ query: String, _ params: [QueryParameter] = []) throws -> [R] {
+        let (rows, _) = try self.query(query, params) as ([R], QueryStatus)
         return rows
     }
     
-    public func query(_ query: String, _ args: [QueryParameter] = []) throws -> QueryStatus {
-        let (_, status) = try self.query(query, args) as ([EmptyRowResult], QueryStatus)
+    public func query<R: Decodable>(_ query: String, _ params: [QueryParameter] = [], option: QueryParameterOption) throws -> [R] {
+        let (rows, _) = try self.query(query, params, option: option) as ([R], QueryStatus)
+        return rows
+    }
+    
+    public func query(_ query: String, _ params: [QueryParameter] = []) throws -> QueryStatus {
+        let (_, status) = try self.query(query, params) as ([EmptyRowResult], QueryStatus)
+        return status
+    }
+    
+    public func query(_ query: String, _ params: [QueryParameter] = [], option: QueryParameterOption) throws -> QueryStatus {
+        let (_, status) = try self.query(query, params, option: option) as ([EmptyRowResult], QueryStatus)
         return status
     }
 }

@@ -69,7 +69,7 @@ public struct SQLString {
 
 public struct QueryFormatter {
     
-    public static func format(query: String, args: [QueryParameterType]) throws -> String {
+    public static func format(query: String, parameters: [QueryParameterType]) throws -> String {
         
         var placeHolderCount = 0
         
@@ -94,26 +94,26 @@ public struct QueryFormatter {
             
             switch formatted[r] {
             case "??":
-                if placeHolderCount >= args.count {
+                if placeHolderCount >= parameters.count {
                     throw QueryFormatError.parameterCountMismatch(query: query)
                 }
-                guard let escapedVal = args[placeHolderCount].escapedForID() else {
-                    throw QueryFormatError.parameterIDTypeError(givenValue: "\(args[placeHolderCount])", query: query)
+                guard let escapedVal = parameters[placeHolderCount].escapedForID() else {
+                    throw QueryFormatError.parameterIDTypeError(givenValue: "\(parameters[placeHolderCount])", query: query)
                 }
                 formatted.replaceSubrange(r, with: escapedVal)
                 scanRange = r.upperBound..<formatted.endIndex
             case "?":
-                if placeHolderCount >= args.count {
+                if placeHolderCount >= parameters.count {
                     throw QueryFormatError.parameterCountMismatch(query: query)
                 }
-                valArgs.append(args[placeHolderCount])
+                valArgs.append(parameters[placeHolderCount])
                 scanRange = r.upperBound..<formatted.endIndex
             default: break
             }
             
             placeHolderCount += 1
             
-            if placeHolderCount >= args.count {
+            if placeHolderCount >= parameters.count {
                 break
             }
         }
