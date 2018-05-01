@@ -45,5 +45,5 @@ workflows:
   build_and_test:
     jobs:
       - mac-swift4.1
-      - linux-swift4.0
+      #- linux-swift4.0
       - linux-swift4.1
