@@ -65,8 +65,6 @@ final class DateTests : XCTestCase {
         let gmt = TimeZone(abbreviation: "PDT")!
         let cal1 = SQLDateCalendar.calendar(forTimezone: gmt)
         let cal2 = SQLDateCalendar.calendar(forTimezone: gmt)
-        //Unmanaged.passUnretained(cal1).toOpaque()
-        //XCTAssertTrue(unsafeAddress(of: cal1 as AnyObject) == unsafeAddress(of: cal2 as AnyObject))
         XCTAssertEqual(cal1, cal2)
         XCTAssertEqual(cal1.hashValue, cal2.hashValue)
     }

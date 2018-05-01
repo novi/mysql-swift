@@ -34,7 +34,7 @@ extension QueryTestType {
 
 extension Row {
     
-    fileprivate struct SimpleUser: Codable {
+    fileprivate struct SimpleUser: Codable, Equatable {
         let id: UInt
         let name: String
         let age: Int
@@ -45,7 +45,7 @@ extension Row {
         case admin = "admin"
     }
     
-    fileprivate struct User: Codable, QueryParameter {
+    fileprivate struct User: Codable, QueryParameter, Equatable {
         let id: AutoincrementID<UserID>
         
         let name: String
@@ -92,19 +92,21 @@ final class QueryTests: XCTestCase, QueryTestType {
         try dropTestTable()
         
         let conn = try pool.getConnection()
-        let query = "CREATE TABLE `\(constants.tableName)` (" +
-            "`id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
-            "`name` varchar(50) NOT NULL DEFAULT ''," +
-            "`age` int(11) NOT NULL," +
-            "`created_at` datetime NOT NULL DEFAULT '2001-01-01 00:00:00'," +
-            "`name_Optional` varchar(50) DEFAULT NULL," +
-            "`age_Optional` int(11) DEFAULT NULL," +
-            "`created_at_Optional` datetime DEFAULT NULL," +
-            "`done` tinyint(1) NOT NULL DEFAULT 0," +
-            "`done_Optional` tinyint(1) DEFAULT NULL," +
-            "`user_type` varchar(255) NOT NULL DEFAULT ''," +
-            "PRIMARY KEY (`id`)" +
-        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
+        let query = """
+            CREATE TABLE `\(constants.tableName)` (
+            `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+            `name` varchar(50) NOT NULL DEFAULT '',
+            `age` int(11) NOT NULL,
+            `created_at` datetime NOT NULL DEFAULT '2001-01-01 00:00:00',
+            `name_Optional` varchar(50) DEFAULT NULL,
+            `age_Optional` int(11) DEFAULT NULL,
+            `created_at_Optional` datetime DEFAULT NULL,
+            `done` tinyint(1) NOT NULL DEFAULT 0,
+            `done_Optional` tinyint(1) DEFAULT NULL,
+            `user_type` varchar(255) NOT NULL DEFAULT '',
+            PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            """
         
         _ = try conn.query(query)
     }
@@ -137,13 +139,13 @@ final class QueryTests: XCTestCase, QueryTestType {
         XCTAssertEqual(status2.insertedID, 134)
         
         let rows:[User] = try pool.execute { conn in
-            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional,user_type FROM ??", [constants.tableName])
+            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional,user_type FROM ?? ORDER BY id ASC", [constants.tableName])
         }
         
         XCTAssertEqual(rows.count, 2)
         
         // first row
-        XCTAssertEqual(rows[0].id.id, UserID(1))
+        XCTAssertEqual(rows[0].id.id, UserID(Int(status.insertedID)))
         XCTAssertEqual(rows[0].name, name)
         XCTAssertEqual(rows[0].age, age)
         XCTAssertEqual(rows[0].createdAt, someDate)
@@ -157,24 +159,7 @@ final class QueryTests: XCTestCase, QueryTestType {
         
         XCTAssertEqual(rows[0].userType, .user)
         
-        // second row
-        XCTAssertEqual(rows[1].id.id, UserID(134))
-        XCTAssertEqual(rows[1].name, name)
-        XCTAssertEqual(rows[1].age, age)
-        XCTAssertEqual(rows[1].createdAt, someDate)
-        
-        XCTAssertNotNil(rows[1].nameOptional)
-        XCTAssertNotNil(rows[1].ageOptional)
-        XCTAssertNotNil(rows[1].createdAtOptional)
-        
-        XCTAssertEqual(rows[1].nameOptional, "fuga")
-        XCTAssertEqual(rows[1].ageOptional, 50)
-        XCTAssertEqual(rows[1].createdAtOptional, anotherDate)
-        
-        XCTAssertTrue(rows[1].done)
-        XCTAssertFalse(rows[1].doneOptional!)
-        
-        XCTAssertEqual(rows[1].userType, .admin)
+        XCTAssertEqual(rows[1], userFill)
     }
     
     
@@ -193,9 +178,8 @@ final class QueryTests: XCTestCase, QueryTestType {
             try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional,user_type FROM ?? WHERE id = ?", [constants.tableName, status.insertedID])
         }
         XCTAssertEqual(rows.count, 1)
-        let fetched = rows[0]
-        XCTAssertEqual(fetched.name, "日本語123🍣🍺あいう")
-        XCTAssertEqual(fetched.age, 123)
+        XCTAssertEqual(rows[0].name, user.name)
+        XCTAssertEqual(rows[0].age, user.age)
     }
     
     
@@ -214,15 +198,13 @@ final class QueryTests: XCTestCase, QueryTestType {
             try conn.query("INSERT INTO ??(id,name,age) VALUES ? ", [constants.tableName, QueryParameterArray(usersParam)])
         }
         
-        let selectedUsersCodeable: [Row.SimpleUser] = try pool.execute { conn in
+        let fetchedUsers: [Row.SimpleUser] = try pool.execute { conn in
             try conn.query("SELECT id,name,age FROM ?? ORDER BY id DESC", [constants.tableName])
         }
-        XCTAssertEqual(selectedUsersCodeable.count, 3)
+        XCTAssertEqual(fetchedUsers.count, 3)
         
-        for (index, row) in (1...3).reversed().enumerated() {
-            XCTAssertEqual(selectedUsersCodeable[index].id, UInt(10+row))
-            XCTAssertEqual(selectedUsersCodeable[index].name, "name\(row)")
-            XCTAssertEqual(selectedUsersCodeable[index].age, row)
+        for index in (0..<3) {
+            XCTAssertEqual(fetchedUsers[index], users.reversed()[index])
         }
     }
     
