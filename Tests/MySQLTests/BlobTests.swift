@@ -24,7 +24,14 @@ extension BlobQueryTests {
 
 extension Row {
     
-    struct JSONDataUser: Codable, Equatable, QueryCustomDataParameter, QueryRowResultCustomData {
+    fileprivate struct BlobTextRow: Codable, QueryParameter {
+        let id: AutoincrementID<BlobTextID>
+        
+        let text1: String
+        let binary1: Data
+    }
+    
+    fileprivate struct JSONDataUser: Codable, Equatable, QueryCustomDataParameter, QueryRowResultCustomData {
         func encodeForQueryParameter() throws -> Data {
             let encoder = JSONEncoder()
             return try encoder.encode(self)
@@ -43,11 +50,12 @@ extension Row {
         let name: String
     }
     
-    struct JSONColumnUser: Codable, QueryParameter, Equatable {
+    fileprivate struct JSONColumnUser: Codable, QueryParameter, Equatable {
         let userName: String
         let jsonValue_blob: JSONDataUser
         let jsonValue_json: JSONDataUser
     }
+    
 }
 
 final class BlobQueryTests: XCTestCase, QueryTestType {

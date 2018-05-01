@@ -17,10 +17,10 @@ import XCTest
             testCase( ConnectionPoolTests.allTests ),
             testCase( ConnectionTests.allTests ),
             testCase( QueryTests.allTests ),
+            testCase( QueryDecimalTypeTests.allTests ),
             testCase( QueryURLTypeTests.allTests ),
             testCase( BlobQueryTests.allTests ),
-            testCase( QueryParameterTests.allTests ),
-            testCase( CodableTests.allTests )
+            testCase( QueryParameterTests.allTests )
         ]
     }
 #endif

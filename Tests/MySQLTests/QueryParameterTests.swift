@@ -17,7 +17,9 @@ extension QueryParameterTests {
                 ("testEnumType", testEnumType),
                 ("testAutoincrementType", testAutoincrementType),
                 ("testDataAndURLType", testDataAndURLType),
-                ("testDecimalType", testDecimalType)
+                ("testDecimalType", testDecimalType),
+                ("testCodableIDType", testCodableIDType),
+                ("testCodableIDType_AutoincrementNoID", testCodableIDType_AutoincrementNoID)
         ]
     }
 }
@@ -25,40 +27,40 @@ extension QueryParameterTests {
 final class QueryParameterTests: XCTestCase {
     
     
-    struct IDInt: IDType {
+    private struct IDInt: IDType {
         let id: Int
         init(_ id: Int) {
             self.id = id
         }
     }
     
-    struct IDString: IDType {
+    private struct IDString: IDType {
         let id: String
         init(_ id: String) {
             self.id = id
         }
     }
     
-    struct ModelWithIDType_StringAutoincrement: Encodable, QueryParameter {
+    private struct ModelWithIDType_StringAutoincrement: Encodable, QueryParameter {
         let idStringAutoincrement: AutoincrementID<IDString>
     }
     
-    struct ModelWithIDType_IntAutoincrement: Encodable, QueryParameter {
+    private struct ModelWithIDType_IntAutoincrement: Encodable, QueryParameter {
         let idIntAutoincrement: AutoincrementID<IDInt>
     }
     
-    enum SomeEnumParameter: String, QueryRawRepresentableParameter {
+    private enum SomeEnumParameter: String, QueryRawRepresentableParameter {
         case first = "first 1"
         case second = "second' 2"
     }
     
-    enum SomeEnumCodable: String, Codable, QueryParameter {
+    private enum SomeEnumCodable: String, Codable, QueryParameter {
         case first = "first 1"
         case second = "second' 2"
     }
     
     // https://developer.apple.com/documentation/swift/optionset
-    struct ShippingOptions: OptionSet, QueryRawRepresentableParameter {
+    private struct ShippingOptions: OptionSet, QueryRawRepresentableParameter {
         let rawValue: Int
         
         static let nextDay    = ShippingOptions(rawValue: 1 << 0)
@@ -70,19 +72,19 @@ final class QueryParameterTests: XCTestCase {
         static let all: ShippingOptions = [.express, .priority, .standard]
     }
     
-    struct ModelWithData: Encodable, QueryParameter {
+    private struct ModelWithData: Encodable, QueryParameter {
         let data: Data
     }
     
-    struct ModelWithDate: Encodable, QueryParameter {
+    private struct ModelWithDate: Encodable, QueryParameter {
         let date: Date
     }
     
-    struct ModelWithURL: Encodable, QueryParameter {
+    private struct ModelWithURL: Encodable, QueryParameter {
         let url: URL
     }
     
-    struct ModelWithDecimal: Encodable, QueryParameter {
+    private struct ModelWithDecimal: Encodable, QueryParameter {
         let value: Decimal
     }
 
@@ -173,5 +175,63 @@ final class QueryParameterTests: XCTestCase {
         let queryString = try decimalModel.queryParameter(option: queryOption).escaped()
         XCTAssertEqual(queryString,
                        "`value` = '12345000000000010240000000000000000000000000000000000000000000000000000000000000000000000000000000000'")
+    }
+    
+    private enum UserType: String, Codable {
+        case user = "user"
+        case admin = "admin"
+    }
+    
+    private struct CodableModel: Codable, QueryParameter {
+        let id: UserID
+        let name: String
+        let userType: UserType
+    }
+    
+    private struct CodableModelWithAutoincrement: Codable, QueryParameter {
+        let id: AutoincrementID<UserID>
+        let name: String
+        let userType: UserType
+    }
+    
+    func testCodableIDType() throws {
+        
+        
+        let expectedResult = Set(arrayLiteral: "`id` = 123", "`name` = 'test4456'", "`userType` = 'user'")
+        
+        do {
+            let parameter: QueryParameter = CodableModel(id: UserID(123),
+                                                         name: "test4456",
+                                                         userType: .user)
+            
+            let result = try parameter.queryParameter(option: queryOption).escaped()
+            
+            XCTAssertEqual(Set(result.split(separator: ",").map(String.init).map({ $0.trimmingCharacters(in: .whitespaces) })), expectedResult)
+        }
+        
+        do {
+            let parameter: QueryParameter = CodableModelWithAutoincrement(id: AutoincrementID(UserID(123)),
+                                                                          name: "test4456",
+                                                                          userType: .user)
+            
+            let result = try parameter.queryParameter(option: queryOption).escaped()
+            XCTAssertEqual(Set(result.split(separator: ",").map(String.init).map({ $0.trimmingCharacters(in: .whitespaces) })), expectedResult)
+        }
+        
+    }
+    
+    func testCodableIDType_AutoincrementNoID() throws {
+        
+        
+        let expectedResult = Set(arrayLiteral: "`name` = 'test4456'", "`userType` = 'user'")
+        
+        let parameter: QueryParameter = CodableModelWithAutoincrement(id: .noID,
+                                                                      name: "test4456",
+                                                                      userType: .user)
+        
+        let result = try parameter.queryParameter(option: queryOption).escaped()
+        
+        XCTAssertEqual(Set(result.split(separator: ",").map(String.init).map({ $0.trimmingCharacters(in: .whitespaces) })), expectedResult)
+        
     }
 }

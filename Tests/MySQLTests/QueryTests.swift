@@ -20,15 +20,6 @@ extension QueryTests {
     }
 }
 
-extension QueryURLTypeTests {
-    static var allTests : [(String, (QueryURLTypeTests) -> () throws -> Void)] {
-        return [
-            ("testURLType", testURLType),
-            ("testURLInvalid", testURLInvalid)
-        ]
-    }
-}
-
 
 protocol QueryTestType: MySQLTestType {
     func dropTestTable() throws
@@ -41,6 +32,49 @@ extension QueryTestType {
     }
 }
 
+extension Row {
+    
+    fileprivate struct SimpleUser: Codable {
+        let id: UInt
+        let name: String
+        let age: Int
+    }
+    
+    fileprivate enum UserType: String, Codable {
+        case user = "user"
+        case admin = "admin"
+    }
+    
+    fileprivate struct User: Codable, QueryParameter {
+        let id: AutoincrementID<UserID>
+        
+        let name: String
+        let age: Int
+        let createdAt: Date
+        
+        let nameOptional: String?
+        let ageOptional: Int?
+        let createdAtOptional: Date?
+        
+        let done: Bool
+        let doneOptional: Bool?
+        
+        let userType: UserType
+        
+        private enum CodingKeys: String, CodingKey {
+            case id
+            case name
+            case age
+            case createdAt = "created_at"
+            case nameOptional = "name_Optional"
+            case ageOptional = "age_Optional"
+            case createdAtOptional = "created_at_Optional"
+            case done
+            case doneOptional = "done_Optional"
+            case userType = "user_type"
+        }
+    }
+}
 
 final class QueryTests: XCTestCase, QueryTestType {
     
@@ -69,8 +103,6 @@ final class QueryTests: XCTestCase, QueryTestType {
             "`done` tinyint(1) NOT NULL DEFAULT 0," +
             "`done_Optional` tinyint(1) DEFAULT NULL," +
             "`user_type` varchar(255) NOT NULL DEFAULT ''," +
-            "`double_value` DOUBLE NOT NULL DEFAULT 0," +
-            //"`double_value` MEDIUMTEXT," +
             "PRIMARY KEY (`id`)" +
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
         
@@ -92,20 +124,20 @@ final class QueryTests: XCTestCase, QueryTestType {
         let name = "name 's"
         let age = 25
         
-        let userNil = User(id: .noID, name: name, age: age, createdAt: someDate, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user, decimalValue: Decimal(0) )
+        let userNil = User(id: .noID, name: name, age: age, createdAt: someDate, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user)
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, userNil])
         }
         XCTAssertEqual(status.insertedID, 1)
         
-        let userFill = User(id: .ID(UserID(134)), name: name, age: age, createdAt: someDate,  nameOptional: "fuga", ageOptional: 50, createdAtOptional: anotherDate, done: true, doneOptional: false, userType: .admin, decimalValue: Decimal(1.23e100))
+        let userFill = User(id: .ID(UserID(134)), name: name, age: age, createdAt: someDate,  nameOptional: "fuga", ageOptional: 50, createdAtOptional: anotherDate, done: true, doneOptional: false, userType: .admin)
         let status2: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, userFill])
         }
         XCTAssertEqual(status2.insertedID, 134)
         
         let rows:[User] = try pool.execute { conn in
-            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional,user_type,double_value FROM ??", [constants.tableName])
+            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional,user_type FROM ??", [constants.tableName])
         }
         
         XCTAssertEqual(rows.count, 2)
@@ -124,7 +156,6 @@ final class QueryTests: XCTestCase, QueryTestType {
         XCTAssertNil(rows[0].doneOptional)
         
         XCTAssertEqual(rows[0].userType, .user)
-        XCTAssertEqual(rows[0].decimalValue, userNil.decimalValue)
         
         // second row
         XCTAssertEqual(rows[1].id.id, UserID(134))
@@ -144,7 +175,6 @@ final class QueryTests: XCTestCase, QueryTestType {
         XCTAssertFalse(rows[1].doneOptional!)
         
         XCTAssertEqual(rows[1].userType, .admin)
-        XCTAssertEqual(rows[1].decimalValue, userFill.decimalValue)
     }
     
     
@@ -154,13 +184,13 @@ final class QueryTests: XCTestCase, QueryTestType {
         
         
         let now = Date()
-        let user = User(id: .noID, name: "日本語123🍣🍺あいう", age: 123, createdAt: now, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user, decimalValue: Decimal(0))
+        let user = User(id: .noID, name: "日本語123🍣🍺あいう", age: 123, createdAt: now, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user)
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, user])
         }
         
         let rows: [User] = try pool.execute{ conn in
-            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional,user_type,double_value FROM ?? WHERE id = ?", [constants.tableName, status.insertedID])
+            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional,user_type FROM ?? WHERE id = ?", [constants.tableName, status.insertedID])
         }
         XCTAssertEqual(rows.count, 1)
         let fetched = rows[0]
@@ -193,79 +223,6 @@ final class QueryTests: XCTestCase, QueryTestType {
             XCTAssertEqual(selectedUsersCodeable[index].id, UInt(10+row))
             XCTAssertEqual(selectedUsersCodeable[index].name, "name\(row)")
             XCTAssertEqual(selectedUsersCodeable[index].age, row)
-        }
-    }
-    
-}
-
-
-final class QueryURLTypeTests: XCTestCase, QueryTestType {
-    var constants: TestConstantsType!
-    var pool: ConnectionPool!
-    
-    override func setUp() {
-        super.setUp()
-        
-        prepare()
-        try! createURLTestTable()
-    }
-
-    func createURLTestTable() throws {
-        try dropTestTable()
-        
-        let conn = try pool.getConnection()
-        let query = """
-        CREATE TABLE `\(constants.tableName)` (
-        `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-        `url` mediumtext NOT NULL,
-        `url_Optional` mediumtext,
-        PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-        """
-        
-        _ = try conn.query(query)
-    }
-    
-    
-    
-    func testURLType() throws {
-        
-        let urlRow1 = Row.URLRow(url: URL(string: "https://apple.com/iphone")!, urlOptional: nil)
-        let urlRow2 = Row.URLRow(url: URL(string: "https://apple.com/iphone")!, urlOptional: URL(string: "https://apple.com/ipad")!)
-        
-        try pool.execute { conn in
-            _ = try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, urlRow1])
-            _ = try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, urlRow2])
-        }
-        
-        let rows: [Row.URLRow] = try pool.execute {
-            try $0.query("SELECT * FROM ?? ORDER BY id ASC", [constants.tableName])
-        }
-        
-        XCTAssertEqual(rows[0], urlRow1)
-        XCTAssertEqual(rows[1], urlRow2)
-    }
-    
-    func testURLInvalid() throws {
-        
-        try pool.execute { conn in
-            _ = try conn.query("INSERT INTO ?? SET `url` = ''", [constants.tableName])
-        }
-        
-        do {
-            let _: [Row.URLRow] = try pool.execute {
-                try $0.query("SELECT * FROM ?? ORDER BY id ASC", [constants.tableName])
-            }
-        } catch let error as DecodingError {
-            switch error {
-            case .dataCorrupted(let context):
-                print(context)
-                // expected error
-            default:
-                XCTFail("unexpected error \(error)")
-            }
-        } catch {
-            XCTFail("unexpected error \(error)")
         }
     }
     
