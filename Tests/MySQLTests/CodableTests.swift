@@ -17,6 +17,8 @@ extension CodableTests {
     }
 }
 
+// TODO: move to QueryParameterTests
+
 final class CodableTests: XCTestCase {
     
     enum UserType: String, Codable {

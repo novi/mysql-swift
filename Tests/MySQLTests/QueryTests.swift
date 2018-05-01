@@ -68,7 +68,9 @@ final class QueryTests: XCTestCase, QueryTestType {
             "`created_at_Optional` datetime DEFAULT NULL," +
             "`done` tinyint(1) NOT NULL DEFAULT 0," +
             "`done_Optional` tinyint(1) DEFAULT NULL," +
-            "`user_type` varchar(50) NOT NULL DEFAULT ''," +
+            "`user_type` varchar(255) NOT NULL DEFAULT ''," +
+            "`double_value` DOUBLE NOT NULL DEFAULT 0," +
+            //"`double_value` MEDIUMTEXT," +
             "PRIMARY KEY (`id`)" +
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
         
@@ -90,20 +92,20 @@ final class QueryTests: XCTestCase, QueryTestType {
         let name = "name 's"
         let age = 25
         
-        let userNil = User(id: .noID, name: name, age: age, createdAt: someDate, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user)
+        let userNil = User(id: .noID, name: name, age: age, createdAt: someDate, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user, decimalValue: Decimal(0) )
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, userNil])
         }
         XCTAssertEqual(status.insertedID, 1)
         
-        let userFill = User(id: .ID(UserID(134)), name: name, age: age, createdAt: someDate,  nameOptional: "fuga", ageOptional: 50, createdAtOptional: anotherDate, done: true, doneOptional: false, userType: .admin)
+        let userFill = User(id: .ID(UserID(134)), name: name, age: age, createdAt: someDate,  nameOptional: "fuga", ageOptional: 50, createdAtOptional: anotherDate, done: true, doneOptional: false, userType: .admin, decimalValue: Decimal(1.23e100))
         let status2: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, userFill])
         }
         XCTAssertEqual(status2.insertedID, 134)
         
         let rows:[User] = try pool.execute { conn in
-            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional,user_type FROM ??", [constants.tableName])
+            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional,user_type,double_value FROM ??", [constants.tableName])
         }
         
         XCTAssertEqual(rows.count, 2)
@@ -122,6 +124,7 @@ final class QueryTests: XCTestCase, QueryTestType {
         XCTAssertNil(rows[0].doneOptional)
         
         XCTAssertEqual(rows[0].userType, .user)
+        XCTAssertEqual(rows[0].decimalValue, userNil.decimalValue)
         
         // second row
         XCTAssertEqual(rows[1].id.id, UserID(134))
@@ -141,6 +144,7 @@ final class QueryTests: XCTestCase, QueryTestType {
         XCTAssertFalse(rows[1].doneOptional!)
         
         XCTAssertEqual(rows[1].userType, .admin)
+        XCTAssertEqual(rows[1].decimalValue, userFill.decimalValue)
     }
     
     
@@ -150,13 +154,13 @@ final class QueryTests: XCTestCase, QueryTestType {
         
         
         let now = Date()
-        let user = User(id: .noID, name: "日本語123🍣🍺あいう", age: 123, createdAt: now, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user)
+        let user = User(id: .noID, name: "日本語123🍣🍺あいう", age: 123, createdAt: now, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user, decimalValue: Decimal(0))
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, user])
         }
         
         let rows: [User] = try pool.execute{ conn in
-            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional,user_type FROM ?? WHERE id = ?", [constants.tableName, status.insertedID])
+            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional,user_type,double_value FROM ?? WHERE id = ?", [constants.tableName, status.insertedID])
         }
         XCTAssertEqual(rows.count, 1)
         let fetched = rows[0]
