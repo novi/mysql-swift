@@ -27,8 +27,13 @@ extension ConnectionPool {
     public func transaction<T>( _ block: (_ conn: Connection) throws -> T  ) throws -> T {
         let conn = try getConnection()
         defer {
+            if options.reconnect {
+                conn.setReconnect(true)
+            }
             releaseConnection(conn)
         }
+        
+        conn.setReconnect(false)
         try conn.beginTransaction()
         do {
             let result = try block(conn)
