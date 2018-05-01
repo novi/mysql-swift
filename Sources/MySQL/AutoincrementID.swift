@@ -88,7 +88,7 @@ extension AutoincrementID: Codable {
     }
     
     public init(from decoder: Decoder) throws {
-        self = .ID(try I.init(from: decoder))
+        self = .ID(try I(from: decoder))
     }
 }
 
