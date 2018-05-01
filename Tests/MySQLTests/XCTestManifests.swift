@@ -19,7 +19,7 @@ import XCTest
             testCase( QueryTests.allTests ),
             testCase( QueryURLTypeTests.allTests ),
             testCase( BlobQueryTests.allTests ),
-            testCase( SQLTypeTests.allTests ),
+            testCase( QueryParameterTests.allTests ),
             testCase( CodableTests.allTests )
         ]
     }

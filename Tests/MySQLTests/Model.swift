@@ -59,6 +59,7 @@ struct Row {
         let doneOptional: Bool?
         
         let userType: UserType
+        let decimalValue: Decimal
         
         private enum CodingKeys: String, CodingKey {
             case id
@@ -71,6 +72,7 @@ struct Row {
             case done
             case doneOptional = "done_Optional"
             case userType = "user_type"
+            case decimalValue = "double_value"
         }
     }
     

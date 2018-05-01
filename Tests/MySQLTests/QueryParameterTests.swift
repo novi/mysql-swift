@@ -1,5 +1,5 @@
 //
-//  SQLTypeTests.swift
+//  QueryParameterTests.swift
 //  MySQL
 //
 //  Created by Yusuke Ito on 4/21/16.
@@ -9,19 +9,20 @@
 import XCTest
 import MySQL
 
-extension SQLTypeTests {
-    static var allTests : [(String, (SQLTypeTests) -> () throws -> Void)] {
+extension QueryParameterTests {
+    static var allTests : [(String, (QueryParameterTests) -> () throws -> Void)] {
         return [
-                   ("testIDType", testIDType),
-                   ("testIDTypeInContainer", testIDTypeInContainer),
-                    ("testEnumType", testEnumType),
-                    ("testAutoincrementType", testAutoincrementType),
-                ("testDataAndURLType", testDataAndURLType)
+                ("testIDType", testIDType),
+                ("testIDTypeInContainer", testIDTypeInContainer),
+                ("testEnumType", testEnumType),
+                ("testAutoincrementType", testAutoincrementType),
+                ("testDataAndURLType", testDataAndURLType),
+                ("testDecimalType", testDecimalType)
         ]
     }
 }
 
-final class SQLTypeTests: XCTestCase {
+final class QueryParameterTests: XCTestCase {
     
     
     struct IDInt: IDType {
@@ -79,6 +80,10 @@ final class SQLTypeTests: XCTestCase {
     
     struct ModelWithURL: Encodable, QueryParameter {
         let url: URL
+    }
+    
+    struct ModelWithDecimal: Encodable, QueryParameter {
+        let value: Decimal
     }
 
     func testIDType() throws {
@@ -163,4 +168,10 @@ final class SQLTypeTests: XCTestCase {
         }
     }
 
+    func testDecimalType() throws {
+        let decimalModel = ModelWithDecimal(value: Decimal(1.2345e100))
+        let queryString = try decimalModel.queryParameter(option: queryOption).escaped()
+        XCTAssertEqual(queryString,
+                       "`value` = '12345000000000010240000000000000000000000000000000000000000000000000000000000000000000000000000000000'")
+    }
 }

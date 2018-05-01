@@ -267,6 +267,9 @@ fileprivate struct RowKeyedDecodingContainer<K : CodingKey> : KeyedDecodingConta
                                                                         debugDescription: "Invalid URL string."))
             }
             return url as! T
+        } else if t == Decimal.self {
+            let doubleValue = try decoder.row.getValue(forField: key.stringValue) as Double
+            return Decimal(doubleValue) as! T
         } else if let customType = t as? QueryRowResultCustomData.Type {
             let data = try decoder.row.getValue(forField: key.stringValue) as Data
             return try customType.decode(fromRowData: data) as! T
