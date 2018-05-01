@@ -3,7 +3,6 @@ mysql-swift
 
 [![Swift 4.0](https://img.shields.io/badge/Swift-4.0-orange.svg)](https://swift.org)
 ![Platform Linux, macOS](https://img.shields.io/badge/Platforms-Linux%2C%20macOS-lightgray.svg)
-[![Build Status](https://travis-ci.org/novi/mysql-swift.svg?branch=master)](https://travis-ci.org/novi/mysql-swift)
 [![CircleCI](https://circleci.com/gh/novi/mysql-swift.svg?style=svg)](https://circleci.com/gh/novi/mysql-swift)
 
 
@@ -14,7 +13,7 @@ This is inspired by Node.js' [mysql](https://github.com/felixge/node-mysql).
 * Based on libmysqlclient
 * Raw SQL query
 * Simple query formatting and escaping (same as Node's)
-* Decoding and mapping queried results to Swift struct or class
+* Mapping queried results to `Codable` structs or classes
 
 _Note:_ No asynchronous support currently. It depends libmysqlclient.
 
@@ -62,7 +61,7 @@ try conn.query("UPDATE `user` SET age = ? WHERE age is NULL;", [defaultAge])
 
 # Requirements
 
-* Swift 4.0.3 or later
+* Swift 4.1 or later
 
 # Dependencies
 
@@ -70,7 +69,7 @@ try conn.query("UPDATE `user` SET age = ? WHERE age is NULL;", [defaultAge])
 
 ## macOS
 
-This library uses Vapor's `cmysql` . Follow [the instruction](https://docs.vapor.codes/2.0/getting-started/install-on-macos/) or install `vapor/tap/cmysql` manually.
+This library uses Vapor's `cmysql` . Follow [the instruction](https://docs.vapor.codes/2.0/getting-started/install-on-macos/) or install `vapor/tap/cmysql` via Homebrew manually.
 
 ## Ubuntu Linux
 
