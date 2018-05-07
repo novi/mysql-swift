@@ -326,7 +326,7 @@ fileprivate struct QueryParameterSingleValueEncodingContainer: SingleValueEncodi
     }
     
     mutating func encode<T>(_ value: T) throws where T : Encodable {
-        fatalError()
+        encoder.singleValue = value as? QueryParameter
     }
     
     
