@@ -14,6 +14,7 @@ extension QueryTests {
     static var allTests : [(String, (QueryTests) -> () throws -> Void)] {
         return [
             ("testInsertRowCodable", testInsertRowCodable),
+            ("testTransaction", testTransaction),
             ("testEmojiInserting", testEmojiInserting),
             ("testBulkInsert", testBulkInsert)
         ]
@@ -160,6 +161,15 @@ final class QueryTests: XCTestCase, QueryTestType {
         XCTAssertEqual(rows[0].userType, .user)
         
         XCTAssertEqual(rows[1], userFill)
+    }
+    
+    func testTransaction() throws {
+        
+        let user = Row.User(id: .noID, name: "name", age: 11, createdAt: someDate, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user)
+        let status: QueryStatus = try pool.transaction { conn in
+            try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, user])
+        }
+        XCTAssertEqual(status.insertedID, 1)
     }
     
     

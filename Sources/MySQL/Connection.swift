@@ -93,6 +93,19 @@ public final class Connection {
         pool.releaseConnection(self)
     }
     
+    internal static func setReconnect(_ reconnect: Bool, mysql: UnsafeMutablePointer<MYSQL>) {
+        let reconnectPtr = UnsafeMutablePointer<my_bool>.allocate(capacity: 1)
+        reconnectPtr.pointee = reconnect == false ? 0 : 1
+        mysql_options(mysql, MYSQL_OPT_RECONNECT, reconnectPtr)
+        reconnectPtr.deallocate()
+    }
+    
+    func setReconnect(_ reconnect: Bool) {
+        if let mysql = mysql {
+            Connection.setReconnect(reconnect, mysql: mysql)
+        }
+    }
+    
     internal func connect() throws -> UnsafeMutablePointer<MYSQL> {
         dispose()
         
@@ -104,23 +117,10 @@ public final class Connection {
             let timeoutPtr = UnsafeMutablePointer<Int>.allocate(capacity: 1)
             timeoutPtr.pointee = options.timeout
             mysql_options(mysql, MYSQL_OPT_CONNECT_TIMEOUT, timeoutPtr)
-            #if swift(>=4.1)
-                timeoutPtr.deallocate()
-            #else
-                timeoutPtr.deallocate(capacity: 1)
-            #endif
+            timeoutPtr.deallocate()
         }
         
-        do {
-            let reconnectPtr = UnsafeMutablePointer<my_bool>.allocate(capacity: 1)
-            reconnectPtr.pointee = options.reconnect == false ? 0 : 1
-            mysql_options(mysql, MYSQL_OPT_RECONNECT, reconnectPtr)
-            #if swift(>=4.1)
-                reconnectPtr.deallocate()
-            #else
-                reconnectPtr.deallocate(capacity: 1)
-            #endif
-        }
+        Connection.setReconnect(options.reconnect, mysql: mysql)
         
         if mysql_real_connect(mysql,
             options.host,
