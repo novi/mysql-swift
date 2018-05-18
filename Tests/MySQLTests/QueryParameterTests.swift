@@ -8,6 +8,14 @@
 
 import XCTest
 import MySQL
+import SQLFormatter
+
+// the URL as QueryParameter should be
+extension URL: QueryParameter {
+    public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
+        return self.absoluteString.queryParameter(option: option)
+    }
+}
 
 extension QueryParameterTests {
     static var allTests : [(String, (QueryParameterTests) -> () throws -> Void)] {
@@ -167,6 +175,13 @@ final class QueryParameterTests: XCTestCase {
             let queryString = try urlModel.queryParameter(option: queryOption).escaped()
             XCTAssertEqual(queryString,
                            "`url` = 'https://apple.com/iphone'")
+        }
+        
+        do {
+            let param: QueryParameter = URL(string: "https://apple.com/iphone")!
+            let queryString = try param.queryParameter(option: queryOption).escaped()
+            XCTAssertEqual(queryString,
+                           "'https://apple.com/iphone'")
         }
     }
 
