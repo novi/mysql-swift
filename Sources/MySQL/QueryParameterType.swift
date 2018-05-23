@@ -20,16 +20,6 @@ public extension QueryParameter {
     }
 }
 
-public protocol QueryParameterDictionaryType: QueryParameter {
-    func queryParameter() throws -> QueryParameterDictionary
-}
-
-public extension QueryParameterDictionaryType {
-    func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
-        return try queryParameter().queryParameter(option: option)
-    }
-}
-
 public protocol QueryParameterOption {
     var timeZone: TimeZone { get }
 }
