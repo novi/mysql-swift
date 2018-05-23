@@ -30,11 +30,18 @@ extension AutoincrementID: Equatable {
     }
 }
 
-extension AutoincrementID: CustomStringConvertible where I: CustomStringConvertible {
+extension AutoincrementID: CustomStringConvertible {
+    // where I: CustomStringConvertible
+    // is not supported yet
     public var description: String {
         switch self {
         case .noID: return "noID"
-        case .ID(let id): return id.description
+        case .ID(let id):
+            if let idVal = id as? CustomStringConvertible {
+                return idVal.description
+            } else {
+                return "\(id)"
+            }
         }
     }
 }
