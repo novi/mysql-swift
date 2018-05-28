@@ -1,7 +1,7 @@
 mysql-swift
 ===========
 
-[![Swift 4.0](https://img.shields.io/badge/Swift-4.0-orange.svg)](https://swift.org)
+[![Swift 4.1](https://img.shields.io/badge/Swift-4.1-orange.svg)](https://swift.org)
 ![Platform Linux, macOS](https://img.shields.io/badge/Platforms-Linux%2C%20macOS-lightgray.svg)
 [![CircleCI](https://circleci.com/gh/novi/mysql-swift.svg?style=svg)](https://circleci.com/gh/novi/mysql-swift)
 
