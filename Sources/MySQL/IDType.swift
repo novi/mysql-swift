@@ -30,8 +30,10 @@ extension IDType where Self: SQLRawStringDecodable, Self.T: SQLRawStringDecodabl
     }
 }
 
-public func ==<T: IDType>(lhs: T, rhs: T) -> Bool {
-    return lhs.id == rhs.id
+extension IDType {
+    public static func ==(lhs: Self, rhs: Self) -> Bool {
+        return lhs.id == rhs.id
+    }
 }
 
 // MARK: Codable type

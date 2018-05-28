@@ -20,9 +20,13 @@ extension DateTests {
     }
 }
 
+struct QueryParameterTestOption: QueryParameterOption {
+    let timeZone: TimeZone
+}
+
 extension XCTestCase {
     var queryOption: QueryParameterOption {
-        return QueryParameterOption(timeZone: TimeZone(abbreviation: "UTC")!)
+        return QueryParameterTestOption(timeZone: TimeZone(abbreviation: "UTC")!)
     }
 }
 
@@ -30,8 +34,8 @@ final class DateTests : XCTestCase {
     
     func testSQLDate() throws {
         
-        let gmt = QueryParameterOption(timeZone: TimeZone(abbreviation: "UTC")!)
-        let losAngeles = QueryParameterOption(timeZone: TimeZone(identifier: "America/Los_Angeles")!)
+        let gmt = QueryParameterTestOption(timeZone: TimeZone(abbreviation: "UTC")!)
+        let losAngeles = QueryParameterTestOption(timeZone: TimeZone(identifier: "America/Los_Angeles")!)
         
         let expected = "2003-01-02 03:04:05" // no timezone
         
@@ -61,8 +65,6 @@ final class DateTests : XCTestCase {
         let gmt = TimeZone(abbreviation: "PDT")!
         let cal1 = SQLDateCalendar.calendar(forTimezone: gmt)
         let cal2 = SQLDateCalendar.calendar(forTimezone: gmt)
-        //Unmanaged.passUnretained(cal1).toOpaque()
-        //XCTAssertTrue(unsafeAddress(of: cal1 as AnyObject) == unsafeAddress(of: cal2 as AnyObject))
         XCTAssertEqual(cal1, cal2)
         XCTAssertEqual(cal1.hashValue, cal2.hashValue)
     }

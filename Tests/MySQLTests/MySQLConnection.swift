@@ -34,6 +34,7 @@ struct DummyConstants: TestConstantsType {
     let tableName: String = "unit_test_db_3894"
     let encoding: Connection.Encoding = .UTF8MB4
     let timeZone: TimeZone = TimeZone(abbreviation: "JST")! // JST
+    let reconnect: Bool = true
 }
 
 protocol TestConstantsType: ConnectionOption {

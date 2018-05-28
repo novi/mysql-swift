@@ -8,9 +8,6 @@
 
 import Foundation
 
-@available(*, renamed: "SQLRawStringDecodable")
-typealias SQLStringDecodable = SQLRawStringDecodable
-
 internal protocol SQLRawStringDecodable {
     static func fromSQLValue(string: String) throws -> Self
 }
@@ -170,7 +167,7 @@ fileprivate struct SQLStringDecoder: Decoder {
     }
 
     func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
-        throw QueryError.resultDecodeErrorMessage(message: "RawTypeDecoder container(keyedBy:) not implemented")
+        throw QueryError.resultDecodeErrorMessage(message: "RawTypeDecoder container(keyedBy:) not implemented, you could implement `QueryRowResultCustomData` ")
     }
     
     func unkeyedContainer() throws -> UnkeyedDecodingContainer {
@@ -255,24 +252,25 @@ fileprivate struct RowKeyedDecodingContainer<K : CodingKey> : KeyedDecodingConta
         return try decoder.row.getValue(forField: key.stringValue) as String
     }
     
-    func decode<T>(_ type: T.Type, forKey key: K) throws -> T where T : Decodable {
-        if type == Data.self {
-            // Bug: The compiler chooses NOT to use "decode() -> Data". We have to implement it in decode<T>()
+    func decode<T>(_ t: T.Type, forKey key: K) throws -> T where T : Decodable {
+        if t == Data.self {
             return try decoder.row.getValue(forField: key.stringValue) as Data as! T
-        }
-        if type == Date.self {
+        } else if t == Date.self {
             return try decoder.row.getValue(forField: key.stringValue) as Date as! T
-        }
-        
-        if type == URL.self {
+        } else if t == URL.self {
             let urlString = try decoder.row.getValue(forField: key.stringValue) as String
             guard let url = URL(string: urlString) else {
                 throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath,
                                                                         debugDescription: "Invalid URL string."))
             }
             return url as! T
+        } else if t == Decimal.self {
+            let doubleValue = try decoder.row.getValue(forField: key.stringValue) as Double
+            return Decimal(doubleValue) as! T
+        } else if let customType = t as? QueryRowResultCustomData.Type {
+            let data = try decoder.row.getValue(forField: key.stringValue) as Data
+            return try customType.decode(fromRowData: data) as! T
         }
-        
         guard let columnValue = decoder.row.columnMap[key.stringValue] else {
             throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: [key], debugDescription: ""))
         }

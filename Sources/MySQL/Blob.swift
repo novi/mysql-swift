@@ -28,14 +28,37 @@ extension Data: QueryParameterType {
         buffer += "'"
         return buffer
     }
+    
     public func escapedForID() -> String? {
-        return nil
+        return nil // Data can not be used for ID(?? placeholder).
     }
 }
 
 extension Data: QueryParameter {
     public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
         return self
+    }
+}
+
+internal struct Blob: QueryParameter {
+    let data: Data
+    let dataType: QueryCustomDataParameterDataType
+    public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
+        return self
+    }
+}
+
+extension Blob: QueryParameterType {
+    public func escaped() -> String {
+        switch dataType {
+        case .blob: return data.escaped()
+        case .json:
+            return "CONVERT(" + data.escaped() + " using utf8mb4)"
+        }
+    }
+    
+    public func escapedForID() -> String? {
+        return nil // Data can not be used for ID(?? placeholder).
     }
 }
 
