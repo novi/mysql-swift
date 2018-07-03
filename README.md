@@ -69,7 +69,11 @@ try conn.query("UPDATE `user` SET age = ? WHERE age is NULL;", [defaultAge])
 
 ## macOS
 
-This library uses Vapor's `cmysql` . Follow [the instruction](https://docs.vapor.codes/2.0/getting-started/install-on-macos/) or install `vapor/tap/cmysql` via Homebrew manually.
+Install pkg-config `.pc` in [cmysql](https://github.com/vapor-community/cmysql) or [cmysql-mariadb](https://github.com/novi/cmysql-mariadb/tree/mariadb).
+
+```
+brew install https://gist.github.com/novi/dd21d48d260379e8919d9490bf5cfaec/raw/6ea4daa02d93f4ab0110ad30d87ea2b497a71cd0/cmysqlmariadb.rb
+```
 
 ## Ubuntu Linux
 
