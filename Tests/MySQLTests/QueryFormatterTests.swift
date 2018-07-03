@@ -14,6 +14,7 @@ extension QueryFormatterTests {
     static var allTests : [(String, (QueryFormatterTests) -> () throws -> Void)] {
         return [
                    ("testBasicFormatting", testBasicFormatting),
+                   ("testLikeEscape", testLikeEscape),
                    ("testPlaceholder", testPlaceholder),
                     ("testStringUtil", testStringUtil)
         ]
@@ -48,6 +49,15 @@ final class QueryFormatterTests: XCTestCase {
         
         let formatted = try QueryFormatter.format(query: "SELECT name,??,id FROM ?? WHERE ?? = ? OR name = ? OR age is ?;", parameters: Connection.buildParameters(args, option: queryOption) )
         XCTAssertEqual(formatted, "SELECT name,`i`.`d`,id FROM `user` WHERE `id` = 1 OR name = 'user\\'s' OR age is NULL;")
+    }
+    
+    func testLikeEscape() {
+        
+        XCTAssertEqual(SQLString.escapeForLike(string: "ap%ple_"), "ap\\%ple\\_")
+        XCTAssertEqual(SQLString.escapeForLike(string: "ap\\%ple_"), "ap\\\\%ple\\_")
+        
+        XCTAssertEqual(SQLString.escapeForLike(string: "ap%ple_", escapingWith: "$"), "ap$%ple$_")
+        XCTAssertEqual(SQLString.escapeForLike(string: "ap\\%ple_", escapingWith: "$"), "ap\\$%ple$_")
     }
     
     func testPlaceholder() throws {
