@@ -151,6 +151,17 @@ fileprivate let DateRegex: NSRegularExpression = {
     return try! NSRegularExpression(pattern: "^(\\d{4})-(\\d{2})-(\\d{2})$", options: [])
 }()
 
+
+fileprivate func stringToNanoseconds<S: StringProtocol>(_ string: S) -> Int? {
+    guard string.count > 0 else {
+        return nil
+    }
+    guard let doubleValue = Double("0.\(string)") else {
+        return nil
+    }
+    return Int(doubleValue * 1_000_000_000.0)
+}
+
 extension DateComponents: SQLRawStringDecodable {
     static func fromSQLValue(string: String) throws -> DateComponents {
         if string.count == 4 {
@@ -167,7 +178,7 @@ extension DateComponents: SQLRawStringDecodable {
             let minute = Int(string[Range(match.range(at: 5), in: string)!])
             let second = Int(string[Range(match.range(at: 6), in: string)!])
             
-            let nanosecond = Int(string[Range(match.range(at: 7), in: string)!])
+            let nanosecond = String(string[Range(match.range(at: 7), in: string)!])
             return DateComponents(
                 year: year,
                 month: month,
@@ -175,7 +186,7 @@ extension DateComponents: SQLRawStringDecodable {
                 hour: hour,
                 minute: minute,
                 second: second,
-                nanosecond: nanosecond != nil ? (nanosecond! * 1_000_000_000) : nil
+                nanosecond: stringToNanoseconds(nanosecond)
             )
         }
         if let match = TimeRegex.firstMatch(in: string, options: [], range: wholeRange) {
@@ -183,12 +194,12 @@ extension DateComponents: SQLRawStringDecodable {
             let minute = Int(string[Range(match.range(at: 2), in: string)!])
             let second = Int(string[Range(match.range(at: 3), in: string)!])
             
-            let nanosecond = Int(string[Range(match.range(at: 4), in: string)!])
+            let nanosecond = string[Range(match.range(at: 4), in: string)!]
             return DateComponents(
                 hour: hour,
                 minute: minute,
                 second: second,
-                nanosecond: nanosecond != nil ? (nanosecond! * 1_000_000_000) : nil
+                nanosecond: stringToNanoseconds(nanosecond)
             )
         }
         if let match = DateRegex.firstMatch(in: string, options: [], range: wholeRange) {

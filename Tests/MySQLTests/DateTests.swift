@@ -90,7 +90,7 @@ final class DateTests : XCTestCase {
             XCTAssertEqual(comps.minute, 59)
             XCTAssertEqual(comps.second, 58)
             
-            XCTAssertEqual(comps.nanosecond, 123456_000_000_000)
+            XCTAssertEqual(comps.nanosecond, 123456_000)
         }
         
         do {
@@ -123,7 +123,7 @@ final class DateTests : XCTestCase {
             XCTAssertEqual(comps.minute, 59)
             XCTAssertEqual(comps.second, 58)
             
-            XCTAssertEqual(comps.nanosecond, 123456_000_000_000)
+            XCTAssertEqual(comps.nanosecond, 123456_000)
         }
         
         do {
