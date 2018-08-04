@@ -38,7 +38,7 @@ public struct SQLString {
     }
     
     public static func escape(string str: String) -> String {
-        var out = ""
+        var out = "'"
         for c in str.unicodeScalars {
             switch c {
             case "\0":
@@ -63,7 +63,21 @@ public struct SQLString {
                 out.append(Character(c))
             }
         }
-        return "'\(out)'"
+        out.append("'")
+        return out
+    }
+    
+    public static func escapeForLike(string str: String, escapingWith: Character = "\\") -> String {
+        var out = ""
+        for c in str.unicodeScalars {
+            switch c {
+            case "%", "_":
+                out.append(escapingWith)
+            default: break
+            }
+            out.append(Character(c))
+        }
+        return out
     }
 }
 
