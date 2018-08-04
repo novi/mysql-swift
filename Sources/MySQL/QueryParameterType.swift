@@ -390,6 +390,8 @@ fileprivate struct QueryParameterKeyedEncodingContainer<Key : CodingKey> : Keyed
     mutating func encode<T>(_ value: T, forKey key: Key) throws where T : Encodable {
         if T.self == Date.self {
             encoder.dict[key.stringValue] = value as! Date
+        } else if T.self == DateComponents.self {
+            encoder.dict[key.stringValue] = value as! DateComponents
         } else if T.self == Data.self {
             encoder.dict[key.stringValue] = value as! Data
         } else if T.self == URL.self {

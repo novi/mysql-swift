@@ -8,8 +8,6 @@
 
 public enum QueryError: Error {
     
-    case parameterCastError(actualValue: String, expectedType: Any, forKey: String, query: String)
-    
     case queryExecutionError(message: String, query: String)
     case resultFetchError(message: String, query: String)
     case resultNoFieldError(query: String)
@@ -24,5 +22,8 @@ public enum QueryError: Error {
     case SQLRawStringDecodeError(error: Error, actualValue: String, expectedType: String, forField: String)
     
     case missingField(String)
-    
+}
+
+public enum QueryParameterError: Error {
+    case dateComponentsError(String)
 }

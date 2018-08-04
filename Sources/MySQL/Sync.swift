@@ -33,7 +33,7 @@ final class Mutex {
 
 extension Mutex {
     
-    func sync<T>( block: () throws -> T) rethrows -> T {
+    func sync<T>( _ block: () throws -> T) rethrows -> T {
         lock()
         defer {
             unlock()

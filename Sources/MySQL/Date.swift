@@ -30,6 +30,17 @@ internal final class SQLDateCalendar {
     }
 }
 
+fileprivate func pad(num: Int, digits: Int = 2) -> String {
+    var str = String(num)
+    if num < 0 {
+        return str
+    }
+    while str.count < digits {
+        str = "0" + str
+    }
+    return str
+}
+
 
 extension Date {
     
@@ -83,34 +94,113 @@ extension Date {
         
         throw QueryError.SQLDateStringError(sqlDate)
     }
-    
-    fileprivate func pad(num: Int32, digits: Int = 2) -> String {
-        return pad(num: Int(num), digits: digits)
-    }
-    fileprivate func pad(num: Int8, digits: Int = 2) -> String {
-        return pad(num: Int(num), digits: digits)
-    }
-    
-    fileprivate func pad(num: Int, digits: Int = 2) -> String {
-        var str = String(num)
-        if num < 0 {
-            return str
-        }
-        while str.count < digits {
-            str = "0" + str
-        }
-        return str
-    }
 }
 
 extension Date: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        let comp = SQLDateCalendar.mutex.sync { () -> DateComponents in
+        let comp: DateComponents = SQLDateCalendar.mutex.sync {
             let cal = SQLDateCalendar.calendar(forTimezone: option.timeZone)
             return cal.dateComponents([ .year, .month,  .day,  .hour, .minute, .second], from: self)
-        } // TODO: in Linux
+        }
         
         // YYYY-MM-DD HH:MM:SS
         return EscapedQueryParameter( "'\(pad(num: comp.year ?? 0, digits: 4))-\(pad(num: comp.month ?? 0))-\(pad(num: comp.day ?? 0)) \(pad(num: comp.hour ?? 0)):\(pad(num: comp.minute ?? 0)):\(pad(num: comp.second ?? 0))'" )
+    }
+}
+
+fileprivate func nanosecondsToString(_ nanosec: Int) -> String {
+    let nanosecSecond = Double(nanosec % 1_000_000_000)/1_000_000_000.0
+    var nanosecStr = String(format: "%.6f", nanosecSecond)
+    nanosecStr.removeFirst()
+    return String(nanosecStr)
+}
+
+extension DateComponents: QueryParameter {
+    public func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
+        if let year = self.year, let month = self.month, let day = self.day, let hour = self.hour, let minute = self.minute, let second = self.second {
+            var string = "'\(pad(num: year, digits: 4))-\(pad(num: month))-\(pad(num: day)) \(pad(num: hour)):\(pad(num: minute)):\(pad(num: second))"
+            if let nanosec = self.nanosecond {
+                string += nanosecondsToString(nanosec)
+            }
+            return EscapedQueryParameter(string + "'")
+        }
+        
+        if let hour = self.hour, let minute = self.minute, let second = self.second {
+            var string = "'\(pad(num: hour)):\(pad(num: minute)):\(pad(num: second))"
+            if let nanosec = self.nanosecond {
+                string += nanosecondsToString(nanosec)
+            }
+            return EscapedQueryParameter(string + "'")
+        }
+        if let year = self.year {
+            return EscapedQueryParameter("'\(pad(num: year))'")
+        }
+        throw QueryParameterError.dateComponentsError(self.description)
+    }
+}
+
+fileprivate let DateTimeRegex: NSRegularExpression = {
+    return try! NSRegularExpression(pattern: "^(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2})\\.?(\\d*)$", options: [])
+}()
+
+fileprivate let TimeRegex: NSRegularExpression = {
+    return try! NSRegularExpression(pattern: "^(\\-?\\d{1,3}):(\\d{2}):(\\d{2})\\.?(\\d*)$", options: [])
+}()
+
+fileprivate let DateRegex: NSRegularExpression = {
+    return try! NSRegularExpression(pattern: "^(\\d{4})-(\\d{2})-(\\d{2})$", options: [])
+}()
+
+extension DateComponents: SQLRawStringDecodable {
+    static func fromSQLValue(string: String) throws -> DateComponents {
+        if string.count == 4 {
+            // YEAR type
+            return DateComponents(year: Int(string))
+        }
+        let wholeRange = NSRange(string.startIndex..<string.endIndex, in: string)
+        if let match = DateTimeRegex.firstMatch(in: string, options: [], range: wholeRange) {
+            let year = Int(string[Range(match.range(at: 1), in: string)!])
+            let month = Int(string[Range(match.range(at: 2), in: string)!])
+            let day = Int(string[Range(match.range(at: 3), in: string)!])
+            
+            let hour = Int(string[Range(match.range(at: 4), in: string)!])
+            let minute = Int(string[Range(match.range(at: 5), in: string)!])
+            let second = Int(string[Range(match.range(at: 6), in: string)!])
+            
+            let nanosecond = Int(string[Range(match.range(at: 7), in: string)!])
+            return DateComponents(
+                year: year,
+                month: month,
+                day: day,
+                hour: hour,
+                minute: minute,
+                second: second,
+                nanosecond: nanosecond != nil ? (nanosecond! * 1_000_000_000) : nil
+            )
+        }
+        if let match = TimeRegex.firstMatch(in: string, options: [], range: wholeRange) {
+            let hour = Int(string[Range(match.range(at: 1), in: string)!])
+            let minute = Int(string[Range(match.range(at: 2), in: string)!])
+            let second = Int(string[Range(match.range(at: 3), in: string)!])
+            
+            let nanosecond = Int(string[Range(match.range(at: 4), in: string)!])
+            return DateComponents(
+                hour: hour,
+                minute: minute,
+                second: second,
+                nanosecond: nanosecond != nil ? (nanosecond! * 1_000_000_000) : nil
+            )
+        }
+        if let match = DateRegex.firstMatch(in: string, options: [], range: wholeRange) {
+            let year = Int(string[Range(match.range(at: 1), in: string)!])
+            let month = Int(string[Range(match.range(at: 2), in: string)!])
+            let day = Int(string[Range(match.range(at: 3), in: string)!])
+            return DateComponents(
+                year: year,
+                month: month,
+                day: day
+            )
+        }
+        throw QueryError.SQLDateStringError(string)
     }
 }
