@@ -21,12 +21,8 @@ internal final class SQLDateCalendar {
         }
         var newCal = Calendar(identifier: .gregorian)
         newCal.timeZone = timeZone
-        self.save(calendar: newCal, forTimeZone: timeZone)
+        cals[timeZone] = newCal
         return newCal
-    }
-    
-    private static func save(calendar cal: Calendar, forTimeZone timeZone: TimeZone) {
-        cals[timeZone] = cal
     }
 }
 
@@ -53,21 +49,6 @@ extension Date {
         }
         
         switch sqlDate.count {
-        case 4:
-            if let year = Int(sqlDate) {
-                var comp = DateComponents()
-                comp.year = year
-                comp.month = 1
-                comp.day = 1
-                comp.hour = 0
-                comp.minute = 0
-                comp.second = 0
-                let cal = SQLDateCalendar.calendar(forTimezone: timeZone)
-                if let date = cal.date(from: comp) {
-                    self = date
-                    return
-                }
-            }
         case 19:
             let chars: [Character] = Array(sqlDate)
             if let year = Int(String(chars[0...3])),
@@ -76,15 +57,15 @@ extension Date {
                 let hour = Int(String(chars[11...12])),
                 let minute = Int(String(chars[14...15])),
                 let second = Int(String(chars[17...18])), year > 0 && day > 0 && month > 0 {
-                var comp = DateComponents()
-                comp.year = year
-                comp.month = month
-                comp.day = day
-                comp.hour = hour
-                comp.minute = minute
-                comp.second = second
+                var comps = DateComponents()
+                comps.year = year
+                comps.month = month
+                comps.day = day
+                comps.hour = hour
+                comps.minute = minute
+                comps.second = second
                 let cal = SQLDateCalendar.calendar(forTimezone: timeZone)
-                if let date = cal.date(from :comp) {
+                if let date = cal.date(from :comps) {
                     self = date
                     return
                 }

@@ -56,10 +56,6 @@ final class DateTests : XCTestCase {
         
         XCTAssertEqual(try Date(sqlDate: expected, timeZone: losAngeles.timeZone),
             try Date(sqlDate: expected, timeZone: losAngeles.timeZone))
-        
-        
-        let sqlYear = try Date(sqlDate: "2021", timeZone: gmt.timeZone)
-        XCTAssertEqual(sqlYear.queryParameter(option: gmt).escaped(), "'2021-01-01 00:00:00'")
     }
     
     func testSQLCalendar() {
