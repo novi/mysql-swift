@@ -11,18 +11,19 @@ import Foundation
 import SQLFormatter
 
 internal final class SQLDateCalendar {
-    fileprivate static let mutex = Mutex()
     
-    private static var cals: [TimeZone:Calendar] = [:]
+    private static var calendars: Atomic<[TimeZone:Calendar]> = Atomic([:])
     
-    internal static func calendar(forTimezone timeZone: TimeZone) -> Calendar {
-        if let cal = cals[timeZone] {
-            return cal
+    internal static func calendar<T>(forTimezone timeZone: TimeZone, _ block: (_ calendar: Calendar) -> T) -> T {
+        return calendars.syncWriting {
+            if let calendar = $0[timeZone] {
+                return block(calendar)
+            }
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = timeZone
+            $0[timeZone] = calendar
+            return block(calendar)
         }
-        var newCal = Calendar(identifier: .gregorian)
-        newCal.timeZone = timeZone
-        cals[timeZone] = newCal
-        return newCal
     }
 }
 
@@ -42,12 +43,6 @@ extension Date {
     
     internal init(sqlDate: String, timeZone: TimeZone) throws {
         
-        SQLDateCalendar.mutex.lock()
-        
-        defer {
-            SQLDateCalendar.mutex.unlock()
-        }
-        
         switch sqlDate.count {
         case 19:
             let chars: [Character] = Array(sqlDate)
@@ -64,8 +59,10 @@ extension Date {
                 comps.hour = hour
                 comps.minute = minute
                 comps.second = second
-                let cal = SQLDateCalendar.calendar(forTimezone: timeZone)
-                if let date = cal.date(from :comps) {
+                let parsedDate: Date? = SQLDateCalendar.calendar(forTimezone: timeZone) { calendar in
+                    calendar.date(from :comps)
+                }
+                if let date = parsedDate {
                     self = date
                     return
                 }
@@ -79,11 +76,9 @@ extension Date {
 
 extension Date: QueryParameter {
     public func queryParameter(option: QueryParameterOption) -> QueryParameterType {
-        let comp: DateComponents = SQLDateCalendar.mutex.sync {
-            let cal = SQLDateCalendar.calendar(forTimezone: option.timeZone)
-            return cal.dateComponents([ .year, .month,  .day,  .hour, .minute, .second], from: self)
-        }
-        
+        let comp: DateComponents = SQLDateCalendar.calendar(forTimezone: option.timeZone) { calendar in
+            calendar.dateComponents([ .year, .month,  .day,  .hour, .minute, .second], from: self)
+        }        
         // YYYY-MM-DD HH:MM:SS
         return EscapedQueryParameter( "'\(pad(num: comp.year ?? 0, digits: 4))-\(pad(num: comp.month ?? 0))-\(pad(num: comp.day ?? 0)) \(pad(num: comp.hour ?? 0)):\(pad(num: comp.minute ?? 0)):\(pad(num: comp.second ?? 0))'" )
     }

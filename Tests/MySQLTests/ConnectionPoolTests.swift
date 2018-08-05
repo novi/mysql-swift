@@ -37,8 +37,8 @@ final class ConnectionPoolTests: XCTestCase, MySQLTestType {
         
         let initialConnection = 1
         
-        XCTAssertEqual(pool.pool.count, initialConnection)
-        XCTAssertEqual(pool.inUseConnections, 0)
+        XCTAssertEqual(pool.pool.sync { $0.count }, initialConnection)
+        XCTAssertEqual(pool.pool.sync { $0.inUseConnections }, 0)
         
         var connections: [Connection] = []
         for _ in 0..<initialConnection {
@@ -46,11 +46,11 @@ final class ConnectionPoolTests: XCTestCase, MySQLTestType {
             connections.append(con)
         }
         XCTAssertEqual(connections.count, initialConnection)
-        XCTAssertEqual(pool.inUseConnections, initialConnection)
+        XCTAssertEqual(pool.pool.sync { $0.inUseConnections }, initialConnection)
         
         // increse initial connections
         pool.initialConnections = 7
-        XCTAssertEqual(pool.pool.count, 7)
+        XCTAssertEqual(pool.pool.sync { $0.count }, 7)
         
         // get connection while max connections count
         while connections.count < pool.maxConnections {
@@ -59,8 +59,8 @@ final class ConnectionPoolTests: XCTestCase, MySQLTestType {
         }
         
         XCTAssertEqual(connections.count, pool.maxConnections)
-        XCTAssertEqual(pool.pool.count, pool.maxConnections)
-        XCTAssertEqual(pool.inUseConnections, pool.maxConnections)
+        XCTAssertEqual(pool.pool.sync { $0.count }, pool.maxConnections)
+        XCTAssertEqual(pool.pool.sync { $0.inUseConnections }, pool.maxConnections)
         
         // this connection getting failure
         pool.timeoutForGetConnection = 2
@@ -71,8 +71,8 @@ final class ConnectionPoolTests: XCTestCase, MySQLTestType {
             c.release()
         }
         connections.removeAll()
-        XCTAssertEqual(pool.inUseConnections, 0)
-        XCTAssertEqual(pool.pool.count, pool.maxConnections)
+        XCTAssertEqual(pool.pool.sync { $0.inUseConnections }, 0)
+        XCTAssertEqual(pool.pool.sync { $0.count }, pool.maxConnections)
     }
     
     

@@ -12,7 +12,7 @@
     import Darwin.C
 #endif
 
-final class Mutex {
+fileprivate final class Mutex {
     private var mutex = pthread_mutex_t()
     init() {
         pthread_mutex_init(&mutex, nil)
@@ -31,14 +31,27 @@ final class Mutex {
     }
 }
 
-extension Mutex {
-    
-    func sync<T>( _ block: () throws -> T) rethrows -> T {
-        lock()
+internal struct Atomic<T> {
+    private var value: T
+    private let mutex = Mutex()
+    init(_ value: T) {
+        self.value = value
+    }
+    mutating func syncWriting<R>( _ block: (inout T) throws -> R) rethrows -> R {
+        mutex.lock()
         defer {
-            unlock()
+            mutex.unlock()
         }
-        return try block()
+        let result = try block(&value)
+        return result
     }
     
+    func sync<R>( _ block: (T) throws -> R) rethrows -> R {
+        mutex.lock()
+        defer {
+            mutex.unlock()
+        }
+        let result = try block(value)
+        return result
+    }
 }

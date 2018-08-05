@@ -67,7 +67,7 @@ extension Connection {
 
 public enum ConnectionError: Error {
     case connectionError(String)
-    case connectionPoolGetConnectionError
+    case connectionPoolGetConnectionTimeoutError
 }
 
 public final class Connection {

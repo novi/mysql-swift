@@ -12,23 +12,84 @@ import Dispatch
 #endif
 import CMySQL
 
+fileprivate var LibraryInitialized: Atomic<Bool> = Atomic(false)
+
+fileprivate func InitializeMySQLLibrary() {
+    LibraryInitialized.syncWriting {
+        guard $0 == false else {
+            return
+        }
+        if mysql_server_init(0, nil, nil) != 0 { // mysql_library_init
+            fatalError("could not initialize MySQL library with `mysql_server_init`.")
+        }
+        $0 = true
+    }
+}
+
+extension Array where Element == Connection {
+    mutating func preparedNewConnection(option: ConnectionOption, pool: ConnectionPool) -> Connection {
+        let newConn = Connection(option: option, pool: pool)
+        _ = try? newConn.connect()
+        append(newConn)
+        return newConn
+    }
+    
+    func getUsableConnection() -> Connection? {
+        for c in self {
+            if c.isInUse == false && c.ping() {
+                c.isInUse = true
+                return c
+            }
+        }
+        return nil
+    }
+    
+    internal var inUseConnections: Int {
+        var count: Int = 0
+        for c in self {
+            if c.isInUse {
+                count += 1
+            }
+        }
+        return count
+    }
+}
+
 final public class ConnectionPool: CustomStringConvertible {
     
     
-    public var initialConnections: Int = 1 {
-        didSet {
-            while pool.count < initialConnections {
-                _ = preparedNewConnection()
+    private var initialConnections_: Atomic<Int> = Atomic(1)
+    
+    public var initialConnections: Int {
+        get {
+            return initialConnections_.sync { $0 }
+        }
+        set {
+            initialConnections_.syncWriting {
+                $0 = newValue
+            }
+            pool.syncWriting {
+                while $0.count < newValue {
+                    _  = $0.preparedNewConnection(option: self.option, pool: self)
+                }
             }
         }
     }
     
-    public var maxConnections: Int = 10
+    public var maxConnections: Int {
+        get {
+            return maxConnections_.sync { $0 }
+        }
+        set {
+            maxConnections_.syncWriting {
+                $0 = newValue
+            }
+        }
+    }
     
-    internal private(set) var pool: [Connection] = []
-    private var mutex = Mutex()
+    private var maxConnections_: Atomic<Int> = Atomic(10)
     
-    private static var libraryInitialized: Bool = false
+    internal private(set) var pool: Atomic<[Connection]> = Atomic([])
     
     @available(*, deprecated, renamed: "option")
     public var options: ConnectionOption {
@@ -45,44 +106,35 @@ final public class ConnectionPool: CustomStringConvertible {
     public init(option: ConnectionOption) {
         self.option = option
         
-        if type(of: self).libraryInitialized == false && mysql_server_init(0, nil, nil) != 0 { // mysql_library_init
-            fatalError("could not initialize MySQL library with `mysql_server_init`.")
-        }
-        type(of: self).libraryInitialized = true
-        
+        InitializeMySQLLibrary()
         
         for _ in 0..<initialConnections {
-            _ = preparedNewConnection()
-        }
-    }
-    
-    private func preparedNewConnection() -> Connection {
-        let newConn = Connection(option: option, pool: self)
-        _ = try? newConn.connect()
-        pool.append(newConn)
-        return newConn
-    }
-    
-    private func getUsableConnection() -> Connection? {
-        for c in pool {
-            if c.isInUse == false && c.ping() {
-                c.isInUse = true
-                return c
+            pool.syncWriting {
+                _ = $0.preparedNewConnection(option: option, pool: self)
             }
         }
-        return nil
+    }
+    public var timeoutForGetConnection: Int {
+        get {
+            return timeoutForGetConnection_.sync { $0 }
+        }
+        set {
+            timeoutForGetConnection_.syncWriting {
+                $0 = newValue
+            }
+        }
     }
     
-    public var timeoutForGetConnection: Int = 60
+    private var timeoutForGetConnection_: Atomic<Int> = Atomic(60)
     
     internal func getConnection() throws -> Connection {
         var connection: Connection? =
-        mutex.sync {
-            if let conn = getUsableConnection() {
+        pool.syncWriting {
+            if let conn = $0.getUsableConnection() {
                 return conn
             }
-            if pool.count < maxConnections {
-                let conn = preparedNewConnection()
+            if $0.count < maxConnections {
+                let conn = $0.preparedNewConnection(option: option, pool: self)
                 conn.isInUse = true
                 return conn
             }
@@ -94,44 +146,35 @@ final public class ConnectionPool: CustomStringConvertible {
         }
         
         let tickInMs = 50 // ms
-        var timeOutCount = (timeoutForGetConnection*1000)/tickInMs
-        while timeOutCount > 0 {
+        var timeoutCount = (timeoutForGetConnection*1000)/tickInMs
+        while timeoutCount > 0 {
             usleep(useconds_t(1000*tickInMs))
-            connection = mutex.sync {
-                getUsableConnection()
+            connection = pool.sync {
+                $0.getUsableConnection()
             }
             if connection != nil {
                 break
             }
-            timeOutCount -= 1
+            timeoutCount -= 1
         }
         
         guard let conn = connection else {
-            throw ConnectionError.connectionPoolGetConnectionError
+            throw ConnectionError.connectionPoolGetConnectionTimeoutError
         }
         return conn
     }
     
     internal func releaseConnection(_ conn: Connection) {
-        mutex.sync {
+        pool.sync { _ in
             conn.isInUse = false
         }
     }
     
-    internal var inUseConnections: Int {
-        return mutex.sync {
-            var count: Int = 0
-            for c in pool {
-                if c.isInUse {
-                    count += 1
-                }
-            }
-            return count
-        } as Int
-    }
-    
     public var description: String {
-        return "initial connection: \(initialConnections), max: \(maxConnections), in use: \(inUseConnections)"
+        let inUseConnections = pool.sync {
+            $0.inUseConnections
+        }
+        return "connections:\n\tinitial:\(initialConnections), max:\(maxConnections), in-use:\(inUseConnections)"
     }
 }
 
