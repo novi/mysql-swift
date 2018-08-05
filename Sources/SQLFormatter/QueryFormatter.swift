@@ -15,7 +15,7 @@ public protocol QueryParameterType {
 
 public struct SQLString {
     
-    public static func escapeForID(string str: String) -> String {
+    public static func escapeForID(_ str: String) -> String {
         var step1 = ""
         for c in str {
             switch c {
@@ -37,7 +37,7 @@ public struct SQLString {
         return "`\(out)`"
     }
     
-    public static func escape(string str: String) -> String {
+    public static func escape(_ str: String) -> String {
         var out = "'"
         for c in str.unicodeScalars {
             switch c {

@@ -8,7 +8,7 @@ mysql-swift
 
 
 MySQL client library for Swift.
-This is inspired by Node.js' [mysql](https://github.com/felixge/node-mysql).
+This is inspired by Node.js' [mysql](https://github.com/mysqljs/mysql).
 
 * Based on libmysqlclient
 * Raw SQL query

@@ -28,10 +28,10 @@ internal struct QueryRowResult {
     }
     
     func isNull(forField field: String) -> Bool {
-        guard let val = columnMap[field] else {
+        guard let fieldValue = columnMap[field] else {
             return false
         }
-        switch val {
+        switch fieldValue {
         case .null:
             return true
         case .binary, .date:

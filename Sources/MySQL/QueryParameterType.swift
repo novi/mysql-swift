@@ -48,7 +48,7 @@ public struct QueryParameterDictionary: QueryParameter {
         var keyVals: [String] = []
         for (k, v) in dict {
             if v == nil || v?.omitOnQueryParameter == false {
-                keyVals.append("\(SQLString.escapeForID(string: k)) = \(try (v ?? QueryParameterNull.null).queryParameter(option: option).escaped())")
+                keyVals.append("\(SQLString.escapeForID(k)) = \(try (v ?? QueryParameterNull.null).queryParameter(option: option).escaped())")
             }
         }
         return EscapedQueryParameter( keyVals.joined(separator:  ", ") )
@@ -121,10 +121,10 @@ internal struct EscapedQueryParameter: QueryParameterType {
 
 extension String: QueryParameterType {
     public func escaped() -> String {
-        return SQLString.escape(string: self)
+        return SQLString.escape(self)
     }
     public func escapedForID() -> String? {
-        return SQLString.escapeForID(string: self)
+        return SQLString.escapeForID(self)
     }
 }
 
