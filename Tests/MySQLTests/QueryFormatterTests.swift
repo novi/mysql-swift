@@ -53,11 +53,11 @@ final class QueryFormatterTests: XCTestCase {
     
     func testLikeEscape() {
         
-        XCTAssertEqual(SQLString.escapeForLike(string: "ap%ple_"), "ap\\%ple\\_")
-        XCTAssertEqual(SQLString.escapeForLike(string: "ap\\%ple_"), "ap\\\\%ple\\_")
+        XCTAssertEqual(SQLString.escapeForLike("ap%ple_"), "ap\\%ple\\_")
+        XCTAssertEqual(SQLString.escapeForLike("ap\\%ple_"), "ap\\\\%ple\\_")
         
-        XCTAssertEqual(SQLString.escapeForLike(string: "ap%ple_", escapingWith: "$"), "ap$%ple$_")
-        XCTAssertEqual(SQLString.escapeForLike(string: "ap\\%ple_", escapingWith: "$"), "ap\\$%ple$_")
+        XCTAssertEqual(SQLString.escapeForLike("ap%ple_", escapingWith: "$"), "ap$%ple$_")
+        XCTAssertEqual(SQLString.escapeForLike("ap\\%ple_", escapingWith: "$"), "ap\\$%ple$_")
     }
     
     func testPlaceholder() throws {

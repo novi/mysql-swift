@@ -15,18 +15,18 @@ extension Data: SQLRawStringDecodable {
     }
 }
 
+fileprivate let HexTable: [Character] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"]
+
 extension Data: QueryParameterType {
     public func escaped() -> String {
-        var buffer = "x'"
-        for d in self {
-            let str = String(d, radix: 16)
-            if str.count == 1 {
-                buffer.append("0")
-            }
-            buffer += str
+        var buffer = [Character](["x", "'"])
+        buffer.reserveCapacity( self.count * 2 + 3 ) // 3 stands for "x''", 2 stands for 2 characters per a byte data
+        for byte in self {
+            buffer.append(HexTable[Int((byte >> 4) & 0x0f)])
+            buffer.append(HexTable[Int(byte & 0x0f)])
         }
-        buffer += "'"
-        return buffer
+        buffer.append("'")
+        return String(buffer)
     }
     
     public func escapedForID() -> String? {

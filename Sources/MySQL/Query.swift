@@ -11,21 +11,21 @@ import SQLFormatter
 import Foundation
 
 public struct QueryStatus: CustomStringConvertible {
-    public let affectedRows: UInt64
+    public let affectedRows: UInt64?
     public let insertedID: UInt64
     
     init(mysql: UnsafeMutablePointer<MYSQL>) {
         self.insertedID = mysql_insert_id(mysql)
         let arows = mysql_affected_rows(mysql)
         if arows == (~0) {
-            self.affectedRows = 0 // error or select statement
+            self.affectedRows = nil // error or select statement
         } else {
             self.affectedRows = arows
         }
     }
     
     public var description: String {
-        return "inserted id = \(insertedID), affected rows = \(affectedRows)"
+        return "insertedID:\(insertedID), affectedRows:" + (affectedRows != nil ? ("\(affectedRows!)") : "nil")
     }
 }
 
@@ -72,7 +72,7 @@ extension Connection {
         
     }
     
-    enum FieldValue {
+    internal enum FieldValue {
         case null
         case binary(Data)
         case date(dateString: String, timezone: TimeZone)
@@ -85,7 +85,7 @@ extension Connection {
         func string() throws -> String {
             switch self {
             case .null:
-                fatalError("TODO")
+                throw QueryError.resultParseError(message: "the field is not string.", result: "null")
             case .date(let string, _):
                 return string
             case .binary(let data):
@@ -107,7 +107,7 @@ extension Connection {
         let mysql = try connectIfNeeded()
         
         func queryPrefix() -> String {
-            if options.omitDetailsOnError {
+            if self.option.omitDetailsOnError {
                 return ""
             }
             return formattedQuery.subString(max: 1000)
@@ -160,26 +160,26 @@ extension Connection {
                 throw QueryError.resultRowFetchError(query: queryPrefix())
             }
             
-            var cols:[FieldValue] = []
+            var fieldValues: [FieldValue] = []
             for i in 0..<fieldCount {
                 let field = fields[i]
                 if let valf = row[i], row[i] != nil {
                     let binary = FieldValue.makeBinary(ptr: valf, length: lengths[i])
                     if field.isDate {
-                        cols.append(FieldValue.date(dateString: try binary.string(), timezone: option.timeZone))
+                        fieldValues.append(FieldValue.date(dateString: try binary.string(), timezone: option.timeZone))
                     } else {
-                        cols.append(binary)
+                        fieldValues.append(binary)
                     }                    
                 } else {
-                    cols.append(FieldValue.null)
+                    fieldValues.append(FieldValue.null)
                 }
                 
             }
             rowCount += 1
-            if fields.count != cols.count {
+            if fields.count != fieldValues.count {
                 throw QueryError.resultParseError(message: "invalid fetched column count", result: "")
             }
-            rows.append(QueryRowResult(fields: fields, cols: cols))
+            rows.append(QueryRowResult(fields: fields, fieldValues: fieldValues))
         }
         
         return (rows, status)
@@ -194,17 +194,12 @@ fileprivate struct QueryParameterDefaultOption: QueryParameterOption {
 extension Connection {
     
     internal static func buildParameters(_ params: [QueryParameter], option: QueryParameterOption) throws -> [QueryParameterType] {
-        return try params.map { param in
-            if let val = param as? String {
-                return val
-            }
-            return try param.queryParameter(option: option)
-        }
+        return try params.map { try $0.queryParameter(option: option) }
     }
     
     public func query<R: Decodable>(_ query: String, _ params: [QueryParameter] = []) throws -> ([R], QueryStatus) {
         let option = QueryParameterDefaultOption(
-            timeZone: options.timeZone
+            timeZone: self.option.timeZone
         )
         let queryString = try QueryFormatter.format(query: query, parameters: type(of: self).buildParameters(params, option: option))
         return try self.query(query: queryString, option: option)

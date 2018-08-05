@@ -7,6 +7,6 @@
 //
 
 public enum QueryFormatError: Error {
-    case parameterCountMismatch(query: String)
+    case placeholderCountMismatch(query: String)
     case parameterIDTypeError(givenValue: String, query: String)
 }

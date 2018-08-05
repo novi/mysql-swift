@@ -71,8 +71,11 @@ try conn.query("UPDATE `user` SET age = ? WHERE age is NULL;", [defaultAge])
 
 Install pkg-config `.pc` in [cmysql](https://github.com/vapor-community/cmysql) or [cmysql-mariadb](https://github.com/novi/cmysql-mariadb/tree/mariadb).
 
-```
-brew install https://gist.github.com/novi/dd21d48d260379e8919d9490bf5cfaec/raw/6ea4daa02d93f4ab0110ad30d87ea2b497a71cd0/cmysqlmariadb.rb
+```sh
+# cmysql
+$ brew tap vapor/homebrew-tap && brew install cmysql
+# cmysql-mariadb
+$ brew install https://gist.github.com/novi/dd21d48d260379e8919d9490bf5cfaec/raw/6ea4daa02d93f4ab0110ad30d87ea2b497a71cd0/cmysqlmariadb.rb
 ```
 
 ## Ubuntu Linux

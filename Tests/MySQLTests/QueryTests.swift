@@ -118,7 +118,7 @@ final class QueryTests: XCTestCase, QueryTestType {
     }
     
     private var someDate: Date {
-        return try! Date(sqlDate: "2015-12-27 16:54:00", timeZone: pool.options.timeZone)
+        return try! Date(sqlDate: "2015-12-27 16:54:00", timeZone: pool.option.timeZone)
     }
     
     private var anotherDate: Date {

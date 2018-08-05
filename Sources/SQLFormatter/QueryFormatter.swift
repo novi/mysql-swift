@@ -10,7 +10,7 @@ import Foundation
 
 public protocol QueryParameterType {
     func escaped() -> String
-    func escapedForID() -> String? // returns nil, if not supported for query id parameter
+    func escapedForID() -> String? // returns nil if not supported for query id parameter
 }
 
 public struct SQLString {
@@ -67,7 +67,7 @@ public struct SQLString {
         return out
     }
     
-    public static func escapeForLike(string str: String, escapingWith: Character = "\\") -> String {
+    public static func escapeForLike(_ str: String, escapingWith: Character = "\\") -> String {
         var out = ""
         for c in str.unicodeScalars {
             switch c {
@@ -109,7 +109,7 @@ public struct QueryFormatter {
             switch formatted[r] {
             case "??":
                 if placeHolderCount >= parameters.count {
-                    throw QueryFormatError.parameterCountMismatch(query: query)
+                    throw QueryFormatError.placeholderCountMismatch(query: query)
                 }
                 guard let escapedVal = parameters[placeHolderCount].escapedForID() else {
                     throw QueryFormatError.parameterIDTypeError(givenValue: "\(parameters[placeHolderCount])", query: query)
@@ -118,7 +118,7 @@ public struct QueryFormatter {
                 scanRange = r.upperBound..<formatted.endIndex
             case "?":
                 if placeHolderCount >= parameters.count {
-                    throw QueryFormatError.parameterCountMismatch(query: query)
+                    throw QueryFormatError.placeholderCountMismatch(query: query)
                 }
                 valArgs.append(parameters[placeHolderCount])
                 scanRange = r.upperBound..<formatted.endIndex
@@ -140,7 +140,7 @@ public struct QueryFormatter {
         while index < formattedChars.count {
             if formattedChars[index] == "?" {
                 if placeHolderCount >= valArgs.count {
-                    throw QueryFormatError.parameterCountMismatch(query: query)
+                    throw QueryFormatError.placeholderCountMismatch(query: query)
                 }
                 let val = valArgs[placeHolderCount]
                 formattedChars.remove(at: index)

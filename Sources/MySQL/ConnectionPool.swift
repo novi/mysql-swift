@@ -30,12 +30,23 @@ final public class ConnectionPool: CustomStringConvertible {
     
     private static var libraryInitialized: Bool = false
     
-    public let options: ConnectionOption
-    public init(options: ConnectionOption) {
-        self.options = options
+    @available(*, deprecated, renamed: "option")
+    public var options: ConnectionOption {
+        return option
+    }
+    
+    public let option: ConnectionOption
+    
+    @available(*, deprecated, renamed: "init(option:)")
+    public convenience init(options: ConnectionOption) {
+        self.init(option: options)
+    }
+    
+    public init(option: ConnectionOption) {
+        self.option = option
         
         if type(of: self).libraryInitialized == false && mysql_server_init(0, nil, nil) != 0 { // mysql_library_init
-            fatalError("could not initialize MySQL library")
+            fatalError("could not initialize MySQL library with `mysql_server_init`.")
         }
         type(of: self).libraryInitialized = true
         
@@ -46,13 +57,11 @@ final public class ConnectionPool: CustomStringConvertible {
     }
     
     private func preparedNewConnection() -> Connection {
-        let newConn = Connection(options: options, pool: self)
+        let newConn = Connection(option: option, pool: self)
         _ = try? newConn.connect()
         pool.append(newConn)
         return newConn
     }
-    
-    private let poolSemaphore = DispatchSemaphore(value: 1)
     
     private func getUsableConnection() -> Connection? {
         for c in pool {
@@ -98,7 +107,7 @@ final public class ConnectionPool: CustomStringConvertible {
         }
         
         guard let conn = connection else {
-            throw Connection.Error.connectionPoolGetConnectionError
+            throw ConnectionError.connectionPoolGetConnectionError
         }
         return conn
     }
@@ -106,7 +115,6 @@ final public class ConnectionPool: CustomStringConvertible {
     internal func releaseConnection(_ conn: Connection) {
         mutex.sync {
             conn.isInUse = false
-            //poolSemaphore.signal()
         }
     }
     
@@ -119,7 +127,7 @@ final public class ConnectionPool: CustomStringConvertible {
                 }
             }
             return count
-            } as Int
+        } as Int
     }
     
     public var description: String {
