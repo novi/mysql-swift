@@ -62,10 +62,7 @@ try conn.query("UPDATE `user` SET age = ? WHERE age is NULL;", [defaultAge])
 # Requirements
 
 * Swift 4.1 or later
-
-# Dependencies
-
-* MariaDB or MySQL Connector/C (libmysqlclient) 2.2.3
+* MariaDB or MySQL Connector/C (libmysqlclient) 2.2.3 or later
 
 ## macOS
 
@@ -78,7 +75,7 @@ $ brew tap vapor/homebrew-tap && brew install cmysql
 $ brew install https://gist.github.com/novi/dd21d48d260379e8919d9490bf5cfaec/raw/6ea4daa02d93f4ab0110ad30d87ea2b497a71cd0/cmysqlmariadb.rb
 ```
 
-## Ubuntu Linux
+## Ubuntu
 
 * Install `libmariadbclient`
 * Follow [Setting up MariaDB Repositories](https://downloads.mariadb.org/mariadb/repositories/#mirror=yamagata-university) and set up your repository.
@@ -100,7 +97,7 @@ import PackageDescription
 let package = Package(
     ...,
     dependencies: [
-        .package(url: "https://github.com/novi/mysql-swift.git", .upToNextMinor(from: "0.9.0"))
+        .package(url: "https://github.com/novi/mysql-swift.git", .upToNextMajor(from: "0.9.0"))
     ],
     targets: [
         .target(
@@ -119,7 +116,7 @@ let package = Package(
 ## Connection & Querying
 
 1. Create a pool with options (hostname, port, password,...).
-2. Use `pool.execute()`. It automatically get and release a connection. 
+2. Use `ConnectionPool.execute()`. It automatically get and release a connection. 
 
 ```swift
 let options = Options(host: "your.mysql.host"...)
