@@ -15,7 +15,7 @@ This is inspired by Node.js' [mysql](https://github.com/mysqljs/mysql).
 * Simple query formatting and escaping (same as Node's)
 * Mapping queried results to `Codable` structs or classes
 
-_Note:_ No asynchronous support currently. It depends libmysqlclient.
+_Note:_ No asynchronous I/O support currently. It depends libmysqlclient.
 
 ```swift
 // Declare a model
@@ -54,8 +54,9 @@ let status = try conn.query("INSERT INTO `user` SET ?", [user]) as QueryStatus
 let newId = status.insertedId
 
 // Updating
+let tableName = "user"
 let defaultAge = 30
-try conn.query("UPDATE `user` SET age = ? WHERE age is NULL;", [defaultAge])
+try conn.query("UPDATE ?? SET age = ? WHERE age is NULL;", [tableName, defaultAge])
 
 ``` 
 
@@ -66,7 +67,7 @@ try conn.query("UPDATE `user` SET age = ? WHERE age is NULL;", [defaultAge])
 
 ## macOS
 
-Install pkg-config `.pc` in [cmysql](https://github.com/vapor-community/cmysql) or [cmysql-mariadb](https://github.com/novi/cmysql-mariadb/tree/mariadb).
+Install pkg-config `.pc` file in [cmysql](https://github.com/vapor-community/cmysql) or [cmysql-mariadb](https://github.com/novi/cmysql-mariadb/tree/mariadb).
 
 ```sh
 # cmysql
@@ -119,10 +120,10 @@ let package = Package(
 2. Use `ConnectionPool.execute()`. It automatically get and release a connection. 
 
 ```swift
-let options = Options(host: "your.mysql.host"...)
-let pool = ConnectionPool(options: options) // Create pool with options
+let option = Option(host: "your.mysql.host"...) // Define and create your option type
+let pool = ConnectionPool(option: option) // Create a pool with the option
 let rows: [User] = try pool.execute { conn in
-	// The connection is held in this block
+	// The connection `conn` is held in this block
 	try conn.query("SELECT * FROM users;") // And it returns result to outside execute block
 }
 ```
@@ -133,7 +134,7 @@ let rows: [User] = try pool.execute { conn in
 let wholeStaus: QueryStatus = try pool.transaction { conn in
 	let status = try conn.query("INSERT INTO users SET ?;", [user]) as QueryStatus // Create a user
 	let userId = status.insertedId // the user's id
-	try conn.query("UPDATE info SET val = ? WHERE key = 'latest_user_id' ", [userId]) // Store user's id that we have created the above
+	try conn.query("UPDATE info SET some_value = ? WHERE some_key = 'latest_user_id' ", [userId]) // Store user's id that we have created the above
 }
 wholeStaus.affectedRows == 1 // true
 ```
