@@ -149,8 +149,12 @@ extension DateComponents: SQLRawStringDecodable {
             // YEAR type
             return DateComponents(year: Int(string))
         }
+        
         let wholeRange = NSRange(string.startIndex..<string.endIndex, in: string)
-        if let match = DateTimeRegex.firstMatch(in: string, options: [], range: wholeRange) {
+        
+        // count of the string will be at least 19...
+        // "2000-01-23 01:23:45"
+        if string.count >= 19, let match = DateTimeRegex.firstMatch(in: string, options: [], range: wholeRange) {
             let year = Int(string[Range(match.range(at: 1), in: string)!])
             let month = Int(string[Range(match.range(at: 2), in: string)!])
             let day = Int(string[Range(match.range(at: 3), in: string)!])
@@ -170,7 +174,9 @@ extension DateComponents: SQLRawStringDecodable {
                 nanosecond: stringToNanoseconds(nanosecond)
             )
         }
-        if let match = TimeRegex.firstMatch(in: string, options: [], range: wholeRange) {
+        
+        // "1:23:45"
+        if string.count >= 7, let match = TimeRegex.firstMatch(in: string, options: [], range: wholeRange) {
             let hour = Int(string[Range(match.range(at: 1), in: string)!])
             let minute = Int(string[Range(match.range(at: 2), in: string)!])
             let second = Int(string[Range(match.range(at: 3), in: string)!])
@@ -183,7 +189,9 @@ extension DateComponents: SQLRawStringDecodable {
                 nanosecond: stringToNanoseconds(nanosecond)
             )
         }
-        if let match = DateRegex.firstMatch(in: string, options: [], range: wholeRange) {
+        
+        // "2000-01-23"
+        if string.count == 10, let match = DateRegex.firstMatch(in: string, options: [], range: wholeRange) {
             let year = Int(string[Range(match.range(at: 1), in: string)!])
             let month = Int(string[Range(match.range(at: 2), in: string)!])
             let day = Int(string[Range(match.range(at: 3), in: string)!])
