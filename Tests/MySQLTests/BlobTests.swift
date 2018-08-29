@@ -109,12 +109,11 @@ final class BlobQueryTests: XCTestCase, QueryTestType {
         
     }
     
-    private let testBinary: [UInt8] = [0, 0x1, 0x9, 0x10, 0x1f, 0x99, 0xff, 0x00, 0x0a]
-    
     func testBlobAndTextOnBinCollation() throws {
         
         try createBinaryBlobTable()
         
+        let testBinary: [UInt8] = Array( (UInt8(0)...UInt8(255)) )
         
         let obj = Row.BlobTextRow(id: .noID, text1: "", binary1: Data(testBinary) )
         let status: QueryStatus = try pool.execute { conn in
@@ -126,7 +125,7 @@ final class BlobQueryTests: XCTestCase, QueryTestType {
             try conn.query("SELECT * FROM ??", [constants.tableName])
         }
         XCTAssertEqual(rows.count, 1)
-        XCTAssertEqual(rows[0].binary1.count, 9)
+        XCTAssertEqual(rows[0].binary1.count, 256)
         XCTAssertEqual(rows[0].binary1, Data(testBinary))
         
         print(rows[0].binary1, testBinary)
@@ -135,6 +134,7 @@ final class BlobQueryTests: XCTestCase, QueryTestType {
     func testEscapeBlob() throws {
         
         do {
+            let testBinary: [UInt8] = [0, 0x1, 0x9, 0x10, 0x1f, 0x99, 0xff, 0x00, 0x0a]
             let str = try Data(testBinary).queryParameter(option: queryOption).escaped()
             XCTAssertEqual(str, "x'000109101f99ff000a'")
         }

@@ -49,7 +49,7 @@ protocol MySQLTestType: class {
 extension MySQLTestType {
     func prepare() {
         self.constants = DummyConstants() // !!! Replace with your MySQL connection !!!
-        self.pool = ConnectionPool(options: constants)
+        self.pool = ConnectionPool(option: constants)
         
         XCTAssertEqual(constants.timeZone, TimeZone(abbreviation: "JST"), "test MySQL's timezone should be JST")
     }

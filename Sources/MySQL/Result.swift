@@ -15,23 +15,23 @@ internal protocol SQLRawStringDecodable {
 internal struct QueryRowResult {
     
     private let fields: [Connection.Field]
-    private let cols: [Connection.FieldValue]
+    private let fieldValues: [Connection.FieldValue]
     internal let columnMap: [String: Connection.FieldValue] // the key is field name
-    init(fields: [Connection.Field], cols: [Connection.FieldValue]) {
+    init(fields: [Connection.Field], fieldValues: [Connection.FieldValue]) {
         self.fields = fields
-        self.cols = cols
+        self.fieldValues = fieldValues
         var map:[String: Connection.FieldValue] = [:]
-        for i in 0..<cols.count {
-            map[fields[i].name] = cols[i]
+        for i in 0..<fieldValues.count {
+            map[fields[i].name] = fieldValues[i]
         }
         self.columnMap = map
     }
     
     func isNull(forField field: String) -> Bool {
-        guard let val = columnMap[field] else {
+        guard let fieldValue = columnMap[field] else {
             return false
         }
-        switch val {
+        switch fieldValue {
         case .null:
             return true
         case .binary, .date:
@@ -48,8 +48,8 @@ internal struct QueryRowResult {
         }
     }
     
-    private func getValue<T: SQLRawStringDecodable>(val: Connection.FieldValue, field: String) throws -> T {
-        switch val {
+    private func getValue<T: SQLRawStringDecodable>(fieldValue: Connection.FieldValue, field: String) throws -> T {
+        switch fieldValue {
         case .null:
             throw QueryError.resultCastError(actualValue: "NULL", expectedType: "\(T.self)", forField: field)
         case .date(let string, let timezone):
@@ -64,15 +64,15 @@ internal struct QueryRowResult {
             if let bin = data as? T {
                 return bin
             }
-            return try castOrFail(val.string(), field: field)
+            return try castOrFail(fieldValue.string(), field: field)
         }
     }
     
     func getValue<T: SQLRawStringDecodable>(forField field: String) throws -> T {
-        guard let val = columnMap[field] else {
+        guard let fieldValue = columnMap[field] else {
             throw QueryError.missingField(field)
         }
-        return try getValue(val: val, field: field)
+        return try getValue(fieldValue: fieldValue, field: field)
     }    
 }
 

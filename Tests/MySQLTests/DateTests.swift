@@ -59,9 +59,9 @@ final class DateTests : XCTestCase {
     }
     
     func testSQLCalendar() {
-        let gmt = TimeZone(abbreviation: "PDT")!
-        let cal1 = SQLDateCalendar.calendar(forTimezone: gmt)
-        let cal2 = SQLDateCalendar.calendar(forTimezone: gmt)
+        let timeZone = TimeZone(abbreviation: "PDT")!
+        let cal1 = SQLDateCalendar.calendar(forTimezone: timeZone, { $0 })
+        let cal2 = SQLDateCalendar.calendar(forTimezone: timeZone, { $0 })
         XCTAssertEqual(cal1, cal2)
         XCTAssertEqual(cal1.hashValue, cal2.hashValue)
     }

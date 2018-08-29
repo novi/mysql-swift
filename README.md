@@ -8,14 +8,14 @@ mysql-swift
 
 
 MySQL client library for Swift.
-This is inspired by Node.js' [mysql](https://github.com/felixge/node-mysql).
+This is inspired by Node.js' [mysql](https://github.com/mysqljs/mysql).
 
 * Based on libmysqlclient
 * Raw SQL query
 * Simple query formatting and escaping (same as Node's)
 * Mapping queried results to `Codable` structs or classes
 
-_Note:_ No asynchronous support currently. It depends libmysqlclient.
+_Note:_ No asynchronous I/O support currently. It depends libmysqlclient.
 
 ```swift
 // Declare a model
@@ -54,28 +54,29 @@ let status = try conn.query("INSERT INTO `user` SET ?", [user]) as QueryStatus
 let newId = status.insertedId
 
 // Updating
+let tableName = "user"
 let defaultAge = 30
-try conn.query("UPDATE `user` SET age = ? WHERE age is NULL;", [defaultAge])
+try conn.query("UPDATE ?? SET age = ? WHERE age is NULL;", [tableName, defaultAge])
 
 ``` 
 
 # Requirements
 
 * Swift 4.1 or later
-
-# Dependencies
-
-* MariaDB or MySQL Connector/C (libmysqlclient) 2.2.3
+* MariaDB or MySQL Connector/C (libmysqlclient) 2.2.3 or later
 
 ## macOS
 
-Install pkg-config `.pc` in [cmysql](https://github.com/vapor-community/cmysql) or [cmysql-mariadb](https://github.com/novi/cmysql-mariadb/tree/mariadb).
+Install pkg-config `.pc` file in [cmysql](https://github.com/vapor-community/cmysql) or [cmysql-mariadb](https://github.com/novi/cmysql-mariadb/tree/mariadb).
 
-```
-brew install https://gist.github.com/novi/dd21d48d260379e8919d9490bf5cfaec/raw/6ea4daa02d93f4ab0110ad30d87ea2b497a71cd0/cmysqlmariadb.rb
+```sh
+# cmysql
+$ brew tap vapor/homebrew-tap && brew install cmysql
+# cmysql-mariadb
+$ brew install https://gist.github.com/novi/dd21d48d260379e8919d9490bf5cfaec/raw/6ea4daa02d93f4ab0110ad30d87ea2b497a71cd0/cmysqlmariadb.rb
 ```
 
-## Ubuntu Linux
+## Ubuntu
 
 * Install `libmariadbclient`
 * Follow [Setting up MariaDB Repositories](https://downloads.mariadb.org/mariadb/repositories/#mirror=yamagata-university) and set up your repository.
@@ -97,7 +98,7 @@ import PackageDescription
 let package = Package(
     ...,
     dependencies: [
-        .package(url: "https://github.com/novi/mysql-swift.git", .upToNextMinor(from: "0.9.0"))
+        .package(url: "https://github.com/novi/mysql-swift.git", .upToNextMajor(from: "0.9.0"))
     ],
     targets: [
         .target(
@@ -116,13 +117,13 @@ let package = Package(
 ## Connection & Querying
 
 1. Create a pool with options (hostname, port, password,...).
-2. Use `pool.execute()`. It automatically get and release a connection. 
+2. Use `ConnectionPool.execute()`. It automatically get and release a connection. 
 
 ```swift
-let options = Options(host: "your.mysql.host"...)
-let pool = ConnectionPool(options: options) // Create pool with options
+let option = Option(host: "your.mysql.host"...) // Define and create your option type
+let pool = ConnectionPool(option: option) // Create a pool with the option
 let rows: [User] = try pool.execute { conn in
-	// The connection is held in this block
+	// The connection `conn` is held in this block
 	try conn.query("SELECT * FROM users;") // And it returns result to outside execute block
 }
 ```
@@ -133,7 +134,7 @@ let rows: [User] = try pool.execute { conn in
 let wholeStaus: QueryStatus = try pool.transaction { conn in
 	let status = try conn.query("INSERT INTO users SET ?;", [user]) as QueryStatus // Create a user
 	let userId = status.insertedId // the user's id
-	try conn.query("UPDATE info SET val = ? WHERE key = 'latest_user_id' ", [userId]) // Store user's id that we have created the above
+	try conn.query("UPDATE info SET some_value = ? WHERE some_key = 'latest_user_id' ", [userId]) // Store user's id that we have created the above
 }
 wholeStaus.affectedRows == 1 // true
 ```

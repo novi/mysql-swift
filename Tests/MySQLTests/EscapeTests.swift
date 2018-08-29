@@ -26,15 +26,15 @@ extension EscapeTests {
 
 final class EscapeTests: XCTestCase {
 
-    // https://github.com/felixge/node-mysql/blob/master/test/unit/protocol/test-SqlString.js
+    // https://github.com/mysqljs/mysql/blob/master/test/unit/protocol/test-SqlString.js
     func testStringEscape() {
-        XCTAssertEqual(SQLString.escape(string: "Sup'er"), "'Sup\\'er'")
+        XCTAssertEqual(SQLString.escape("Sup'er"), "'Sup\\'er'")
         
-        XCTAssertEqual(SQLString.escape(string: "\u{00A5}"), "'¥'")
-        XCTAssertEqual(SQLString.escape(string: "\\"), "'\\\\'")
+        XCTAssertEqual(SQLString.escape("\u{00A5}"), "'¥'")
+        XCTAssertEqual(SQLString.escape("\\"), "'\\\\'")
         
         // escape combined character
-        XCTAssertEqual(SQLString.escape(string: "'ﾞ"), "'\\'ﾞ'")
+        XCTAssertEqual(SQLString.escape("'ﾞ"), "'\\'ﾞ'")
     }
     
     func testBasicTypes() throws {

@@ -11,17 +11,14 @@ import CoreFoundation
 import Foundation
 
 internal struct MySQLUtil {
-    internal static func getMySQLError(_ mysqlPtr: UnsafeMutablePointer<MYSQL>?) -> String {
-        guard let mysql = mysqlPtr else {
-            return "generic error"
+    internal static func getMySQLError(_ mysql: UnsafeMutablePointer<MYSQL>) -> String {
+        guard let strPtr = mysql_error(mysql) else {
+            return "unknown error. could not get error with `mysql_error()`."
         }
-        guard let ch = mysql_error(mysql) else {
-            return "generic error"
+        guard let errorString = String(validatingUTF8: strPtr) else {
+            return "unknown error. could not get error as string."
         }
-        guard let str = String(validatingUTF8: ch) else {
-            return "generic error"
-        }
-        return str as String
+        return errorString
     }
 }
 
@@ -68,11 +65,9 @@ extension Connection {
     
 }
 
-extension Connection {
-    public enum Error: Swift.Error {
-        case connectionError(String)
-        case connectionPoolGetConnectionError
-    }
+public enum ConnectionError: Error {
+    case connectionError(String)
+    case connectionPoolGetConnectionTimeoutError
 }
 
 public final class Connection {
@@ -81,10 +76,10 @@ public final class Connection {
     private var mysql_: UnsafeMutablePointer<MYSQL>?
     
     internal let pool: ConnectionPool
-    public let options: ConnectionOption
+    public let option: ConnectionOption
     
-    init(options: ConnectionOption, pool: ConnectionPool) {
-        self.options = options
+    internal init(option: ConnectionOption, pool: ConnectionPool) {
+        self.option = option
         self.pool = pool
         self.mysql_ = nil
     }
@@ -115,23 +110,23 @@ public final class Connection {
         
         do {
             let timeoutPtr = UnsafeMutablePointer<Int>.allocate(capacity: 1)
-            timeoutPtr.pointee = options.timeout
+            timeoutPtr.pointee = option.timeout
             mysql_options(mysql, MYSQL_OPT_CONNECT_TIMEOUT, timeoutPtr)
             timeoutPtr.deallocate()
         }
         
-        Connection.setReconnect(options.reconnect, mysql: mysql)
+        Connection.setReconnect(option.reconnect, mysql: mysql)
         
         if mysql_real_connect(mysql,
-            options.host,
-            options.user,
-            options.password,
-            options.database,
-            UInt32(options.port), nil, 0) == nil {
+            option.host,
+            option.user,
+            option.password,
+            option.database,
+            UInt32(option.port), nil, 0) == nil {
             // error
-                throw Error.connectionError(MySQLUtil.getMySQLError(mysql))
+                throw ConnectionError.connectionError(MySQLUtil.getMySQLError(mysql))
         }
-        mysql_set_character_set(mysql, options.encoding.rawValue)
+        mysql_set_character_set(mysql, option.encoding.rawValue)
         self.mysql_ = mysql
         return mysql
     }
