@@ -15,7 +15,8 @@ extension DateTests {
     static var allTests : [(String, (DateTests) -> () throws -> Void)] {
         return [
                    ("testSQLDate", testSQLDate),
-                   ("testSQLCalendar", testSQLCalendar)
+                   ("testSQLCalendar", testSQLCalendar),
+                   ("testDateComponents", testDateComponents),
         ]
     }
 }
@@ -55,10 +56,6 @@ final class DateTests : XCTestCase {
         
         XCTAssertEqual(try Date(sqlDate: expected, timeZone: losAngeles.timeZone),
             try Date(sqlDate: expected, timeZone: losAngeles.timeZone))
-        
-        
-        let sqlYear = try Date(sqlDate: "2021", timeZone: gmt.timeZone)
-        XCTAssertEqual(sqlYear.queryParameter(option: gmt).escaped(), "'2021-01-01 00:00:00'")
     }
     
     func testSQLCalendar() {
@@ -69,4 +66,69 @@ final class DateTests : XCTestCase {
         XCTAssertEqual(cal1.hashValue, cal2.hashValue)
     }
     
+    func testDateComponents() throws {
+        
+        do {
+            // YEAR
+            let comps = try DateComponents.fromSQLValue(string: "9999")
+            XCTAssertEqual(comps.year, 9999)
+        }
+        
+        do {
+            // DATETIME
+            // with nanoseconds
+            let comps = try DateComponents.fromSQLValue(string: "9999-12-31 23:59:58.123456")
+            XCTAssertEqual(comps.year, 9999)
+            XCTAssertEqual(comps.month, 12)
+            XCTAssertEqual(comps.day, 31)
+            
+            XCTAssertEqual(comps.hour, 23)
+            XCTAssertEqual(comps.minute, 59)
+            XCTAssertEqual(comps.second, 58)
+            
+            XCTAssertEqual(comps.nanosecond, 123456_000)
+        }
+        
+        do {
+            // DATETIME
+            let comps = try DateComponents.fromSQLValue(string: "9999-12-31 23:59:58")
+            XCTAssertEqual(comps.year, 9999)
+            XCTAssertEqual(comps.month, 12)
+            XCTAssertEqual(comps.day, 31)
+            
+            XCTAssertEqual(comps.hour, 23)
+            XCTAssertEqual(comps.minute, 59)
+            XCTAssertEqual(comps.second, 58)
+        }
+        
+        do {
+            // TIME
+            // negative hours
+            let comps = try DateComponents.fromSQLValue(string: "-123:59:58")
+            
+            XCTAssertEqual(comps.hour, -123)
+            XCTAssertEqual(comps.minute, 59)
+            XCTAssertEqual(comps.second, 58)
+        }
+        
+        do {
+            // TIME
+            // with nanoseconds
+            let comps = try DateComponents.fromSQLValue(string: "893:59:58.123456")
+            XCTAssertEqual(comps.hour, 893)
+            XCTAssertEqual(comps.minute, 59)
+            XCTAssertEqual(comps.second, 58)
+            
+            XCTAssertEqual(comps.nanosecond, 123456_000)
+        }
+        
+        do {
+            // DATE
+            let comps = try DateComponents.fromSQLValue(string: "9999-12-31")
+            XCTAssertEqual(comps.year, 9999)
+            XCTAssertEqual(comps.month, 12)
+            XCTAssertEqual(comps.day, 31)
+        }
+        
+    }
 }

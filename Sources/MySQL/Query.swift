@@ -75,7 +75,7 @@ extension Connection {
     enum FieldValue {
         case null
         case binary(Data)
-        case date(Date)
+        case date(dateString: String, timezone: TimeZone)
         
         static func makeBinary(ptr: UnsafeMutablePointer<Int8>, length: UInt) -> FieldValue {
             let data = Data(bytes: UnsafeRawPointer(ptr), count: Int(length))
@@ -86,8 +86,8 @@ extension Connection {
             switch self {
             case .null:
                 fatalError("TODO")
-            case .date:
-                fatalError("TODO")
+            case .date(let string, _):
+                return string
             case .binary(let data):
                 guard let string = String(data: data, encoding: .utf8) else {
                     throw QueryError.resultParseError(message: "invalid utf8 string bytes.", result: "")
@@ -166,7 +166,7 @@ extension Connection {
                 if let valf = row[i], row[i] != nil {
                     let binary = FieldValue.makeBinary(ptr: valf, length: lengths[i])
                     if field.isDate {
-                        cols.append(FieldValue.date(try Date(sqlDate: binary.string(), timeZone: option.timeZone)))
+                        cols.append(FieldValue.date(dateString: try binary.string(), timezone: option.timeZone))
                     } else {
                         cols.append(binary)
                     }                    

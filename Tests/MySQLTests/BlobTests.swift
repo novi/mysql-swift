@@ -14,9 +14,9 @@ extension BlobQueryTests {
     static var allTests : [(String, (BlobQueryTests) -> () throws -> Void)] {
         return [
                    ("testInsertForCombinedUnicodeCharacter", testInsertForCombinedUnicodeCharacter),
-                    ("testBlobAndTextOnBinCollation", testBlobAndTextOnBinCollation),
-                    ("testEscapeBlob", testEscapeBlob),
-                    ("testJSONColumnValue", testJSONColumnValue)
+                   ("testBlobAndTextOnBinCollation", testBlobAndTextOnBinCollation),
+                   ("testEscapeBlob", testEscapeBlob),
+                   ("testJSONColumnValue", testJSONColumnValue)
         ]
     }
 }

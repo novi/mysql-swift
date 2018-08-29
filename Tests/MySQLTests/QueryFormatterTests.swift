@@ -16,7 +16,7 @@ extension QueryFormatterTests {
                    ("testBasicFormatting", testBasicFormatting),
                    ("testLikeEscape", testLikeEscape),
                    ("testPlaceholder", testPlaceholder),
-                    ("testStringUtil", testStringUtil)
+                   ("testStringUtil", testStringUtil)
         ]
     }
 }

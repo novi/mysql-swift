@@ -52,11 +52,13 @@ internal struct QueryRowResult {
         switch val {
         case .null:
             throw QueryError.resultCastError(actualValue: "NULL", expectedType: "\(T.self)", forField: field)
-        case .date(let date):
-            guard let val = date as? T else {
-                throw QueryError.resultCastError(actualValue: "\(date)", expectedType: "\(T.self)", forField: field)
+        case .date(let string, let timezone):
+            if T.self == Date.self {
+                return try Date(sqlDate: string, timeZone: timezone) as! T
+            } else if T.self == DateComponents.self {
+                return try DateComponents.fromSQLValue(string: string) as! T
             }
-            return val
+            throw QueryError.resultCastError(actualValue: "\(string)", expectedType: "\(T.self)", forField: field)
         case .binary(let data):
             //print("T is \(T.self)")
             if let bin = data as? T {
@@ -257,6 +259,8 @@ fileprivate struct RowKeyedDecodingContainer<K : CodingKey> : KeyedDecodingConta
             return try decoder.row.getValue(forField: key.stringValue) as Data as! T
         } else if t == Date.self {
             return try decoder.row.getValue(forField: key.stringValue) as Date as! T
+        } else if t == DateComponents.self {
+            return try decoder.row.getValue(forField: key.stringValue) as DateComponents as! T
         } else if t == URL.self {
             let urlString = try decoder.row.getValue(forField: key.stringValue) as String
             guard let url = URL(string: urlString) else {

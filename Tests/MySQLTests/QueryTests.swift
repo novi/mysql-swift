@@ -53,6 +53,8 @@ extension Row {
         let age: Int
         let createdAt: Date
         
+        let createdAtDateComponentsOptional: DateComponents?
+        
         let nameOptional: String?
         let ageOptional: Int?
         let createdAtOptional: Date?
@@ -67,6 +69,8 @@ extension Row {
             case name
             case age
             case createdAt = "created_at"
+            
+            case createdAtDateComponentsOptional = "created_at_datecomponents_Optional"
             case nameOptional = "name_Optional"
             case ageOptional = "age_Optional"
             case createdAtOptional = "created_at_Optional"
@@ -99,6 +103,7 @@ final class QueryTests: XCTestCase, QueryTestType {
             `name` varchar(50) NOT NULL DEFAULT '',
             `age` int(11) NOT NULL,
             `created_at` datetime NOT NULL DEFAULT '2001-01-01 00:00:00',
+            `created_at_datecomponents_Optional` datetime(6) DEFAULT NULL,
             `name_Optional` varchar(50) DEFAULT NULL,
             `age_Optional` int(11) DEFAULT NULL,
             `created_at_Optional` datetime DEFAULT NULL,
@@ -127,20 +132,22 @@ final class QueryTests: XCTestCase, QueryTestType {
         let name = "name 's"
         let age = 25
         
-        let userNil = User(id: .noID, name: name, age: age, createdAt: someDate, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user)
+        let dateComponents = DateComponents(year: 2012, month: 3, day: 4, hour: 5, minute: 6, second: 7, nanosecond: 890_000_000)
+        
+        let userNil = User(id: .noID, name: name, age: age, createdAt: someDate, createdAtDateComponentsOptional: dateComponents, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user)
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, userNil])
         }
         XCTAssertEqual(status.insertedID, 1)
         
-        let userFill = User(id: .ID(UserID(134)), name: name, age: age, createdAt: someDate,  nameOptional: "fuga", ageOptional: 50, createdAtOptional: anotherDate, done: true, doneOptional: false, userType: .admin)
+        let userFill = User(id: .ID(UserID(134)), name: name, age: age, createdAt: someDate, createdAtDateComponentsOptional: dateComponents, nameOptional: "fuga", ageOptional: 50, createdAtOptional: anotherDate, done: true, doneOptional: false, userType: .admin)
         let status2: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, userFill])
         }
         XCTAssertEqual(status2.insertedID, 134)
         
         let rows:[User] = try pool.execute { conn in
-            try conn.query("SELECT id,name,age,created_at,name_Optional,age_Optional,created_at_Optional,done,done_Optional,user_type FROM ?? ORDER BY id ASC", [constants.tableName])
+            try conn.query("SELECT id,name,age,created_at,created_at_datecomponents_Optional,name_Optional,age_Optional,created_at_Optional,done,done_Optional,user_type FROM ?? ORDER BY id ASC", [constants.tableName])
         }
         
         XCTAssertEqual(rows.count, 2)
@@ -165,7 +172,7 @@ final class QueryTests: XCTestCase, QueryTestType {
     
     func testTransaction() throws {
         
-        let user = Row.User(id: .noID, name: "name", age: 11, createdAt: someDate, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user)
+        let user = Row.User(id: .noID, name: "name", age: 11, createdAt: someDate, createdAtDateComponentsOptional: nil, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user)
         let status: QueryStatus = try pool.transaction { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, user])
         }
@@ -179,7 +186,7 @@ final class QueryTests: XCTestCase, QueryTestType {
         
         
         let now = Date()
-        let user = User(id: .noID, name: "日本語123🍣🍺あいう", age: 123, createdAt: now, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user)
+        let user = User(id: .noID, name: "日本語123🍣🍺あいう", age: 123, createdAt: now, createdAtDateComponentsOptional: nil, nameOptional: nil, ageOptional: nil, createdAtOptional: nil, done: false, doneOptional: nil, userType: .user)
         let status: QueryStatus = try pool.execute { conn in
             try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, user])
         }

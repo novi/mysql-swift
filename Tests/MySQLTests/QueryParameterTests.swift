@@ -24,6 +24,7 @@ extension QueryParameterTests {
                 ("testIDTypeInContainer", testIDTypeInContainer),
                 ("testEnumType", testEnumType),
                 ("testAutoincrementType", testAutoincrementType),
+                ("testDateComponentsType", testDateComponentsType),
                 ("testDataAndURLType", testDataAndURLType),
                 ("testDecimalType", testDecimalType),
                 ("testCodableIDType", testCodableIDType),
@@ -86,6 +87,10 @@ final class QueryParameterTests: XCTestCase {
     
     private struct ModelWithDate: Encodable, QueryParameter {
         let date: Date
+    }
+    
+    private struct ModelWithDateComponents: Encodable, QueryParameter {
+        let dateComponents: DateComponents
     }
     
     private struct ModelWithURL: Encodable, QueryParameter {
@@ -159,6 +164,86 @@ final class QueryParameterTests: XCTestCase {
         
         let noID: AutoincrementID<UserID> = .noID
         XCTAssertEqual(noID, AutoincrementID.noID)
+    }
+    
+    func testDateComponentsType() throws {
+
+        do {
+            let compsEmpty = DateComponents()
+            let model = ModelWithDateComponents(dateComponents: compsEmpty)
+            let _ = try model.queryParameter(option: queryOption).escaped()
+            XCTFail("this should be throws an error")
+        } catch {
+            // OK
+        }
+        do {
+            // MySQL YEAR type
+            var comps = DateComponents()
+            comps.year = 2155
+            let model = ModelWithDateComponents(dateComponents: comps)
+            
+            let queryString = try model.queryParameter(option: queryOption).escaped()
+            XCTAssertEqual(queryString, "`dateComponents` = '2155'")
+        }
+        
+        do {
+            // MySQL TIME type
+            var comps = DateComponents()
+            comps.hour = -838
+            comps.minute = 59
+            comps.second = 59
+            let model = ModelWithDateComponents(dateComponents: comps)
+            
+            let queryString = try model.queryParameter(option: queryOption).escaped()
+            XCTAssertEqual(queryString, "`dateComponents` = '-838:59:59'")
+        }
+        
+        do {
+            // MySQL TIME type
+            // with nanosecond
+            var comps = DateComponents()
+            comps.hour = -838
+            comps.minute = 59
+            comps.second = 59
+            comps.nanosecond = 1234567
+            let model = ModelWithDateComponents(dateComponents: comps)
+            
+            let queryString = try model.queryParameter(option: queryOption).escaped()
+            XCTAssertEqual(queryString, "`dateComponents` = '-838:59:59.001235'")
+        }
+        
+        do {
+            // MySQL DATETIME, TIMESTAMP type
+            var comps = DateComponents()
+            comps.year = 9999
+            comps.month = 12
+            comps.day = 31
+            comps.hour = 23
+            comps.minute = 59
+            comps.second = 59
+            let model = ModelWithDateComponents(dateComponents: comps)
+            
+            let queryString = try model.queryParameter(option: queryOption).escaped()
+            XCTAssertEqual(queryString, "`dateComponents` = '9999-12-31 23:59:59'")
+        }
+        
+        do {
+            // MySQL DATETIME, TIMESTAMP type
+            // with nanosecond
+            var comps = DateComponents()
+            comps.year = 9999
+            comps.month = 12
+            comps.day = 31
+            comps.hour = 23
+            comps.minute = 59
+            comps.second = 59
+            comps.nanosecond = 1234567
+            let model = ModelWithDateComponents(dateComponents: comps)
+            
+            let queryString = try model.queryParameter(option: queryOption).escaped()
+            XCTAssertEqual(queryString, "`dateComponents` = '9999-12-31 23:59:59.001235'")
+        }
+        
     }
     
     func testDataAndURLType() throws {
