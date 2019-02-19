@@ -10,18 +10,6 @@ import XCTest
 @testable import MySQL
 import Foundation
 
-extension BlobQueryTests {
-    static var allTests : [(String, (BlobQueryTests) -> () throws -> Void)] {
-        return [
-                   ("testInsertForCombinedUnicodeCharacter", testInsertForCombinedUnicodeCharacter),
-                   ("testBlobAndTextOnBinCollation", testBlobAndTextOnBinCollation),
-                   ("testEscapeBlob", testEscapeBlob),
-                   ("testJSONColumnValue", testJSONColumnValue)
-        ]
-    }
-}
-
-
 extension Row {
     
     fileprivate struct BlobTextRow: Codable, QueryParameter {

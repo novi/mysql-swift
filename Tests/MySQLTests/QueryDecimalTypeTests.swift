@@ -9,20 +9,13 @@ import XCTest
 @testable import MySQL
 import Foundation
 
-extension QueryDecimalTypeTests {
-    static var allTests : [(String, (QueryDecimalTypeTests) -> () throws -> Void)] {
-        return [
-        ]
-    }
-}
-
 extension Row {
     fileprivate struct DecimalRow: Codable, QueryParameter, Equatable {
-        let valueDouble: Decimal
-        let valueText: Decimal
+        let valueDoubleColumn: Decimal
+        let valueTextColumn: Decimal
         private enum CodingKeys: String, CodingKey {
-            case valueDouble = "value_double"
-            case valueText = "value_text"
+            case valueDoubleColumn = "value_double_col"
+            case valueTextColumn = "value_text_col"
         }
     }
 }
@@ -46,8 +39,8 @@ final class QueryDecimalTypeTests: XCTestCase, QueryTestType {
         let query = """
         CREATE TABLE `\(constants.tableName)` (
         `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-        `value_double` DOUBLE NOT NULL DEFAULT 0,
-        `value_text` MEDIUMTEXT,
+        `value_double_col` DOUBLE NOT NULL DEFAULT 0,
+        `value_text_col` MEDIUMTEXT,
         PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         """
@@ -56,10 +49,24 @@ final class QueryDecimalTypeTests: XCTestCase, QueryTestType {
     }
     
     
+    func testDecimalType() throws {
+        let value = Decimal(string: "1.549")!
+        let row = Row.DecimalRow(valueDoubleColumn: value, valueTextColumn: value)
+        
+        try pool.execute { conn in
+            _ = try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, row])
+        }
+        
+        let rows: [Row.DecimalRow] = try pool.execute {
+            try $0.query("SELECT * FROM ?? ORDER BY id ASC", [constants.tableName])
+        }
+        
+        XCTAssertEqual(rows[0], row)
+    }
     
-    func disabled_testDecimalType() throws {
-        let value = Decimal(1.23e100)
-        let row = Row.DecimalRow(valueDouble: value, valueText: value)
+    func testDecimalType_largerValue() throws {
+        let value = Decimal(string: "1.23e100")!
+        let row = Row.DecimalRow(valueDoubleColumn: value, valueTextColumn: value)
     
         try pool.execute { conn in
             _ = try conn.query("INSERT INTO ?? SET ? ", [constants.tableName, row])

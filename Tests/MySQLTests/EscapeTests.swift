@@ -10,20 +10,6 @@ import XCTest
 @testable import MySQL
 import SQLFormatter
 
-
-extension EscapeTests {
-    static var allTests : [(String, (EscapeTests) -> () throws -> Void)] {
-        return [
-                   ("testStringEscape", testStringEscape),
-                   ("testBasicTypes", testBasicTypes),
-                   ("testArrayType", testArrayType),
-                   ("testNestedArray", testNestedArray),
-                   ("testDictionary", testDictionary),
-                   ("testAutoincrement", testAutoincrement)
-        ]
-    }
-}
-
 final class EscapeTests: XCTestCase {
 
     // https://github.com/mysqljs/mysql/blob/master/test/unit/protocol/test-SqlString.js
