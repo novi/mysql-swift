@@ -12,7 +12,6 @@ import Foundation
 extension QueryDecimalTypeTests {
     static var allTests : [(String, (QueryDecimalTypeTests) -> () throws -> Void)] {
         return [
-            ("testDecimalType", testDecimalType)
         ]
     }
 }
@@ -58,7 +57,7 @@ final class QueryDecimalTypeTests: XCTestCase, QueryTestType {
     
     
     
-    func testDecimalType() throws {
+    func disabled_testDecimalType() throws {
         let value = Decimal(1.23e100)
         let row = Row.DecimalRow(valueDouble: value, valueText: value)
     
