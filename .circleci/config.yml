@@ -15,7 +15,7 @@ jobs:
   linux-swift4.1:
     docker:
       - image: yusukeito/swift-basic:swift4.1
-      - image: mariadb:10.3
+      - image: circleci/mariadb:10.3
         environment:
           MYSQL_USER: root
           MYSQL_DATABASE: "test"
