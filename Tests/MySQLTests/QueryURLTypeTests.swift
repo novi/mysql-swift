@@ -9,15 +9,6 @@ import XCTest
 @testable import MySQL
 import Foundation
 
-extension QueryURLTypeTests {
-    static var allTests : [(String, (QueryURLTypeTests) -> () throws -> Void)] {
-        return [
-            ("testURLType", testURLType),
-            ("testURLInvalid", testURLInvalid)
-        ]
-    }
-}
-
 extension Row {
     fileprivate struct URLRow: Codable, QueryParameter, Equatable {
         let url: URL

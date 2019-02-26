@@ -11,16 +11,6 @@ import Dispatch
 import XCTest
 @testable import MySQL
 
-extension ConnectionPoolTests {
-    static var allTests : [(String, (ConnectionPoolTests) -> () throws -> Void)] {
-        return [
-                   ("testGetConnection", testGetConnection),
-                   ("testExecutionBlock", testExecutionBlock),
-                   ("testThreadingConnectionPool", testThreadingConnectionPool)
-        ]
-    }
-}
-
 final class ConnectionPoolTests: XCTestCase, MySQLTestType {
 
     

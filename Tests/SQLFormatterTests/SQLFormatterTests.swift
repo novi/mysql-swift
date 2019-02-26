@@ -9,13 +9,6 @@
 import XCTest
 @testable import SQLFormatter
 
-extension SQLFormattingTests {
-    static var allTests : [(String, (SQLFormattingTests) -> () throws -> Void)] {
-        return [
-                   ("testDummy", testDummy)
-        ]
-    }
-}
 
 class SQLFormattingTests: XCTestCase {
     
@@ -23,11 +16,3 @@ class SQLFormattingTests: XCTestCase {
         XCTAssertTrue(true)
     }
 }
-
-#if !os(macOS)
-    public func allTests() -> [XCTestCaseEntry] {
-        return [
-            testCase( SQLFormattingTests.allTests ),
-        ]
-    }
-#endif

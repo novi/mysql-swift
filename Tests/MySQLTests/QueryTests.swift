@@ -10,18 +10,6 @@ import XCTest
 @testable import MySQL
 import Foundation
 
-extension QueryTests {
-    static var allTests : [(String, (QueryTests) -> () throws -> Void)] {
-        return [
-            ("testInsertRowCodable", testInsertRowCodable),
-            ("testTransaction", testTransaction),
-            ("testEmojiInserting", testEmojiInserting),
-            ("testBulkInsert", testBulkInsert)
-        ]
-    }
-}
-
-
 protocol QueryTestType: MySQLTestType {
     func dropTestTable() throws
 }

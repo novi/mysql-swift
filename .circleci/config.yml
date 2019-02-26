@@ -24,6 +24,7 @@ jobs:
           DATABASE_HOST: "%"
     steps:
       - checkout
+      - run: sleep 5 #wait for mysql
       - run: swift build
       - run: swift test
   linux-swift4.2:
@@ -38,6 +39,7 @@ jobs:
           DATABASE_HOST: "%"
     steps:
       - checkout
+      - run: sleep 5 #wait for mysql
       - run: swift build
       - run: swift test
 
