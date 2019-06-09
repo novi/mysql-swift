@@ -1,7 +1,6 @@
 mysql-swift
 ===========
 
-[![Swift 4.1](https://img.shields.io/badge/Swift-4.1-orange.svg)](https://swift.org)
 ![Platform Linux, macOS](https://img.shields.io/badge/Platforms-Linux%2C%20macOS-lightgray.svg)
 [![CircleCI](https://circleci.com/gh/novi/mysql-swift.svg?style=svg)](https://circleci.com/gh/novi/mysql-swift)
 
@@ -71,9 +70,9 @@ Install pkg-config `.pc` file in [cmysql](https://github.com/vapor-community/cmy
 
 ```sh
 # cmysql
-$ brew tap vapor/homebrew-tap && brew install cmysql
+$ brew install https://gist.githubusercontent.com/novi/c6d4afa6e9f9cc9c426e3ccd140c3c74/raw/7130ad1d5062cdb2f7492d42e8d5574b864f3e18/cmysql.rb
 # cmysql-mariadb
-$ brew install https://gist.github.com/novi/dd21d48d260379e8919d9490bf5cfaec/raw/6ea4daa02d93f4ab0110ad30d87ea2b497a71cd0/cmysqlmariadb.rb
+$ brew install https://gist.githubusercontent.com/novi/dd21d48d260379e8919d9490bf5cfaec/raw/6ea4daa02d93f4ab0110ad30d87ea2b497a71cd0/cmysqlmariadb.rb
 ```
 
 ## Ubuntu

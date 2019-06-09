@@ -19,9 +19,15 @@ public extension IDType {
     func queryParameter(option: QueryParameterOption) throws -> QueryParameterType {
         return try id.queryParameter(option: option)
     }
+    #if swift(>=4.2)
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    #else
     var hashValue: Int {
         return id.hashValue
     }
+    #endif
 }
 
 extension IDType where Self: SQLRawStringDecodable, Self.T: SQLRawStringDecodable {

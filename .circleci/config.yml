@@ -12,6 +12,29 @@ jobs:
       - run: mysql -u root -e "create database IF NOT EXISTS test;"
       - run: swift build
       - run: swift test
+  mac-swift5.0:
+    macos:
+      xcode: "10.2.0"
+    steps:
+      - checkout
+      - run: brew update
+      - run: brew install https://gist.github.com/novi/dd21d48d260379e8919d9490bf5cfaec/raw/6ea4daa02d93f4ab0110ad30d87ea2b497a71cd0/cmysqlmariadb.rb #cmysql
+      - run: mkdir -p /usr/local/etc/my.cnf.d #workaround
+      - run: mysql.server start
+      - run: mysql -u root -e "create database IF NOT EXISTS test;"
+      - run: swift build
+      - run: swift test
+  mac-swift5.0-mysql:
+    macos:
+      xcode: "10.2.0"
+    steps:
+      - checkout
+      - run: brew update
+      - run: brew install https://gist.githubusercontent.com/novi/c6d4afa6e9f9cc9c426e3ccd140c3c74/raw/7130ad1d5062cdb2f7492d42e8d5574b864f3e18/cmysql.rb
+      - run: mysql.server start
+      - run: mysql -u root -e "create database IF NOT EXISTS test;"
+      - run: swift build
+      - run: swift test
   linux-swift4.1:
     docker:
       - image: yusukeito/swift-basic:swift4.1
@@ -42,11 +65,29 @@ jobs:
       - run: sleep 5 #wait for mysql
       - run: swift build
       - run: swift test
+  linux-swift5.0:
+    docker:
+      - image: yusukeito/swift-basic:swift5.0
+      - image: mariadb:10.3
+        environment:
+          MYSQL_USER: root
+          MYSQL_DATABASE: "test"
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_ROOT_HOST: "%"
+          DATABASE_HOST: "%"
+    steps:
+      - checkout
+      - run: sleep 5 #wait for mysql
+      - run: swift build
+      - run: swift test
 
 workflows:
   version: 2
   build_and_test:
     jobs:
       - mac-swift4.2
+      - mac-swift5.0
+      - mac-swift5.0-mysql
       - linux-swift4.1
       - linux-swift4.2
+      - linux-swift5.0
