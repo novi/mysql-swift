@@ -9,10 +9,11 @@ let package = Package(
     targets: [
         .systemLibrary(
             name: "CMySQL",
+            path: "Sources/cmysql",
             pkgConfig: "cmysql",
             providers: [
-                .brew(["mysql"]),
-                .apt(["libmysqlclient"])
+                .brew(["cmysql"]),
+                .apt(["libmysqlclient-dev"])
             ]
         ),
         .target(
