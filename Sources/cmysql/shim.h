@@ -3,4 +3,9 @@
 
 #include <mysql/mysql.h>
 
+#if LIBMYSQL_VERSION_ID >= 80000
+typedef int my_bool;
 #endif
+
+#endif
+

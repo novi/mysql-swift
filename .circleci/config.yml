@@ -24,6 +24,17 @@ jobs:
       - run: mysql -u root -e "create database IF NOT EXISTS test;"
       - run: swift build
       - run: swift test
+  mac-swift5.0-mysql:
+    macos:
+      xcode: "10.2.0"
+    steps:
+      - checkout
+      - run: brew update
+      - run: brew install https://gist.githubusercontent.com/novi/c6d4afa6e9f9cc9c426e3ccd140c3c74/raw/7130ad1d5062cdb2f7492d42e8d5574b864f3e18/cmysql.rb
+      - run: mysql.server start
+      - run: mysql -u root -e "create database IF NOT EXISTS test;"
+      - run: swift build
+      - run: swift test
   linux-swift4.1:
     docker:
       - image: yusukeito/swift-basic:swift4.1
@@ -76,6 +87,7 @@ workflows:
     jobs:
       - mac-swift4.2
       - mac-swift5.0
+      - mac-swift5.0-mysql
       - linux-swift4.1
       - linux-swift4.2
       - linux-swift5.0
