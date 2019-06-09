@@ -56,7 +56,7 @@ jobs:
       - run: swift test
   linux-swift5.0:
     docker:
-      - image: yusukeito/swift-basic:swift5
+      - image: yusukeito/swift-basic:swift5.0
       - image: mariadb:10.3
         environment:
           MYSQL_USER: root
