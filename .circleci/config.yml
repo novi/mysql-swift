@@ -112,11 +112,11 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      #- mac-swift4.2
+      - mac-swift4.2
       - mac-swift5.0
-      #- mac-swift5.0-mysql
-      #- mac-swift5.1
-      #- linux-swift4.1
-      #- linux-swift4.2
-      #- linux-swift5.0
-      #- linux-swift5.1
+      - mac-swift5.0-mysql
+      - mac-swift5.1
+      - linux-swift4.1
+      - linux-swift4.2
+      - linux-swift5.0
+      - linux-swift5.1
