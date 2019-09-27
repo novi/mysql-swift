@@ -8,7 +8,8 @@ jobs:
       - run: brew update
       - run: brew install https://gist.github.com/novi/dd21d48d260379e8919d9490bf5cfaec/raw/6ea4daa02d93f4ab0110ad30d87ea2b497a71cd0/cmysqlmariadb.rb #cmysql
       - run: mkdir -p /usr/local/etc/my.cnf.d #workaround
-      - run: mysqld_safe --skip-grant-tables &; sleep 5
+      - run: mysqld_safe --skip-grant-tables &
+      - run: sleep 5
       - run: mysql -u root -e "create database IF NOT EXISTS test;"
       - run: swift build
       - run: swift test
@@ -20,7 +21,8 @@ jobs:
       - run: brew update
       - run: brew install https://gist.github.com/novi/dd21d48d260379e8919d9490bf5cfaec/raw/6ea4daa02d93f4ab0110ad30d87ea2b497a71cd0/cmysqlmariadb.rb #cmysql
       - run: mkdir -p /usr/local/etc/my.cnf.d #workaround
-      - run: mysqld_safe --skip-grant-tables &; sleep 5
+      - run: mysqld_safe --skip-grant-tables &
+      - run: sleep 5
       - run: mysql -u root -e "create database IF NOT EXISTS test;"
       - run: swift build
       - run: swift test
@@ -32,7 +34,8 @@ jobs:
       - run: brew update
       - run: brew install https://gist.github.com/novi/dd21d48d260379e8919d9490bf5cfaec/raw/6ea4daa02d93f4ab0110ad30d87ea2b497a71cd0/cmysqlmariadb.rb #cmysql
       - run: mkdir -p /usr/local/etc/my.cnf.d #workaround
-      - run: mysqld_safe --skip-grant-tables &; sleep 5
+      - run: mysqld_safe --skip-grant-tables &
+      - run: sleep 5
       - run: mysql -u root -e "create database IF NOT EXISTS test;"
       - run: swift build
       - run: swift test
@@ -112,11 +115,11 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - mac-swift4.2
+      #- mac-swift4.2
       - mac-swift5.0
-      - mac-swift5.0-mysql
-      - mac-swift5.1
-      - linux-swift4.1
-      - linux-swift4.2
-      - linux-swift5.0
-      - linux-swift5.1
+      #- mac-swift5.0-mysql
+      #- mac-swift5.1
+      #- linux-swift4.1
+      #- linux-swift4.2
+      #- linux-swift5.0
+      #- linux-swift5.1
