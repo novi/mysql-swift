@@ -61,7 +61,7 @@ jobs:
           DATABASE_HOST: "%"
     steps:
       - checkout
-      - run: sleep 5 #wait for mysql
+      - run: sleep 10 #wait for mysql
       - run: swift build
       - run: swift test
 
@@ -77,7 +77,7 @@ jobs:
           DATABASE_HOST: "%"
     steps:
       - checkout
-      - run: sleep 5 #wait for mysql
+      - run: sleep 10 #wait for mysql
       - run: swift build
       - run: swift test
 
@@ -93,7 +93,7 @@ jobs:
           DATABASE_HOST: "%"
     steps:
       - checkout
-      - run: sleep 5 #wait for mysql
+      - run: sleep 10 #wait for mysql
       - run: swift build
       - run: swift test
 
