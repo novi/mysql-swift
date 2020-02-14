@@ -31,3 +31,4 @@ Carthage/
 
 Constants.swift
 /*.xcodeproj
+.swiftpm/
