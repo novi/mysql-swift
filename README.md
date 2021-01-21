@@ -94,7 +94,7 @@ $ sudo apt-get install libmariadbclient-dev
 * Add `mysql-swift` to `Package.swift` of your project.
 
 ```swift
-// swift-tools-version:5.0
+// swift-tools-version:5.2
 import PackageDescription
 
 let package = Package(
@@ -107,7 +107,7 @@ let package = Package(
             name: "YourAppOrLibrary",
             dependencies: [
                 // add a dependency
-                "MySQL", 
+                .product(name: "MySQL", package: "mysql-swift")
             ]
         )
     ]

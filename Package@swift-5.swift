@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "MySQL",
+    name: "mysql-swift",
     products: [
         .library(name: "MySQL", targets: ["MySQL"])
     ],
