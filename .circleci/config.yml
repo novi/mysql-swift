@@ -19,8 +19,8 @@ jobs:
     steps:
       - checkout
       - run: brew tap novi/tap && brew install novi/tap/cmysql
-      - run: mkdir -p /usr/local/var/mysql
-      - run: mysql.server start & sleep 5
+      - run: mkdir -p /usr/local/var/mysql/data && echo "datadir=/usr/local/var/mysql/data" >> /usr/local/etc/my.cnf && mysqld --initialize-insecure
+      - run: mysql.server start
       - run: mysql -u root -e "create database IF NOT EXISTS test;"
       - run: swift build
       - run: swift test
