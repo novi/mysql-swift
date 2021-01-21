@@ -2,46 +2,24 @@ version: 2
 
 
 jobs:
-  mac-swift5.1:
+  mac-swift5.3:
     macos:
-      xcode: "11.3.0"
+      xcode: "12.3.0"
     steps:
       - checkout
-      - run: brew update && brew tap novi/tap && brew install novi/tap/cmysqlmariadb
-      - run: mkdir -p /usr/local/etc/my.cnf.d #workaround
+      - run: brew tap novi/tap && brew install novi/tap/cmysqlmariadb
+      - run: mkdir -p /usr/local/etc/my.cnf.d /usr/local/var/mysql #workaround
       - run: sh -c "mysqld_safe --skip-grant-tables & sleep 5"
       - run: mysql -u root -e "create database IF NOT EXISTS test;"
       - run: swift build
       - run: swift test
-  mac-swift5.2:
+  mac-swift5.3-mysql:
     macos:
-      xcode: "11.5.0"
+      xcode: "12.3.0"
     steps:
       - checkout
-      - run: brew update && brew tap novi/tap && brew install novi/tap/cmysqlmariadb
-      - run: mkdir -p /usr/local/etc/my.cnf.d #workaround
-      - run: sh -c "mysqld_safe --skip-grant-tables & sleep 5"
-      - run: mysql -u root -e "create database IF NOT EXISTS test;"
-      - run: swift build
-      - run: swift test
-  mac-swift5.1-mysql:
-    macos:
-      xcode: "11.3.0"
-    steps:
-      - checkout
-      - run: brew update
-      - run: brew update && brew tap novi/tap && brew install novi/tap/cmysql
-      - run: mysql.server start
-      - run: mysql -u root -e "create database IF NOT EXISTS test;"
-      - run: swift build
-      - run: swift test
-  mac-swift5.2-mysql:
-    macos:
-      xcode: "11.5.0"
-    steps:
-      - checkout
-      - run: brew update
-      - run: brew update && brew tap novi/tap && brew install novi/tap/cmysql
+      - run: brew tap novi/tap && brew install novi/tap/cmysql
+      - run: mkdir -p /usr/local/var/mysql/data && echo "datadir=/usr/local/var/mysql/data" >> /usr/local/etc/my.cnf && mysqld --initialize-insecure
       - run: mysql.server start
       - run: mysql -u root -e "create database IF NOT EXISTS test;"
       - run: swift build
@@ -95,14 +73,29 @@ jobs:
       - run: swift build
       - run: swift test
 
+  linux-swift5.3:
+    docker:
+      - image: yusukeito/swift-basic:swift5.3-grpc-1
+      - image: mariadb:10.3
+        environment:
+          MYSQL_USER: root
+          MYSQL_DATABASE: "test"
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_ROOT_HOST: "%"
+          DATABASE_HOST: "%"
+    steps:
+      - checkout
+      - run: sleep 10 #wait for mysql
+      - run: swift build
+      - run: swift test
+
 workflows:
   version: 2
   build_and_test:
     jobs:
-      - mac-swift5.1
-      - mac-swift5.1-mysql
-      - mac-swift5.2
-      - mac-swift5.2-mysql
+      - mac-swift5.3
+      - mac-swift5.3-mysql
       - linux-swift5.0
       - linux-swift5.1
       - linux-swift5.2
+      - linux-swift5.3
