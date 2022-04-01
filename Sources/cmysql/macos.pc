@@ -1,9 +1,0 @@
-prefix=/usr/local/opt/mysql
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
-includedir=${prefix}/include
-Name: MySQL
-Description: MySQL client library
-Version: 2.0
-Cflags: -I${includedir}
-Libs: -L${libdir} -lmysqlclient

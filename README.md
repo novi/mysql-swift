@@ -63,7 +63,7 @@ try conn.query("UPDATE ?? SET age = ? WHERE age is NULL;", [tableName, defaultAg
 
 # Requirements
 
-* Swift 5.0 or later
+* Swift 5.6 or later
 * MariaDB or MySQL Connector/C (libmysqlclient) 2.2.3 or later
 
 ## macOS
@@ -72,11 +72,9 @@ Install pkg-config `.pc` file in [cmysql](https://github.com/vapor-community/cmy
 
 ```sh
 # cmysql
-$ brew tap novi/tap
 $ brew install novi/tap/cmysql
 
 # cmysql-mariadb
-$ brew tap novi/tap
 $ brew install novi/tap/cmysqlmariadb
 ```
 

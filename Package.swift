@@ -1,21 +1,28 @@
-// swift-tools-version:4.0
+// swift-tools-version:5.6
 import PackageDescription
 
 let package = Package(
-    name: "MySQL",
+    name: "mysql-swift",
     products: [
         .library(name: "MySQL", targets: ["MySQL"])
     ],
-    dependencies: [
-        .package(url: "https://github.com/novi/cmysql.git", from: "2.0.0"),
-    ],
     targets: [
+        .systemLibrary(
+            name: "CMySQL",
+            path: "Sources/cmysql",
+            pkgConfig: "cmysql",
+            providers: [
+                .brew(["cmysql"]),
+                .apt(["libmysqlclient-dev"])
+            ]
+        ),
         .target(
             name: "SQLFormatter"
         ),
         .target(
             name: "MySQL",
             dependencies: [
+                "CMySQL",
                 "SQLFormatter",
             ]
         ),
@@ -31,6 +38,5 @@ let package = Package(
                 "MySQL"
             ]
         )
-    ],
-    swiftLanguageVersions: [4]
+    ]
 )
