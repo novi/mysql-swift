@@ -34,6 +34,7 @@ public protocol ConnectionOption {
     var timeout: Int { get }
     var reconnect: Bool { get }
     var omitDetailsOnError: Bool { get }
+    var sslMode: Connection.SSLMode { get }
 }
 
 fileprivate let defaultTimeZone = TimeZone(identifier: "UTC")!
@@ -55,6 +56,9 @@ public extension ConnectionOption {
     var omitDetailsOnError: Bool {
         return true
     }
+    var sslMode: Connection.SSLMode {
+        return .preferred
+    }
 }
 
 extension Connection {
@@ -63,6 +67,10 @@ extension Connection {
         case UTF8MB4 = "utf8mb4"
     }
     
+    public enum SSLMode {
+        case disabled
+        case preferred
+    }
 }
 
 public enum ConnectionError: Error {
@@ -109,10 +117,17 @@ public final class Connection {
         }
         
         do {
-            let timeoutPtr = UnsafeMutablePointer<Int>.allocate(capacity: 1)
-            timeoutPtr.pointee = option.timeout
+            let timeoutPtr = UnsafeMutablePointer<UInt>.allocate(capacity: 1)
+            timeoutPtr.pointee = UInt(option.timeout)
             mysql_options(mysql, MYSQL_OPT_CONNECT_TIMEOUT, timeoutPtr)
             timeoutPtr.deallocate()
+        }
+        
+        switch option.sslMode {
+        case .disabled:
+            mysql_swift_set_ssl_option_disabled(mysql)
+        case .preferred:
+            mysql_swift_set_ssl_option_preferred(mysql)
         }
         
         Connection.setReconnect(option.reconnect, mysql: mysql)
