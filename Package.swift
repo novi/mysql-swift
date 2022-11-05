@@ -1,6 +1,12 @@
 // swift-tools-version:5.6
 import PackageDescription
 
+#if os(Linux)
+let cMySQLPackageName = "CMariadb"
+#else
+let cMySQLPackageName = "CMySQL"
+#endif
+
 let package = Package(
     name: "mysql-swift",
     products: [
@@ -16,13 +22,22 @@ let package = Package(
                 .apt(["libmysqlclient-dev"])
             ]
         ),
+        .systemLibrary(
+            name: "CMariadb",
+            path: "Sources/cmariadb",
+            pkgConfig: "cmariadb",
+            providers: [
+                .brew(["mariadb"]),
+                .apt(["libmariadbclient-dev"])
+            ]
+        ),
         .target(
             name: "SQLFormatter"
         ),
         .target(
             name: "MySQL",
             dependencies: [
-                "CMySQL",
+                .byName(name: cMySQLPackageName),
                 "SQLFormatter",
             ]
         ),

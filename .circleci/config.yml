@@ -25,9 +25,9 @@ jobs:
       - run: swift build
       - run: swift test
 
-  linux-swift5.6:
+  linux-swift5.7:
     docker:
-      - image: yusukeito/swift-basic:swift5.6-grpc-1
+      - image: yusukeito/swift-basic:swift5.7-grpc-1
       - image: mariadb:10.3
         environment:
           MYSQL_USER: root
@@ -47,4 +47,4 @@ workflows:
     jobs:
       #- mac-swift5.6
       #- mac-swift5.6-mysql
-      - linux-swift5.6
+      - linux-swift5.7
