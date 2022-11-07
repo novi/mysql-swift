@@ -9,7 +9,7 @@ jobs:
       - checkout
       - run: brew install novi/tap/cmysqlmariadb
       - run: mkdir -p /usr/local/etc/my.cnf.d /usr/local/var/mysql #workaround
-      - run: sh -c "mysqld_safe --skip-grant-tables & sleep 5"
+      - run: sh -c "mysqld_safe --skip-grant-tables &" && sleep 10
       - run: mysql -u root -e "create database IF NOT EXISTS test;"
       - run: swift build
       - run: swift test
