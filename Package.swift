@@ -2,7 +2,7 @@
 import PackageDescription
 
 #if os(Linux)
-let cMySQLPackageName = "CMariadb"
+let cMySQLPackageName = "CMySQL" //"CMariadb"
 #else
 let cMySQLPackageName = "CMySQL"
 #endif
@@ -18,7 +18,7 @@ let package = Package(
             path: "Sources/cmysql",
             pkgConfig: "cmysql",
             providers: [
-                .brew(["cmysql"]),
+                .brew(["novi/tap/cmysql"]),
                 .apt(["libmysqlclient-dev"])
             ]
         ),
@@ -27,7 +27,7 @@ let package = Package(
             path: "Sources/cmariadb",
             pkgConfig: "cmariadb",
             providers: [
-                .brew(["mariadb"]),
+                .brew(["novi/tap/cmysqlmariadb"]),
                 .apt(["libmariadbclient-dev"])
             ]
         ),
