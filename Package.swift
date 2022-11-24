@@ -9,6 +9,9 @@ let cMySQLPackageName = "CMySQL"
 
 let package = Package(
     name: "mysql-swift",
+    platforms: [
+        .macOS(.v10_15)
+    ],
     products: [
         .library(name: "MySQL", targets: ["MySQL"])
     ],
