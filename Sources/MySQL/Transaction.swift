@@ -50,4 +50,31 @@ extension ConnectionPool {
             throw error
         }
     }
+    
+    public func transaction<T>( _ block: (_ conn: Connection) async throws -> T  ) async throws -> T {
+        let conn = try getConnection()
+        defer {
+            if option.reconnect {
+                conn.setReconnect(true)
+            }
+            releaseConnection(conn)
+        }
+        
+        // disable reconnect option of MySQL while transaction
+        conn.setReconnect(false)
+        
+        try conn.beginTransaction()
+        do {
+            let result = try await block(conn)
+            try conn.commit()
+            return result
+        } catch {
+            do {
+                try conn.rollback()
+            } catch {
+                print("error while `ROLLBACK`.", error)
+            }
+            throw error
+        }
+    }
 }
