@@ -189,4 +189,12 @@ extension ConnectionPool {
         return try block(conn)
     }
     
+    public func execute<T>( _ block: (_ conn: Connection) async throws -> T  ) async throws -> T {
+        let conn = try getConnection()
+        defer {
+            releaseConnection(conn)
+        }
+        return try await block(conn)
+    }
+    
 }
