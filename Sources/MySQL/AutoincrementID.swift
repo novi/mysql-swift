@@ -21,7 +21,7 @@ public enum AutoincrementID<I: IDType> {
 }
 
 extension AutoincrementID: Equatable {
-    static public func ==<I>(lhs: AutoincrementID<I>, rhs: AutoincrementID<I>) -> Bool {
+    static public func ==(lhs: AutoincrementID<I>, rhs: AutoincrementID<I>) -> Bool {
         switch (lhs, rhs) {
         case (.noID, .noID): return true
         case (.ID(let lhs), .ID(let rhs) ): return lhs.id == rhs.id

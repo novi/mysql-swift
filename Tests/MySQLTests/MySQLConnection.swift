@@ -41,7 +41,7 @@ protocol TestConstantsType: ConnectionOption {
     var tableName: String { get }
 }
 
-protocol MySQLTestType: class {
+protocol MySQLTestType: AnyObject {
     var constants: TestConstantsType! { get set }
     var pool: ConnectionPool! { get set }
 }
