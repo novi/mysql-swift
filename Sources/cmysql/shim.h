@@ -1,13 +1,13 @@
 #ifndef __CMYSQL_SHIM_H__
 #define __CMYSQL_SHIM_H__
 
-#include <mysql/mysql.h>
+#include <mysql.h>
 
 #if LIBMYSQL_VERSION_ID >= 80000
 typedef int my_bool;
 #endif
 
-void mysql_swift_set_ssl_option_disabled(MYSQL *mysql)
+static inline void mysql_swift_set_ssl_option_disabled(MYSQL *mysql)
 {
 #ifndef LIBMARIADB
     unsigned int mode = SSL_MODE_DISABLED;
@@ -15,7 +15,7 @@ void mysql_swift_set_ssl_option_disabled(MYSQL *mysql)
 #endif
 }
 
-void mysql_swift_set_ssl_option_preferred(MYSQL *mysql)
+static inline void mysql_swift_set_ssl_option_preferred(MYSQL *mysql)
 {
 #ifndef LIBMARIADB
     unsigned int mode = SSL_MODE_PREFERRED;
